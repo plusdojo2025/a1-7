@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Spring Boot サンプル</title>
+</head>
+<body>
+	<div th:text="${message}"></div>
+
+	<form method="post" action="/signup/add/">
+		<label>生年月日<input type="date" name="birthday"></input></label> <label>婚活開始<input
+			type="date" name="marriage_start"></input></label> <input type="text"
+			name="mail_address"></input> <input type="password"></input> <input
+			type="password" name="password"></input> <input type="submit"
+			name="submit" value="登録">
+	</form>
+	<p id="errormessage"></p>
+</body>
+</html>
