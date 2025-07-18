@@ -17,11 +17,9 @@ public class MemberRegistController {
 	private UsersRepository repository;
 
 	@PostMapping("/signup/add/")
-
 	public String add(@ModelAttribute Users users) {
 		repository.save(users);
 		return "redirect:/";
-
 	}
 
 	@GetMapping("/signup/")

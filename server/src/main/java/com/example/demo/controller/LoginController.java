@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.entity.Users;
 import com.example.demo.repository.UsersRepository;
@@ -22,4 +24,10 @@ public class LoginController {
 		model.addAttribute("users",users);
 		return "login";
 }
+	@PostMapping("/home/")
+	public String login(@ModelAttribute Users users) {
+		repository.save(users);
+		return "home";
+	}
+	
 	}

@@ -2,16 +2,19 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
-<title>Spring Boot サンプル</title>
+<title>Login|ログイン</title>
 </head>
 <body>
-<div th:text="${users}"></div>
+	<div th:text="${users}"></div>
 
-<input type="text"></input>
-<input type="password"></input>
- <input type="submit" name="submit" value="ログイン">
-      <input type="reset" name="reset" value="リセット">
-      <p id="errormessage"></p>
-<a th:href="@{./signup/}">新規登録はこちら</a>
+	<form method="POST" action="/home/">
+		<input type="text"><br>
+		<input type="password"><br>
+		<input type="submit" name="submit" value="ログイン">
+		<input type="reset" name="reset" value="リセット">
+	</form>
+
+	<p id="errormessage"></p>
+	<a th:href="@{./signup/}">新規登録はこちら</a>
 </body>
 </html>
