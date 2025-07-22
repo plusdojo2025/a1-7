@@ -2,13 +2,12 @@ import React from "react";
 import axios from "axios";
 
 export default class MemberRegist extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       birthday: "",
-      marriage_start: "",
-      mail_address: "",
+      marriageStart: "",
+      mailAddress: "",
       password1: "",
       password2: "",
       errorMessage: "",
@@ -19,14 +18,15 @@ export default class MemberRegist extends React.Component {
     const name = e.target.name;
     this.setState({
       [name]: e.target.value,
-      errorMessage: "",
+      errorMessage: "", // 入力があったらエラーメッセージをクリア
     });
-  }
+  };
 
   addUser = (e) => {
     e.preventDefault();
 
-    const { birthday, marriage_start, mail_address, password1, password2 } = this.state;
+    const { birthday, marriageStart, mailAddress, password1, password2 } =
+      this.state;
 
     // パスワードチェック
     if (password1 !== password2) {
@@ -34,55 +34,95 @@ export default class MemberRegist extends React.Component {
       return;
     }
 
-    const data = { birthday, marriage_start, mail_address, password: password1 };
+    // ＊ パスワードの文字数などのチェックを追加するならココ ＊
 
-    //axiosだとpostが記述しやすい
-    axios.post("http://localhost:8000/signup/add/", data)
-      .then(response => {
+    const data = { birthday, marriageStart, mailAddress, password: password1 };
+
+    try {
+      axios.post("/signup/add/", data).then((response) => {
         console.log(response);
+        // ユーザー登録成功後、フォームをクリア
         this.setState({
           birthday: "",
-          marriage_start: "",
-          mail_address: "",
+          marriageStart: "",
+          mailAddress: "",
           password1: "",
           password2: "",
-          errorMessage: "登録が完了しました！",
+          errorMessage: "",
         });
-        //追加したら再読み込みする。
-        this.componentDidMount();
-      })
-      .catch((error) => {
-        console.error(error);
-        this.setState({ errorMessage: "登録に失敗しました。もう一度お試しください。" });
       });
+    } catch (error) {
+      console.error(error);
+      this.setState({
+        errorMessage: "登録に失敗しました。もう一度お試しください。",
+      });
+    }
   };
 
-
   render() {
-    const { birthday, marriage_start, mail_address, password1, password2 } = this.state;
+    const {
+      birthday,
+      marriageStart,
+      mailAddress,
+      password1,
+      password2,
+      errorMessage,
+    } = this.state;
     return (
       <div>
         <form onSubmit={this.addUser}>
           <label htmlFor="birthday">生年月日</label>
-          <input type="date" name="birthday" id="birthday" value={birthday} onChange={this.onInput} />
+          <input
+            type="date"
+            name="birthday"
+            id="birthday"
+            value={birthday}
+            onChange={this.onInput}
+          />
 
-          <label htmlFor="marriage_start">婚活開始</label>
-          <input type="date" name="marriage_start" id="marriage_start" value={marriage_start} onChange={this.onInput} />
+          <label htmlFor="marriageStart">婚活開始</label>
+          <input
+            type="date"
+            name="marriageStart"
+            id="marriage_start"
+            value={marriageStart}
+            onChange={this.onInput}
+          />
 
-          <label htmlFor="mail_address">メールアドレス</label>
-          <input type="text" name="mail_address" id="mail_address" value={mail_address} onChange={this.onInput} />
+          <label htmlFor="mailAddress">メールアドレス</label>
+          <input
+            type="text"
+            name="mailAddress"
+            id="mail_address"
+            value={mailAddress}
+            onChange={this.onInput}
+          />
 
           <label htmlFor="password1">パスワード</label>
-          <input type="password" name="password1" id="password1" value={password1} onChange={this.onInput} />
+          <input
+            type="password"
+            name="password1"
+            id="password1"
+            value={password1}
+            onChange={this.onInput}
+          />
 
           <label htmlFor="password2">パスワード（確認用）</label>
-          <input type="password" name="password2" id="password2" value={password2} onChange={this.onInput} />
+          <input
+            type="password"
+            name="password2"
+            id="password2"
+            value={password2}
+            onChange={this.onInput}
+          />
 
           <input type="submit" name="submit" value="登録" />
         </form>
 
-        <p id="errormessage"></p>
+        <p id="errorMessage" style={{ color: "red" }}>
+          {this.state.errorMessage}
+        </p>
       </div>
     );
-  };
+  }
 }
