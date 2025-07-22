@@ -1,25 +1,27 @@
 package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Users;
 import com.example.demo.repository.UsersRepository;
 
-@Controller
+@RestController
 public class MemberRegistController {
 
 	@Autowired
 	private UsersRepository repository;
 
 	@PostMapping("/signup/add/")
-	public String add(@ModelAttribute Users users) {
+	// @ModelAttributeで、フロントエンドから送られるURLエンコードされたデータ（キーと値のペア）をオブジェクトにバインド
+	// フロントエンド（ReactのAxios）から送信されたJSONデータが自動的にUsersオブジェクトに変換
+	public String add(@RequestBody Users users) {
 		repository.save(users);
-		return "redirect:/";
+		return "redirect:/"; // ログイン画面にリダイレクト
 	}
 
 	@GetMapping("/signup/")
