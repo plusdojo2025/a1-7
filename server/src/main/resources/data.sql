@@ -10,7 +10,7 @@ INSERT INTO `users` (`id`, `mail_address`, `password`, `birthday`, `marriage_sta
 INSERT INTO partners (
   id, user_id, name, name_read, age, birthday, met_event, first_met_day, last_met_day,
   first_impression, home_skill, economic_power, appearance, consideration, communication,
-  contact_freq, initiative, personality, marrige_intent, financial_sense, smoker,
+  contact_freq, initiative, personality, marriage_intent, financial_sense, smoker,
   alcohol, gamble, has_children, transferable, driver_license, live_with_parents,
   dual_income, created_at, updated_at
 ) VALUES

@@ -39,7 +39,7 @@ public class Partners {
 	private	Integer	contactFreq;
 	private	Integer	initiative;
 	private	Integer	personality;
-	private	Integer	marrigeIntent;
+	private	Integer	marriageIntent;
 	private	Integer	financialSense;
 	private	Integer	smoker;
 	private	Integer	alcohol;
