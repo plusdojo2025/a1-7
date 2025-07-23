@@ -18,7 +18,6 @@ export default class MemberRegist extends React.Component {
     const name = e.target.name;
     this.setState({
       [name]: e.target.value,
-      errorMessage: "", // 入力があったらエラーメッセージをクリア
     });
   };
 
