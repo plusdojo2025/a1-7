@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>PartnerList | お相手一覧</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+	<form action="/partnerlist/search" method="get">
+  		<input type="text" name="search" placeholder="名前で検索" />
+  		<button type="submit">検索</button>
+	</form>
+	
+	<table>
+		<tr th:each="partner : ${partners}">
+			<td th:text="${partner.name}"></td>
+			<td th:text="${partner.age}"></td>
+			<td th:text="${partner.last_met_day}"></td>
+			<td>
+				<form th:action="@{/partnerlist/delete/{id}(id=${partner.id})}" method="post" 
+            	onsubmit="return confirm('本当に削除しますか？');">
+            	<button type="submit"><i class="fa fa-trash"></i></button>
+            	</form>
+            </td>
+    	</tr>        
+	</table>
+	
+	
+	
+<p id="errormessage"></p>
+
+//下あとで訂正
+<a th:href="@{./signup/}">ユーザープロフ・理想像登録はこちら</a>
+</body>
+</html>

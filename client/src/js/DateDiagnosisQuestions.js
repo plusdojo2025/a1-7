@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-export default class PartnerList extends React.Component {
+export default class DateDiagnosisQuestions extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,7 +15,7 @@ export default class PartnerList extends React.Component {
   render() {
     return (
       <div>
-        <p>わあ</p>
+        <p>aa</p>
       </div>
     );
   }
