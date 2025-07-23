@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ProfileRegist|情報登録・理想像登録</title>
+</head>
+<body>
+	<div th:text="${users}"></div>
+
+	<form method="POST" action="/home/userRegist">
+		<button onclick="showTab(1)">ユーザー情報</button>
+		<button onclick="showTab(2)">理想像設定</button>
+
+
+		<div id="tab1">
+			<h1>基本情報</h1>
+			<br>
+			<h2>子供が欲しいか</h2>
+			<select name="wantChildren">
+				<option value="0">未設定</option>
+				<option value="1">はい</option>
+				<option value="2">どちらでもよい</option>
+				<option value="3">いいえ</option>
+			</select>
+			<h2>両親との同棲希望か</h2>
+			<h2>共働き希望か</h2>
+		</div>
+		<div id="tab2" style="display: none;">ここに内容2が表示されます</div>
+
+		<script>
+			function showTab(tabNo) {
+				document.getElementById("tab1").style.display = (tabNo === 1) ? "block"
+						: "none";
+				document.getElementById("tab2").style.display = (tabNo === 2) ? "block"
+						: "none";
+			}
+		</script>
+		<input type="submit" name="submit" value="ログイン"> <input
+			　type="reset" name="reset" value="リセット">
+	</form>
+
+	<p id="errormessage"></p>
+	<a th:href="@{./signup/}">新規登録はこちら</a>
+</body>
+</html>
