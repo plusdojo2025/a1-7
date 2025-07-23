@@ -41,7 +41,7 @@ public class PartnerListController {
 	}
 	
 	@PostMapping("/partnerlist/delete/{id}")
-	public String deletePartner(@PathVariable Long id) {
+	public String deletePartner(@PathVariable Integer id) {
 	    repository.deleteById(id);
 	    return "redirect:/partnerlist/";
 	}
