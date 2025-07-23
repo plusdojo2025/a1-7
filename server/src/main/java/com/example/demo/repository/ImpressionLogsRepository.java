@@ -1,10 +1,19 @@
 package com.example.demo.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import com.example.demo.entity.ImpressionLogs;
 
+@Repository
 public interface ImpressionLogsRepository extends JpaRepository<ImpressionLogs, Integer> {
-	ImpressionLogs findFirstByIdOrderByIdAsc(Integer id);
-	void deleteById(Integer id);
+	
+	// お相手の印象記録を全件取得
+	List<ImpressionLogs> findByPartnerProfilesIdOrderByRecordDateDesc(Integer partnerProfilesId);
+	
+	// 印象内容で部分一致検索
+	List<ImpressionLogs> findByImpressionLike(String impression);
+	
 }

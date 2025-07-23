@@ -70,7 +70,7 @@ function App() {
               path="/login/"
               element={<Login onLoginSuccess={handleLoginSuccess} />}
             />
-            <Route path="/signup/" element={<MemberRegist />} />
+            <Route path="/login/signup/" element={<MemberRegist />} />
 
             {/* 保護されたルート(ログインが必要) */}
             <Route
@@ -106,7 +106,7 @@ function App() {
               }
             />
             <Route
-              path="/impressions/new/"
+              path="/partners/:id/impressions/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
                   <Impression />
