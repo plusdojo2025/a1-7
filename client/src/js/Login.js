@@ -6,6 +6,7 @@ import { withRouter } from "../hoc/withRouter";
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
+    // 初期値を設定
     this.state = {
       mailAddress: "",
       password: "",
@@ -14,9 +15,9 @@ export default class Login extends React.Component {
     };
   }
 
-  // 入力値が変更されたときにステートを更新
+  // 入力値が変更されたときに state を更新するメソッド
   onInput = (e) => {
-    // 入力値が変更された要素のname属性と入力値valueを取得
+    // イベントが発生したDOM要素 e.target の name属性 と 現在の入力値value を取得
     const { name, value } = e.target;
     this.setState({
       [name]: value,
@@ -34,24 +35,23 @@ export default class Login extends React.Component {
     });
 
     const { mailAddress, password } = this.state;
-    
-    const { navigate, onLoginSuccess } = this.props; // this.props.navigate でルーティング機能にアクセス
+    const { navigate, onLoginSuccess } = this.props; // ルーティング機能にアクセス
 
     try {
       // 1. バックエンドAPIへのリクエスト
       const data = { mailAddress, password };
-      const response = await axios.post("/", data);
+      const response = await axios.post("/login/", data);
 
-      // ログイン成功時の処理
+      // ２．ログイン成功時の処理
       console.log("ログイン成功:", response.data);
-      // 親コンポーネントにログイン成功を通知する（例:認証状態を更新するため）
+      // 親コンポーネントにログイン成功を通知する（認証状態を更新するため）
       if (onLoginSuccess) {
         onLoginSuccess();
       }
       // お相手一覧画面に遷移
       navigate("/home/"); // this.props.navigate を使用（37行目）
 
-      // ログイン失敗時の処理
+      // ３．ログイン失敗時の処理
     } catch (error) {
       console.error("ログインエラー:", error);
 
@@ -60,7 +60,7 @@ export default class Login extends React.Component {
         // サーバーからのエラーレスポンスがある場合
         if (error.response.status === 401) {
           message = "メールアドレスまたはパスワードが間違っています。";
-        // サーバーが具体的なエラーメッセージを返した場合
+          // サーバーが具体的なエラーメッセージを返した場合
         } else if (error.response.data && error.response.data.message) {
           message = error.response.data.message;
         } else {
@@ -68,19 +68,19 @@ export default class Login extends React.Component {
         }
       } else if (error.request) {
         // リクエストは送信されたが、レスポンスがない場合 (ネットワークエラーなど)
-        message = "サーバーに接続できませんでした。ネットワーク接続を確認してください。";
+        message =
+          "サーバーに接続できませんでした。ネットワーク接続を確認してください。";
       }
       this.setState({ errorMessage: message });
-
     } finally {
-      // ローディング終了
+      // ４．ローディング終了
       this.setState({ loading: false });
     }
   };
 
   // フォームのリセットハンドラ
   handleReset = () => {
-        this.setState({
+    this.setState({
       mailAddress: "",
       password: "",
       errorMessage: "",
@@ -92,7 +92,12 @@ export default class Login extends React.Component {
     return (
       <div>
         <form onSubmit={this.handleLogin}>
-          <label htmlFor="mail_address">メールアドレス</label><br/>
+          <label
+            htmlFor="mail_address" // input の id と一致させる
+          >
+            メールアドレス
+          </label>
+          <br />
           <input
             type="text"
             name="mailAddress"
@@ -100,9 +105,11 @@ export default class Login extends React.Component {
             value={mailAddress}
             onChange={this.onInput}
             required // 入力必須に
-          /><br/>
+          />
+          <br />
 
-          <label htmlFor="password">パスワード</label><br/>
+          <label htmlFor="password">パスワード</label>
+          <br />
           <input
             type="password"
             name="password"
@@ -110,21 +117,27 @@ export default class Login extends React.Component {
             value={password}
             onChange={this.onInput}
             required
-          /><br/>
+          />
+          <br />
 
-          {errorMessage && ( // エラーメッセージがある場合のみ表示
+          {/* エラーメッセージがある場合のみ表示 */}
+          {errorMessage && (
             <p id="errorMessage" style={{ color: "red" }}>
               {errorMessage}
             </p>
           )}
 
-          <input type="reset" name="reset" value="リセット" onClick={this.handleReset}/>
+          <input
+            type="reset"
+            name="reset"
+            value="リセット"
+            onClick={this.handleReset}
+          />
           <input
             type="submit"
             name="submit"
             value={loading ? "ログイン中..." : "ログイン"}
-            // フォーム送信中にボタンを無効化
-            disabled={loading}
+            disabled={loading} // フォーム送信中にボタンを無効化
           />
         </form>
 

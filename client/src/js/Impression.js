@@ -16,8 +16,6 @@ export default class Impression extends React.Component {
   render() {
     return (
       <div>
-        {/* <div>{users}</div> */}
-
         <form method="POST" action="/home/">
           <input type="text" />
           <br />

@@ -4,7 +4,7 @@ import axios from "axios";
 export default class MemberRegist extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
+    this.state = { 
       birthday: "",
       marriageStart: "",
       mailAddress: "",
@@ -77,7 +77,8 @@ export default class MemberRegist extends React.Component {
             id="birthday"
             value={birthday}
             onChange={this.onInput}
-          />
+            required
+          /><br/>
 
           <label htmlFor="marriageStart">婚活開始</label>
           <input
@@ -86,34 +87,38 @@ export default class MemberRegist extends React.Component {
             id="marriage_start"
             value={marriageStart}
             onChange={this.onInput}
-          />
+            required
+          /><br/>
 
-          <label htmlFor="mailAddress">メールアドレス</label>
+          <label htmlFor="mailAddress">メールアドレス</label><br/>
           <input
             type="text"
             name="mailAddress"
             id="mail_address"
             value={mailAddress}
             onChange={this.onInput}
-          />
+            required
+          /><br/>
 
-          <label htmlFor="password1">パスワード</label>
+          <label htmlFor="password1">パスワード</label><br/>
           <input
             type="password"
             name="password1"
             id="password1"
             value={password1}
             onChange={this.onInput}
-          />
+            required
+          /><br/>
 
-          <label htmlFor="password2">パスワード（確認用）</label>
+          <label htmlFor="password2">パスワード（確認用）</label><br/>
           <input
             type="password"
             name="password2"
             id="password2"
             value={password2}
             onChange={this.onInput}
-          />
+            required
+          /><br/>
 
           <input type="submit" name="submit" value="登録" />
         </form>

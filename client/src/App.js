@@ -20,7 +20,10 @@ import Impression from "./js/Impression";
 import Phase from "./js/Phase";
 // DateはJavaScriptの組み込みオブジェクトと衝突するため変更
 import DatePlan from "./js/Date";
+import DatePlanQuestions from "./js/DateDiagnosisQuestions";
+import DatePlanResult from "./js/DateDiagnosisResult";
 import Marriage from "./js/Marriage";
+import MarriageResult from "./js/MarriageResult";
 import MessageIdea from "./js/MessageIdea";
 import MessageCorrect from "./js/MessageCorrect";
 
@@ -29,7 +32,7 @@ function App() {
 
   // アプリケーション起動時に認証状態をチェック
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem("accessToken");
     if (token) {
       setIsAuthenticated(true);
     }
@@ -40,7 +43,7 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('accessToken');
+    localStorage.removeItem("accessToken");
     setIsAuthenticated(false);
   };
 
@@ -119,7 +122,7 @@ function App() {
               }
             />
             <Route
-              path="/dates/new/"
+              path="/dates/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
                   <DatePlan />
@@ -127,10 +130,34 @@ function App() {
               }
             />
             <Route
-              path="/marriage-plans/new/"
+              path="/dates/questions/"
+              element={
+                <PrivateRoute isAuthenticated={isAuthenticated}>
+                  <DatePlanQuestions />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/dates/result/"
+              element={
+                <PrivateRoute isAuthenticated={isAuthenticated}>
+                  <DatePlanResult />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/marriage-plans/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
                   <Marriage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/marriage-plans/result/"
+              element={
+                <PrivateRoute isAuthenticated={isAuthenticated}>
+                  <MarriageResult />
                 </PrivateRoute>
               }
             />
