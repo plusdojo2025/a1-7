@@ -28,6 +28,7 @@ public class LoginController {
 	public String login(@ModelAttribute Users users) {
 		repository.save(users);
 		return "home";
+				
 	}
 	
 	}
