@@ -45,7 +45,7 @@ INSERT INTO impression_logs (
   
   
   INSERT INTO love_events (
-  id, phase_id, check, type, event, point, created_at, updated_at
+  id, phase_id, event_check, event_type, event, point, created_at, updated_at
 ) VALUES
   (1, 1, 0, 0, '自己紹介をする', 10, '2025-07-01 10:00:00', '2025-07-01 10:00:00'),
   (2, 1, 1, 1, '初めてのデート', 30, '2025-07-02 18:00:00', '2025-07-02 18:00:00'),
