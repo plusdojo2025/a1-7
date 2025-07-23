@@ -18,14 +18,16 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name="impression_logs")
 public class ImpressionLogs {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private	Integer	id;
-	private	Integer	partnerProfilesId;
-	private	Date	recordDate;
-	private	String	impression;
-	private	String	mimeType;
-	private	byte[]	imageData;
-	private	Timestamp	createdAt;
-	private	Timestamp	updatedAt;	
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Integer id;
+
+    private Integer partnerProfilesId;
+    private Date recordDate;
+    private String impression;
+    private String mimeType;
+    private byte[] imageData;
+
+    private Timestamp createdAt;
+    private Timestamp updatedAt;    
 }

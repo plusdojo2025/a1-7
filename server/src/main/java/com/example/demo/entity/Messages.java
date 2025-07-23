@@ -18,15 +18,16 @@ import lombok.NoArgsConstructor;
 @Table(name = "messages")
 public class Messages {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	private Integer usersId;
-	private Integer partnersId;
-	private Integer mood;
-	private Integer matter;
-	private String prompt;
-	private Timestamp createdAt;
-	private Timestamp updatedAt;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
+    private Integer usersId;
+    private Integer partnersId;
+    private Integer mood;
+    private Integer matter;
+    private String prompt;
+
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 }

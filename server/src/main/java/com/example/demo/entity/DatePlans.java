@@ -17,16 +17,17 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name="date_plans")
 public class DatePlans {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private	Integer	id;
-	private	String	questionId;
-	private	String	question;
-	private	String	yesNextId;
-	private	String	noNextId;
-	private	String	prevId;
-	private	String	conclusion;
-	private	Timestamp	createdAt;
-	private	Timestamp	updatedAt;
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Integer id;
 
+    private String questionId;
+    private String question;
+    private String yesNextId;
+    private String noNextId;
+    private String prevId;
+    private String conclusion;
+
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 }

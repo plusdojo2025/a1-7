@@ -18,15 +18,16 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name="marriage_plans")
 public class MarriagePlans {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private	Integer	id;
-	private	Integer	usersId;
-	private	Date	marriageTiming;
-	private	Integer	spanId;
-	private	Integer	span;
-	private	double	percentage;
-	private	Timestamp	createdAt;
-	private	Timestamp	updatedAt;
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Integer id;
 
+    private Integer usersId;
+    private Date marriageTiming;
+    private Integer spanId;
+    private Integer span;
+    private double percentage;
+
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 }
