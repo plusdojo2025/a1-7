@@ -3,7 +3,8 @@ import axios from "axios";
 // withNavigation をインポートしてクラスコンポーネントに navigate を渡す
 import { withNavigation } from "../hoc/withNavigation";
 
-export default class Login extends React.Component {
+// default export は withNavigation で行う（コード末尾参照）
+class Login extends React.Component {
   constructor(props) {
     super(props);
     // 初期値を設定
@@ -43,33 +44,43 @@ export default class Login extends React.Component {
       const response = await axios.post("/login/", data);
 
       // ２．ログイン成功時の処理
-      console.log("ログイン成功:", response.data);
+      console.log("ログイン成功:", response.data); // デバッグ用
       // 親コンポーネントにログイン成功を通知する（認証状態を更新するため）
       if (onLoginSuccess) {
         onLoginSuccess();
       }
-      // お相手一覧画面に遷移
-      navigate("/home/"); // this.props.navigate を使用（37行目）
+      // お相手一覧画面に遷移（this.props.navigate を使用）
+      navigate("/home/");
 
       // ３．ログイン失敗時の処理
     } catch (error) {
       console.error("ログインエラー:", error);
 
       let message = "予期せぬエラーが発生しました。";
-      if (error.response) {
-        // サーバーからのエラーレスポンスがある場合
-        if (error.response.status === 401) {
-          message = "メールアドレスまたはパスワードが間違っています。";
-          // サーバーが具体的なエラーメッセージを返した場合
-        } else if (error.response.data && error.response.data.message) {
-          message = error.response.data.message;
+      // エラーがAxiosのものかどうかを確認
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          // サーバーからのエラーレスポンスがある場合
+          if (error.response.status === 401) {
+            message = "メールアドレスまたはパスワードが間違っています。";
+            // サーバーが具体的なエラーメッセージを返した場合
+          } else if (error.response.data && error.response.data.message) {
+            message = error.response.data.message;
+          } else {
+            message =
+              "ログインに失敗しました。ステータスコード: ${error.response.status}";
+          }
+        } else if (error.request) {
+          // リクエストは送信されたが、レスポンスがない場合 (ネットワークエラーなど)
+          message =
+            "サーバーに接続できませんでした。ネットワーク接続を確認してください。";
         } else {
-          message = "ログインに失敗しました。サーバーエラーです。";
+          // リクエストの設定中に発生したエラーなど
+          message = "リクエストエラー: ${error.message}";
         }
-      } else if (error.request) {
-        // リクエストは送信されたが、レスポンスがない場合 (ネットワークエラーなど)
-        message =
-          "サーバーに接続できませんでした。ネットワーク接続を確認してください。";
+      } else {
+        // Axios以外の予期せぬエラー
+        message = "予期せぬエラーが発生しました: ${error.message}";
       }
       this.setState({ errorMessage: message });
     } finally {
@@ -93,7 +104,7 @@ export default class Login extends React.Component {
       <div>
         <form onSubmit={this.handleLogin}>
           <label
-            htmlFor="mail_address" // input の id と一致させる
+            htmlFor="mail_address" // ※ input の id と一致させる
           >
             メールアドレス
           </label>
@@ -146,3 +157,6 @@ export default class Login extends React.Component {
     );
   }
 }
+
+// withNavigation でラップしてエクスポート
+export default withNavigation(Login);

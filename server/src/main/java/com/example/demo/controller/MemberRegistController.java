@@ -1,8 +1,10 @@
 package com.example.demo.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,17 +18,22 @@ public class MemberRegistController {
 	@Autowired
 	private UsersRepository repository;
 
-	@PostMapping("/signup/add/")
-	// @ModelAttributeで、フロントエンドから送られるURLエンコードされたデータ（キーと値のペア）をオブジェクトにバインド
-	// フロントエンド（ReactのAxios）から送信されたJSONデータが自動的にUsersオブジェクトに変換
-	public String add(@RequestBody Users users) {
-		repository.save(users);
-		return "redirect:/login/"; // ログイン画面にリダイレクト
-	}
+	// Reactでルートページを扱っているため、Thymeleafテンプレートを返す@GetMapping("/signup/") メソッドは不要
 
-	@GetMapping("/signup/")
-	public String signup(Model model) {
-		model.addAttribute("message", "こんにちは");
-		return "signup";
+	@PostMapping("/signup/add/")
+	public ResponseEntity<String> add(@RequestBody Users users) {
+		try {
+			// 1. メールアドレスの重複チェック
+			Optional<Users> existingUser = repository.findByMailAddress(users.getMailAddress());
+			if (existingUser.isPresent()) {
+				return ResponseEntity.status(HttpStatus.CONFLICT).body("このメールアドレスは既に登録されています。");
+			}
+			// 2. 重複がなければユーザー登録を実行
+			repository.save(users);
+			return ResponseEntity.ok("");
+		} catch (Exception e) {
+			// その他の予期せぬエラーが発生した場合
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("ユーザー登録に失敗しました: " + e.getMessage());
+		}
 	}
 }

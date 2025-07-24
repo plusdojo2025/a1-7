@@ -4,7 +4,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 // navigateフックをラップし、クラスコンポーネントにnavigateプロパティとして渡す
-const withNavigation = (Component) => {
+export const withNavigation = (Component) => {
   return (props) => {
     // useNavigateを呼び出し、
     const navigate = useNavigate();
@@ -12,5 +12,3 @@ const withNavigation = (Component) => {
     return <Component {...props} navigate={navigate} />;
   };
 };
-
-export default withNavigation;
