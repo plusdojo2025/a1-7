@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Table(name="date_plans")
-public class DatePlans {
+@Table(name="date_spots")
+public class DateSpots {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;

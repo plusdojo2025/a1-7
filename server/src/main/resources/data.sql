@@ -52,7 +52,7 @@ INSERT INTO love_events (
   (5, 4, 0, 0, '悩みを共有する', 50, '2025-07-12 12:00:00', '2025-07-12 12:00:00');
 
 -- デートプラン質問と結論の木構造
-INSERT INTO date_plans (
+INSERT INTO date_spots (
   id, question_id, question, yes_next_id, no_next_id, prev_id, conclusion, created_at, updated_at
 ) VALUES
   (1, 'Q1', '初デートはカフェに行きたい？', 'Q2', 'A1', NULL, NULL, '2025-07-01 10:00:00', '2025-07-01 10:00:00'),

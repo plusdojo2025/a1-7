@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
-// withRouter をインポートしてクラスコンポーネントに navigate を渡す
-import { withRouter } from "../hoc/withRouter";
+// withNavigation をインポートしてクラスコンポーネントに navigate を渡す
+import { withNavigation } from "../hoc/withNavigation";
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -141,7 +141,7 @@ export default class Login extends React.Component {
           />
         </form>
 
-        <a href="./signup/">新規登録はこちら</a>
+        <a href="/signup/">新規登録はこちら</a>
       </div>
     );
   }

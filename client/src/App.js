@@ -19,16 +19,16 @@ import PartnerEdit from "./js/PartnerEdit";
 import Impression from "./js/Impression";
 import Phase from "./js/Phase";
 // DateはJavaScriptの組み込みオブジェクトと衝突するため変更
-import DatePlan from "./js/Date";
-import DatePlanQuestions from "./js/DateDiagnosisQuestions";
-import DatePlanResult from "./js/DateDiagnosisResult";
+import DateSpot from "./js/DateSpotDiagnosis";
+import DateSpotQuestions from "./js/DateSpotDiagnosisQuestions";
+import DateSpotResult from "./js/DateSpotDiagnosisResult";
 import Marriage from "./js/Marriage";
 import MarriageResult from "./js/MarriageResult";
 import MessageIdea from "./js/MessageIdea";
 import MessageCorrect from "./js/MessageCorrect";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // * あとで false に戻す *
 
   // アプリケーション起動時に認証状態をチェック
   useEffect(() => {
@@ -70,7 +70,7 @@ function App() {
               path="/login/"
               element={<Login onLoginSuccess={handleLoginSuccess} />}
             />
-            <Route path="/login/signup/" element={<MemberRegist />} />
+            <Route path="/signup/" element={<MemberRegist />} />
 
             {/* 保護されたルート(ログインが必要) */}
             <Route
@@ -122,26 +122,26 @@ function App() {
               }
             />
             <Route
-              path="/dates/"
+              path="/date-spot/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <DatePlan />
+                  <DateSpot />
                 </PrivateRoute>
               }
             />
             <Route
-              path="/dates/questions/"
+              path="/date-spot/questions/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <DatePlanQuestions />
+                  <DateSpotQuestions />
                 </PrivateRoute>
               }
             />
             <Route
-              path="/dates/result/"
+              path="/date-spot/result/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <DatePlanResult />
+                  <DateSpotResult />
                 </PrivateRoute>
               }
             />

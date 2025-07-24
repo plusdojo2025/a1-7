@@ -9,24 +9,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.example.demo.entity.DatePlans;
-import com.example.demo.repository.DatePlansRepository;
+import com.example.demo.entity.DateSpots;
+import com.example.demo.repository.DateSpotsRepository;
 
 @Controller
-public class DateController {
+public class DateSpotController {
 	
 	@Autowired
-	private DatePlansRepository repository;
+	private DateSpotsRepository repository;
 	
 	@GetMapping("/date/")
 	public String date(Model model) {
-		List<DatePlans> datePlans=repository.findAll();
-		model.addAttribute("date_plans",datePlans);
+		List<DateSpots> dateSpot=repository.findAll();
+		model.addAttribute("date_plans",dateSpot);
 		return "date";
 	}
 	
 	@PostMapping("/date/")
-	public String date(@ModelAttribute DatePlans dateplans) {
+	public String date(@ModelAttribute DateSpots dateplans) {
 		repository.save(dateplans);
 		return "redirect:/date/";
 	}

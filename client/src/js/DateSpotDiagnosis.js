@@ -16,7 +16,7 @@ export default function DateStart() {
     setLoading(true);
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      navigate("/result"); // 「結果」ページに遷移
+      navigate("/result/"); // 「結果」ページに遷移
     } catch (error) {
       console.error("エラー:", error);
     } finally {

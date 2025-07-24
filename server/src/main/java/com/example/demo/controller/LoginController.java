@@ -18,7 +18,7 @@ public class LoginController {
 	@Autowired
 	private UsersRepository repository;
 
-	@GetMapping("/")
+	@GetMapping("/login/")
 	public String login(Model model) {
 		List<Users> users=repository.findAll();
 		model.addAttribute("users",users);

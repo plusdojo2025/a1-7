@@ -21,7 +21,7 @@ public class MemberRegistController {
 	// フロントエンド（ReactのAxios）から送信されたJSONデータが自動的にUsersオブジェクトに変換
 	public String add(@RequestBody Users users) {
 		repository.save(users);
-		return "redirect:/"; // ログイン画面にリダイレクト
+		return "redirect:/login/"; // ログイン画面にリダイレクト
 	}
 
 	@GetMapping("/signup/")
