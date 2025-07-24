@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,21 +25,54 @@ public class MarriageController {
 		System.out.println(marriagePlans);
 
 //		repository.save(marriagePlans);
-		String span = "6ヶ月";
+		long span = 0;
 		String percentage = "85";
 		String errorMessage = null;
 		
-		
-		String check = marriagePlans.getMarriageTiming();
-		if (check == "") {
+//		未入力エラーチェック できてないです
+		int checkYear = marriagePlans.getMarriageYear();
+		int checkMonth = marriagePlans.getMarriageMonth();
+ 		if (checkYear == 0 || checkMonth == 0) {
 			errorMessage = "結婚希望時期を入力してください";
 		}
+ 		
+// 		半年後エラーチェック1 	
+ 		LocalDate inputDate = LocalDate.of(checkYear, checkMonth ,1);
+		LocalDate today = LocalDate.now();
+//		LocalDate sixMonthsLater = today.plusMonths(6);
+		
+		span = ChronoUnit.MONTHS.between(today, inputDate);
+		
+        if (span >= 6) {
+            System.out.println("入力は半年後以降です ✅");
+        } else {
+            System.out.println("入力は半年以内です ❌");
+            return "marriagePlan";
+        }
+
+//        if (!inputDate.isBefore(sixMonthsLater)) {
+//            System.out.println("入力は半年後以降です ✅");
+//        } else {
+//            System.out.println("入力は半年以内です ❌");
+//        }
+
+		
+//		String check = marriagePlans.getMarriageTiming();
+//		if (check == "") {
+//			errorMessage = "結婚希望時期を入力してください";
+//		}
 //		else if (check - today < 182) {
 //			errorMessage = "半年以降で入力してください";
 //		}
 		
-		model.addAttribute("marriageTiming", marriagePlans.getMarriageTiming());
+//		model.addAttribute("marriageTiming", marriagePlans.getMarriageTiming());
+		
+		model.addAttribute("marriageYear", marriagePlans.getMarriageYear());
+		model.addAttribute("marriageMonth", marriagePlans.getMarriageMonth());
+		
+//		span = ChronoUnit.MONTHS.between(today, inputDate);			
 	    model.addAttribute("span", span);
+	    
 //	    割合はこちらで計算
 //	    model.addAttribute("percentage", percentage);
 	    model.addAttribute("errorMessage", errorMessage);

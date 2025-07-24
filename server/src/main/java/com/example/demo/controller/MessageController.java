@@ -27,6 +27,9 @@ public class MessageController {
 			return "message";
 		}
 
+		
+//		直打ちしたければEntityをStringに変換
+				
 //		命令文作成
 		String commandSentence = String.format("%dさん宛に、%dな雰囲気で、%dのメッセージを生成してください。", messages.getPartnersId(),
 				messages.getMood(), messages.getMatter());

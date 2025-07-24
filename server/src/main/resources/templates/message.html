@@ -27,12 +27,12 @@ label {
 	<br />
 
 	<!-- 命令文とプロンプトの表示 -->
-	<div th:if="${messageIdea.prompt}">
+	<!-- <div th:if="${messageIdea.prompt}">
 		<h3>生成されたプロンプト：</h3>
 		<p th:text="${messageIdea.prompt}"></p>
 	</div>
 	<br />
-	<br />
+	<br /> -->
 
 	<!-- 入力フォーム -->
 	<form th:action="@{/messages/ideas/}" method="post"

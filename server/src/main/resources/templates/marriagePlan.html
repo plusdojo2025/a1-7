@@ -1,24 +1,42 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-  <meta charset="UTF-8">
-  <title>婚活プラン提案</title>
+    <meta charset="UTF-8">
+    <title>婚活プラン提案</title>
 </head>
+
 <body>
-  <div>
-    <h2>結婚希望時期は？</h2>
-    <p>（半年以降で設定してください）</p>
+    <div>
+        <h2>結婚希望時期は？</h2>
+        <p>（半年以降で設定してください）</p>
 
-    <form th:action="@{/marriage-plans/result/}" method="post">
-      <label for="marriageTiming">結婚希望時期</label>
-      <input type="date" id="marriageTiming" name="marriageTiming"
-             th:value="${marriagePlans.marriageTiming}"/>
+        <!-- カレンダーから入力
+			<input type="date"
+				id="marriageTiming" name="marriageTiming"
+				th:value="${marriagePlans.marriageTiming}" /> 
+				 -->
 
-      <button type="submit">調べる</button>
 
-      <!-- エラーメッセージがある場合のみ表示 -->
-      <p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red"></p>
-    </form>
-  </div>
+        <form th:action="@{/marriage-plans/result/}" method="post" th:object="${marriagePlans}">
+            <label for="marriageYear">年：</label>
+            <select th:field="*{marriageYear}" id="marriageYear">
+                <option value="">-- 年を選択 --</option>
+                <option th:each="y : ${#numbers.sequence(2025, 2100)}" th:value="${y}" th:text="${y}">2025</option>
+            </select>
+
+            <label for="marriageMonth">月：</label>
+            <select th:field="*{marriageMonth}" id="marriageMonth">
+                <option value="">-- 月を選択 --</option>
+                <option th:each="m : ${#numbers.sequence(1, 12)}" th:value="${m}" th:text="${m + '月'}">1月</option>
+            </select>
+
+            <br /><br />
+            <button type="submit">調べる</button>
+
+            <p th:if="${errorMessage}" th:text="${errorMessage}" style="color: red"></p>
+        </form>
+    </div>
 </body>
+
 </html>

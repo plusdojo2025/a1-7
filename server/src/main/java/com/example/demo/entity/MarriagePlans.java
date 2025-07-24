@@ -23,6 +23,8 @@ public class MarriagePlans {
 
     private Integer usersId;
     private String marriageTiming;
+    private Integer marriageYear;
+    private Integer marriageMonth;
     private Integer spanId;
     private Integer span;
     private double percentage;

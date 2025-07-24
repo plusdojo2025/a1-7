@@ -38,12 +38,14 @@
     <h4>両家挨拶、式場予約</h4>
 
     <!-- 結果表示エリア（データがあれば表示） -->
-    <div th:if="${marriageTiming}">
-      <h3>希望時期: <span th:text="${marriageTiming}"></span></h3>
+    <div th:if="${marriageYear}">
+      <!-- <h3>希望時期: <span th:text="${marriageTiming}"></span></h3> -->
+      <h3>希望時期: <span th:text="${marriageYear}"></span>年
+      <span th:text="${marriageMonth}"></span>月</h3>
     </div>
 
     <div th:if="${span}">
-      <h3>想定期間: <span th:text="${span}"></span></h3>
+      <h3>想定期間: <span th:text="${span}"></span>ヶ月</h3>
     </div>
 
     <div th:if="${percentage}">
