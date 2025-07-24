@@ -3,13 +3,14 @@ package com.example.demo.entity;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,12 +37,14 @@ public class Partners {
 
 	private Integer age;
 
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date birthday;
 
 	@Column(name = "met_event")
 	private Integer metEvent;
 
 	@Column(name = "first_met_day")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private Date firstMetDay;
 
 	@Column(name = "last_met_day")

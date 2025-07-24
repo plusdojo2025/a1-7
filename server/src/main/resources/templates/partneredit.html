@@ -17,8 +17,10 @@
             <label>名前: <input type="text" th:field="*{name}" /></label><br/>
             <label>ふりがな: <input type="text" th:field="*{nameRead}" /></label><br/>
             <label>年齢: <input type="number" th:field="*{age}" /></label><br/>
-            <label>生年月日: <input type="date" th:field="*{birthday}" /></label><br/>
-            <label>出会った日: <input type="date" th:field="*{firstMetDay}" /></label><br/>
+            <label>生年月日: <input type="date" name="birthday"
+           th:value="${#dates.format(partner.birthday, 'yyyy-MM-dd')}" /></label><br/>
+            <label>出会った日: <input type="date" name="firstMetDay"
+           th:value="${#dates.format(partner.firstMetDay, 'yyyy-MM-dd')}" /></label><br/>
         </div>
 
         <hr/>
@@ -37,18 +39,59 @@
         <div>
             <p>連絡頻度</p>
             <label><input type="radio" th:field="*{contactFreq}" value="1" /> 少なめ</label>
-            <label><input type="radio" th:field="*{contactFreq}" value="2" /> 普通</label>
-            <label><input type="radio" th:field="*{contactFreq}" value="3" /> 多め</label>
+            <label><input type="radio" th:field="*{contactFreq}" value="2" /> </label>
+            <label><input type="radio" th:field="*{contactFreq}" value="3" /> </label>
+            <label><input type="radio" th:field="*{contactFreq}" value="4" /> </label>
+            <label><input type="radio" th:field="*{contactFreq}" value="5" /> 多め</label>
 
             <p>性格</p>
             <label><input type="radio" th:field="*{personality}" value="1" /> 内向的</label>
-            <label><input type="radio" th:field="*{personality}" value="2" /> 中間</label>
-            <label><input type="radio" th:field="*{personality}" value="3" /> 外向的</label>
+            <label><input type="radio" th:field="*{personality}" value="2" /> </label>
+            <label><input type="radio" th:field="*{personality}" value="3" /> </label>
+            <label><input type="radio" th:field="*{personality}" value="4" /> </label>
+            <label><input type="radio" th:field="*{personality}" value="5" /> 外向的</label>
 
             <p>金銭感覚</p>
             <label><input type="radio" th:field="*{financialSense}" value="1" /> 節約家</label>
-            <label><input type="radio" th:field="*{financialSense}" value="2" /> 普通</label>
-            <label><input type="radio" th:field="*{financialSense}" value="3" /> 浪費家</label>
+             <label><input type="radio" th:field="*{financialSense}" value="2" /> </label>
+            <label><input type="radio" th:field="*{financialSense}" value="3" /> </label>
+             <label><input type="radio" th:field="*{financialSense}" value="4" /> </label>
+            <label><input type="radio" th:field="*{financialSense}" value="5" /> 浪費家</label>
+            
+            <p>主体性</p>
+            <label><input type="radio" th:field="*{initiative}" value="1" /> 受動的</label>
+            <label><input type="radio" th:field="*{initiative}" value="2" /> </label>
+            <label><input type="radio" th:field="*{initiative}" value="3" /> </label>
+            <label><input type="radio" th:field="*{initiative}" value="4" /> </label>
+            <label><input type="radio" th:field="*{initiative}" value="5" /> 主体的</label>
+            
+            <p>婚活真剣度</p>
+            <label><input type="radio" th:field="*{marriageIntent}" value="1" /> 低め</label>
+            <label><input type="radio" th:field="*{marriageIntent}" value="2" /> </label>
+            <label><input type="radio" th:field="*{marriageIntent}" value="3" /> </label>
+            <label><input type="radio" th:field="*{marriageIntent}" value="4" /> </label>
+            <label><input type="radio" th:field="*{marriageIntent}" value="5" /> 高め</label>
+            
+            <p>喫煙</p>
+            <label><input type="radio" th:field="*{smoker}" value="1" /> まったく吸わない</label>
+            <label><input type="radio" th:field="*{smoker}" value="2" /> </label>
+            <label><input type="radio" th:field="*{smoker}" value="3" /> </label>
+            <label><input type="radio" th:field="*{smoker}" value="4" /> </label>
+            <label><input type="radio" th:field="*{smoker}" value="5" /> よく吸う</label>
+            
+            <p>飲酒</p>
+            <label><input type="radio" th:field="*{alcohol}" value="1" /> まったく飲まない</label>
+            <label><input type="radio" th:field="*{alcohol}" value="2" /> </label>
+            <label><input type="radio" th:field="*{alcohol}" value="3" /> </label>
+            <label><input type="radio" th:field="*{alcohol}" value="4" /> </label>
+            <label><input type="radio" th:field="*{alcohol}" value="5" /> よく飲む</label>
+            
+            <p>ギャンブル</p>
+            <label><input type="radio" th:field="*{gamble}" value="1" /> まったくしない</label>
+            <label><input type="radio" th:field="*{gamble}" value="2" /> </label>
+            <label><input type="radio" th:field="*{gamble}" value="3" /> </label>
+            <label><input type="radio" th:field="*{gamble}" value="4" /> </label>
+            <label><input type="radio" th:field="*{gamble}" value="5" /> よくする</label>
         </div>
 
         <hr/>
