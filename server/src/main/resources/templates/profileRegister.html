@@ -5,9 +5,9 @@
 <title>ProfileRegist|情報登録・理想像登録</title>
 </head>
 <body>
-	<div th:text="${users}"></div>
+	<div th:text="${user}"></div>
 
-	<form method="POST" action="/home/userRegist">
+	<form method="POST" action="/Users/new">
 		<button type="button" onclick="showTab(1)">ユーザー情報</button>
 		<button type="button" onclick="showTab(2)">理想像設定</button>
 
@@ -16,7 +16,7 @@
 			<h1>基本情報</h1>
 			<br>
 			<h3>子供が欲しいか</h3>
-			<select name="wantChildren">
+			<select name="childWish">
 				<option value="0">未設定</option>
 				<option value="1">はい</option>
 				<option value="2">どちらでもよい</option>
@@ -285,18 +285,18 @@
 				<option value="3">いいえ</option>
 			</select> <br>
 			<h3>子供の有無</h3>
-			<select name="idealHasChildren">
+			<select name="idealHasChildren">F
 				<option value="0">未設定</option>
 				<option value="1">はい</option>
 				<option value="2">どちらでもよい</option>
 				<option value="3">いいえ</option>
 			</select> <br>
-
-		</div>
-		<div class="buttons">
+<div class="buttons">
 			<button type="submit">更新</button>
 			<button type="reset">元に戻す</button>
 		</div>
+		</div>
+		
 	</form>
 
 	<script>
