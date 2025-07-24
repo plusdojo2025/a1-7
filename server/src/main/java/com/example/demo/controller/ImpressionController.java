@@ -20,7 +20,7 @@ public class ImpressionController {
 	private ImpressionLogsRepository repository;
 
 	// 全件またはファイルリング結果を取得
-	@GetMapping("/{partnerProfilesId}")
+	@GetMapping("/{partnerProfilesId}/")
 	public ResponseEntity<List<ImpressionLogs>> getAllImpressionsOrSearch(
 			@RequestParam(required = false) String searchTerm) {
 		List<ImpressionLogs> impressions;

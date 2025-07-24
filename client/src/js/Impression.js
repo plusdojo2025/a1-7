@@ -25,7 +25,7 @@ export default class Impression extends React.Component {
 
     // axios.get()で ImpressionController から json を受け取り、fullItemsList と filteredItems にセット
     axios
-      .get("/impressions/${partnerProfilesId}")
+      .get("/impressions/${partnerProfilesId}/")
       .then((response) => {
         console.log(response.data);
         this.setState({
@@ -91,6 +91,16 @@ export default class Impression extends React.Component {
           </button>
         </div>
 
+        {/* モーダルウィンドウ */}
+        <div>
+
+        </div>
+
+        {/* 印象登録ボタン */}
+        <div>
+
+        </div>
+
         {/* 印象ログ表示部 */}
         <div>
           {filteredItems.length > 0 ? (
@@ -115,7 +125,9 @@ export default class Impression extends React.Component {
                   )}
                   {/* アクションボタン */}
                   <button onClick={() => this.handleEdit(log.id)}>編集</button>
-                  <button onClick={() => this.handleDelete(log.id)}>削除</button>
+                  <button onClick={() => this.handleDelete(log.id)}>
+                    削除
+                  </button>
                 </li>
               ))}
             </ul>
