@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>婚活プラン結果</title>
+  <style>
+    h2 { margin-top: 1em; }
+    h3 { margin-left: 1em; }
+    h4 { margin-left: 2em; color: #555; }
+  </style>
+</head>
+<body>
+  <div>
+    <!-- おおまかな流れ -->
+    <h2>流れ</h2>
+    <h3>お相手探し</h3>
+    <h3>ファーストコンタクト</h3>
+    <h3>交際</h3>
+    <h3>真剣交際</h3>
+    <h3>ゴール</h3>
+
+    <br/>
+
+    <!-- 期間ごとのイベント（仮表示） -->
+    <h3>〇月～〇月：</h3>
+    <h4>プロフィール完成、活動開始</h4>
+
+    <h3>〇月～〇月：</h3>
+    <h4>初対面、メッセージのやり取りを開始</h4>
+
+    <h3>〇月～〇月：</h3>
+    <h4>交際開始、共通価値観の確認</h4>
+
+    <h3>〇月～〇月：</h3>
+    <h4>交際安定、将来の話を始める</h4>
+
+    <h3>〇月～〇月：</h3>
+    <h4>両家挨拶、式場予約</h4>
+
+    <!-- 結果表示エリア（データがあれば表示） -->
+    <div th:if="${marriageTiming}">
+      <h3>希望時期: <span th:text="${marriageTiming}"></span></h3>
+    </div>
+
+    <div th:if="${span}">
+      <h3>想定期間: <span th:text="${span}"></span></h3>
+    </div>
+
+    <div th:if="${percentage}">
+      <h3>割合: <span th:text="${percentage} + '%'"></span></h3>
+    </div>
+
+    <!-- エラーメッセージ表示 -->
+    <p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red"></p>
+  </div>
+</body>
+</html>

@@ -27,6 +27,7 @@ public class Messages {
     private Integer mood;
     private Integer matter;
     private String prompt;
+    private String commandSentence;
 
     private Timestamp createdAt;
     private Timestamp updatedAt;

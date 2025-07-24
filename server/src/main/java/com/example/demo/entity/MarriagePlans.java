@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 import jakarta.persistence.Entity;
@@ -23,7 +22,7 @@ public class MarriagePlans {
     private Integer id;
 
     private Integer usersId;
-    private Date marriageTiming;
+    private String marriageTiming;
     private Integer spanId;
     private Integer span;
     private double percentage;

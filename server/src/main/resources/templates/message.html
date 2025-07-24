@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title>メッセージ提案</title>
+<style>
+label {
+	display: block;
+	margin-top: 1em;
+}
+</style>
+</head>
+<body>
+	<h2>メッセージ提案</h2>
+
+	<!-- 表示専用（命令文とプロンプト） -->
+	<div th:if="${messageIdea.commandSentence}">
+		<h4>命令文：</h4>
+		<p th:text="${messageIdea.commandSentence}"></p>
+	</div>
+
+	<div th:if="${messageIdea.prompt}">
+		<h4>プロンプト：</h4>
+		<p th:text="${messageIdea.prompt}"></p>
+	</div>
+
+	<br />
+
+	<!-- 命令文とプロンプトの表示 -->
+	<div th:if="${messageIdea.prompt}">
+		<h3>生成されたプロンプト：</h3>
+		<p th:text="${messageIdea.prompt}"></p>
+	</div>
+	<br />
+	<br />
+
+	<!-- 入力フォーム -->
+	<form th:action="@{/messages/ideas/}" method="post"
+		th:object="${messageIdea}">
+
+
+		<label
+			for="partnersId">さん宛に</label> <input type="text"
+			th:field="*{partnersId}" /> <br /> <label for="mood">な雰囲気で</label>
+		<input type="text" th:field="*{mood}" /> <br /> <label for="matter">ためのメッセージを考えて</label>
+		<input type="text" th:field="*{matter}" /> <br /> <br />
+
+		<button type="submit">作成</button>
+
+		<p th:if="${errorMessage}" th:text="${errorMessage}"
+			style="color: red"></p>
+	</form>
+</body>
+</html>

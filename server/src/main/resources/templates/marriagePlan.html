@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>婚活プラン提案</title>
+</head>
+<body>
+  <div>
+    <h2>結婚希望時期は？</h2>
+    <p>（半年以降で設定してください）</p>
+
+    <form th:action="@{/marriage-plans/result/}" method="post">
+      <label for="marriageTiming">結婚希望時期</label>
+      <input type="date" id="marriageTiming" name="marriageTiming"
+             th:value="${marriagePlans.marriageTiming}"/>
+
+      <button type="submit">調べる</button>
+
+      <!-- エラーメッセージがある場合のみ表示 -->
+      <p th:if="${errorMessage}" th:text="${errorMessage}" style="color:red"></p>
+    </form>
+  </div>
+</body>
+</html>
