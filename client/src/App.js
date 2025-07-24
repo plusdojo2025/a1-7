@@ -1,15 +1,15 @@
 // BrowserRouter, Routes, Route は、通常、アプリケーションのトップレベルのコンポーネントで設定するため、
 // 子コンポーネント自体がこれらのコンポーネントを直接インポートする必要はない
-import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, Navigate, useParams } from "react-router-dom";
 
 // PrivateRoute コンポーネント
 import PrivateRoute from "./hoc/PrivateRoute";
 // useState と useEffect をインポート
 import React, { useState, useEffect } from "react";
 
-// import logo from './logo.svg';
 import "./App.css";
 
+// 各コンポーネントのインポート
 import Login from "./js/Login";
 import MemberRegist from "./js/MemberRegist";
 import PartnerList from "./js/PartnerList";
@@ -18,7 +18,6 @@ import PartnerDisplay from "./js/PartnerDisplay";
 import PartnerEdit from "./js/PartnerEdit";
 import Impression from "./js/Impression";
 import Phase from "./js/Phase";
-// DateはJavaScriptの組み込みオブジェクトと衝突するため変更
 import DateSpot from "./js/DateSpotDiagnosis";
 import DateSpotQuestions from "./js/DateSpotDiagnosisQuestions";
 import DateSpotResult from "./js/DateSpotDiagnosisResult";
@@ -90,7 +89,7 @@ function App() {
               }
             />
             <Route
-              path="/partners/:id/"
+              path="/partner/:id/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
                   <PartnerDisplay />
@@ -98,7 +97,7 @@ function App() {
               }
             />
             <Route
-              path="/partners/:id/edit/"
+              path="/partner/:id/edit/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
                   <PartnerEdit />
@@ -106,7 +105,7 @@ function App() {
               }
             />
             <Route
-              path="/partners/:id/impressions/"
+              path="/partner/:id/impressions/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
                   <Impression />
