@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>lovephase|恋愛フェーズ</title>
+</head>
+<!-- lovephase.html -->
+
+<body>
+    <h1>恋愛フェーズ</h1>
+    <form action="/phases/" method="POST">
+        <label for="phaseName">フェーズ名</label>
+        <input type="text" id="phaseName" name="phaseName" value="${phase.phaseName}" />
+
+        <label for="achievementRate">進捗率</label>
+        <input type="text" id="achievementRate" name="achievementRate" value="${phase.achievementRate}" />
+
+        <!-- 他のフィールドも追加 -->
+
+        <button type="submit">保存</button>
+    </form>
+
+    <!-- 入力された値の確認用 -->
+    <div>
+        <h2>入力内容:</h2>
+        <p>フェーズ名: ${phase.phaseName}</p>
+        <p>進捗率: ${phase.achievementRate}</p>
+    </div>
+</body>
+</html>
+
