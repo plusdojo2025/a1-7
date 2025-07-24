@@ -10,13 +10,14 @@ class DateSpotDiagnosisQuestions extends React.Component {
       loading: true,
       errorMessage: "",
       nextId:"",
+      history:[],
     };
   }
 
   componentDidMount() {
     axios.get("/api/date-spot/")
       .then(response => {
-         console.log("APIから取得したデータ:", response.data);  // ← ここに移動
+         console.log("APIから取得したデータ:", response.data); 
         const map = {};
         response.data.forEach(item => {
           map[item.questionId] = item;
@@ -38,7 +39,7 @@ class DateSpotDiagnosisQuestions extends React.Component {
   }
 
   handleAnswer = (answer) => {
-    const { questionsMap, currentQuestionId } = this.state;
+    const { questionsMap, currentQuestionId, history } = this.state;
     const currentItem = questionsMap[currentQuestionId];
     if (!currentItem) return;
 
@@ -51,7 +52,24 @@ class DateSpotDiagnosisQuestions extends React.Component {
       return;
     }
 
-    this.setState({ currentQuestionId: nextId, errorMessage: "" });
+    this.setState({ currentQuestionId: nextId, errorMessage: "",
+      history: [...history, currentQuestionId],
+     });
+  };
+
+  handleBack = () => {
+    const { history } = this.state;
+
+    if (history.length === 0) return; //履歴が空なら何もしない
+
+    const previousId = history[history.length -1];
+    const newHistory = history.slice(0, history.length -1); // 最後のIDを削除
+
+    this.setState({
+      currentQuestionId: previousId,
+      history: newHistory,
+      errorMessage: "",
+    });
   };
 
   render() {
@@ -80,11 +98,16 @@ class DateSpotDiagnosisQuestions extends React.Component {
     return (
       <div>
         <h2>{currentItem.question}</h2>
-        <button onClick={() => this.handleAnswer("yes")}>はい</button>
-        <button onClick={() => this.handleAnswer("no")}>いいえ</button>
+        <button onClick={() => this.handleAnswer("yes")}>YES</button>
+        <button onClick={() => this.handleAnswer("no")}>No</button>
+
+        {this.state.history.length > 0 && (
+          <button onClick={this.handleBack} >←前の質問に戻る</button>
+        )}
       </div>
     );
   }
 }
+
 
 export default DateSpotDiagnosisQuestions;
