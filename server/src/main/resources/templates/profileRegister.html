@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ProfileRegist|情報登録・理想像登録</title>
+</head>
+<body>
+	<div th:text="${users}"></div>
+
+	<form method="POST" action="/home/userRegist">
+		<button type="button" onclick="showTab(1)">ユーザー情報</button>
+		<button type="button" onclick="showTab(2)">理想像設定</button>
+
+
+		<div id="tab1">
+			<h1>基本情報</h1>
+			<br>
+			<h3>子供が欲しいか</h3>
+			<select name="wantChildren">
+				<option value="0">未設定</option>
+				<option value="1">はい</option>
+				<option value="2">どちらでもよい</option>
+				<option value="3">いいえ</option>
+			</select> <br>
+			<h3>両親との同棲希望か</h3>
+			<select name="liveWithParents">
+				<option value="0">未設定</option>
+				<option value="1">はい</option>
+				<option value="2">どちらでもよい</option>
+				<option value="3">いいえ</option>
+			</select> <br>
+			<h3>共働き希望か</h3>
+			<select name="dualIncome">
+				<option value="0">未設定</option>
+				<option value="1">はい</option>
+				<option value="2">どちらでもよい</option>
+				<option value="3">いいえ</option>
+			</select> <br>
+			<h1>自己評価</h1>
+			<br>
+			<div>
+				<p>家事スキル</p>
+				<div class="rating">
+					<label><input type="radio" name="homeSkill" value="1">★</label>
+					<label><input type="radio" name="homeSkill" value="2">★★</label>
+					<label><input type="radio" name="homeSkill" value="3">★★★</label>
+					<label><input type="radio" name="homeSkill" value="4">★★★★</label>
+					<label><input type="radio" name="homeSkill" value="5">★★★★★</label>
+				</div>
+			</div>
+
+			<div>
+				<p>コミュ力</p>
+				<div class="rating">
+					<label><input type="radio" name="communication" value="1">★</label>
+					<label><input type="radio" name="communication" value="2">★★</label>
+					<label><input type="radio" name="communication" value="3">★★★</label>
+					<label><input type="radio" name="communication" value="4">★★★★</label>
+					<label><input type="radio" name="communication" value="5">★★★★★</label>
+				</div>
+			</div>
+
+			<div>
+				<p>経済力</p>
+				<div class="rating">
+					<label><input type="radio" name="economicPower" value="1">★</label>
+					<label><input type="radio" name="economicPower" value="2">★★</label>
+					<label><input type="radio" name="economicPower" value="3">★★★</label>
+					<label><input type="radio" name="economicPower" value="4">★★★★</label>
+					<label><input type="radio" name="economicPower" value="5">★★★★★</label>
+				</div>
+			</div>
+
+			<div>
+				<p>容姿</p>
+				<div class="rating">
+					<label><input type="radio" name="appearance" value="1">★</label>
+					<label><input type="radio" name="appearance" value="2">★★</label>
+					<label><input type="radio" name="appearance" value="3">★★★</label>
+					<label><input type="radio" name="appearance" value="4">★★★★</label>
+					<label><input type="radio" name="appearance" value="5">★★★★★</label>
+				</div>
+			</div>
+
+			<div>
+				<p>気遣い</p>
+				<div class="rating">
+					<label><input type="radio" name="consideration" value="1">★</label>
+					<label><input type="radio" name="consideration" value="2">★★</label>
+					<label><input type="radio" name="consideration" value="3">★★★</label>
+					<label><input type="radio" name="consideration" value="4">★★★★</label>
+					<label><input type="radio" name="consideration" value="5">★★★★★</label>
+				</div>
+			</div>
+
+
+			<div class="buttons">
+				<button type="submit">更新</button>
+				<button type="reset">元に戻す</button>
+			</div>
+
+
+
+		</div>
+		<div id="tab2" style="display: none;">
+			<h1>理想スペック</h1>
+			<br>
+			<div>
+				<p>家事スキル</p>
+				<div class="rating">
+					<label><input type="radio" name="idealHomeSkill" value="1">★</label>
+					<label><input type="radio" name="idealHomeSkill" value="2">★★</label>
+					<label><input type="radio" name="idealHomeSkill" value="3">★★★</label>
+					<label><input type="radio" name="idealHomeSkill" value="4">★★★★</label>
+					<label><input type="radio" name="idealHomeSkill" value="5">★★★★★</label>
+				</div>
+			</div>
+
+			<div>
+				<p>コミュ力</p>
+				<div class="rating">
+					<label><input type="radio" name="idealCommunication"
+						value="1">★</label> <label><input type="radio"
+						name="idealCommunication" value="2">★★</label> <label><input
+						type="radio" name="idealCommunication" value="3">★★★</label> <label><input
+						type="radio" name="idealCommunication" value="4">★★★★</label> <label><input
+						type="radio" name="idealCommunication" value="5">★★★★★</label>
+				</div>
+			</div>
+
+			<div>
+				<p>経済力</p>
+				<div class="rating">
+					<label><input type="radio" name="idealEconomicPower"
+						value="1">★</label> <label><input type="radio"
+						name="idealEconomicPower" value="2">★★</label> <label><input
+						type="radio" name="idealEconomicPower" value="3">★★★</label> <label><input
+						type="radio" name="idealEconomicPower" value="4">★★★★</label> <label><input
+						type="radio" name="idealEconomicPower" value="5">★★★★★</label>
+				</div>
+			</div>
+
+			<div>
+				<p>容姿</p>
+				<div class="rating">
+					<label><input type="radio" name="idealAppearance" value="1">★</label>
+					<label><input type="radio" name="idealAppearance" value="2">★★</label>
+					<label><input type="radio" name="idealAppearance" value="3">★★★</label>
+					<label><input type="radio" name="idealAppearance" value="4">★★★★</label>
+					<label><input type="radio" name="idealAppearance" value="5">★★★★★</label>
+				</div>
+			</div>
+
+			<div>
+				<p>気遣い</p>
+				<div class="rating">
+					<label><input type="radio" name="idealConsideration"
+						value="1">★</label> <label><input type="radio"
+						name="idealConsideration" value="2">★★</label> <label><input
+						type="radio" name="idealConsideration" value="3">★★★</label> <label><input
+						type="radio" name="idealConsideration" value="4">★★★★</label> <label><input
+						type="radio" name="idealConsideration" value="5">★★★★★</label>
+				</div>
+			</div>
+
+			<div class="rating-block">
+				<p>連絡頻度</p>
+				<div class="rating-row">
+					<span class="label-left">少なめ</span>
+					<div class="rating">
+						<input type="radio" name="idealContactFreq" value="1"> <input
+							type="radio" name="idealContactFreq" value="2"> <input
+							type="radio" name="idealContactFreq" value="3"> <input
+							type="radio" name="idealContactFreq" value="4"> <input
+							type="radio" name="idealContactFreq" value="5">
+					</div>
+					<span class="label-right">多め</span>
+				</div>
+			</div>
+			<div class="rating-block">
+				<p>性格</p>
+				<div class="rating-row">
+					<span class="label-left">内向的</span>
+					<div class="rating">
+						<input type="radio" name="idealPersonality" value="1"> <input
+							type="radio" name="idealPersonality" value="2"> <input
+							type="radio" name="idealPersonality" value="3"> <input
+							type="radio" name="idealPersonality" value="4"> <input
+							type="radio" name="idealPersonality" value="5">
+					</div>
+					<span class="label-right">外交的</span>
+				</div>
+			</div>
+			<div class="rating-block">
+				<p>婚活真剣度</p>
+				<div class="rating-row">
+					<span class="label-left">低め</span>
+					<div class="rating">
+						<input type="radio" name="idealMarriageIntent" value="1">
+						<input type="radio" name="idealMarriageIntent" value="2">
+						<input type="radio" name="idealMarriageIntent" value="3">
+						<input type="radio" name="idealMarriageIntent" value="4">
+						<input type="radio" name="idealMarriageIntent" value="5">
+					</div>
+					<span class="label-right">高め</span>
+				</div>
+			</div>
+			<div class="rating-block">
+				<p>金銭感覚</p>
+				<div class="rating-row">
+					<span class="label-left">節約家</span>
+					<div class="rating">
+						<input type="radio" name="idealFinancialSense" value="1">
+						<input type="radio" name="idealFinancialSense" value="2">
+						<input type="radio" name="idealFinancialSense" value="3">
+						<input type="radio" name="idealFinancialSense" value="4">
+						<input type="radio" name="idealFinancialSense" value="5">
+					</div>
+					<span class="label-right">浪費家</span>
+				</div>
+			</div>
+			<div class="rating-block">
+				<p>喫煙度</p>
+				<div class="rating-row">
+					<span class="label-left">まったく吸わない</span>
+					<div class="rating">
+						<input type="radio" name="idealSmoker" value="1"> <input
+							type="radio" name="idealSmoker" value="2"> <input
+							type="radio" name="idealSmoker" value="3"> <input
+							type="radio" name="idealSmoker" value="4"> <input
+							type="radio" name="idealSmoker" value="5">
+					</div>
+					<span class="label-right">よく吸う</span>
+				</div>
+			</div>
+
+			<div class="rating-block">
+				<p>飲酒度</p>
+				<div class="rating-row">
+					<span class="label-left">全く飲まない</span>
+					<div class="rating">
+						<input type="radio" name="idealAlcohol" value="1"> <input
+							type="radio" name="idealAlcohol" value="2"> <input
+							type="radio" name="idealAlcohol" value="3"> <input
+							type="radio" name="idealAlcohol" value="4"> <input
+							type="radio" name="idealAlcohol" value="5">
+					</div>
+					<span class="label-right">よく飲む</span>
+				</div>
+			</div>
+			<div class="rating-block">
+				<p>ギャンブル</p>
+				<div class="rating-row">
+					<span class="label-left">まったくしない</span>
+					<div class="rating">
+						<input type="radio" name="idealGamble" value="1"> <input
+							type="radio" name="idealGamble" value="2"> <input
+							type="radio" name="idealGamble" value="3"> <input
+							type="radio" name="idealGamble" value="4"> <input
+							type="radio" name="idealGamble" value="5">
+					</div>
+					<span class="label-right">よくする</span>
+				</div>
+			</div>
+
+			<h3>運転免許</h3>
+			<select name="idealDriverLicense">
+				<option value="0">未設定</option>
+				<option value="1">はい</option>
+				<option value="2">どちらでもよい</option>
+				<option value="3">いいえ</option>
+			</select> <br>
+			<h3>転勤の有無</h3>
+			<select name="idealTransferable">
+				<option value="0">未設定</option>
+				<option value="1">はい</option>
+				<option value="2">どちらでもよい</option>
+				<option value="3">いいえ</option>
+			</select> <br>
+			<h3>既婚歴</h3>
+			<select name="idealHasDivorce">
+				<option value="0">未設定</option>
+				<option value="1">はい</option>
+				<option value="2">どちらでもよい</option>
+				<option value="3">いいえ</option>
+			</select> <br>
+			<h3>子供の有無</h3>
+			<select name="idealHasChildren">
+				<option value="0">未設定</option>
+				<option value="1">はい</option>
+				<option value="2">どちらでもよい</option>
+				<option value="3">いいえ</option>
+			</select> <br>
+
+		</div>
+		<div class="buttons">
+			<button type="submit">更新</button>
+			<button type="reset">元に戻す</button>
+		</div>
+	</form>
+
+	<script>
+		function showTab(tabNo) {
+			document.getElementById("tab1").style.display = (tabNo === 1) ? "block"
+					: "none";
+			document.getElementById("tab2").style.display = (tabNo === 2) ? "block"
+					: "none";
+		}
+	</script>
+
+
+
+
+</body>
+</html>

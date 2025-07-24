@@ -25,7 +25,7 @@ public class ProfileRegistController {
 	@PostMapping("/home/userRegist")
 	public String userProfileRegist(@ModelAttribute Users users) {
 		repository.save(users);
-		return "redirect:/home";
+		 return "profileRegister";
 	}
 	
 

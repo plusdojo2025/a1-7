@@ -1,0 +1,49 @@
+/* --- 共通 --- */
+.rating {
+  font-size: 2rem;
+  display: inline-flex;
+  gap: 4px;
+}
+
+/* --- 星評価用 --- */
+.rating.star {
+  font-size: 2rem;
+  display: inline-flex;
+  direction: ltr;
+  flex-direction: row-reverse; 
+}
+
+.rating.star input {
+  display: none;
+}
+.rating.star label {
+  color: lightgray;
+  cursor: pointer;
+  user-select: none;
+}
+.rating.star input:checked ~ label,
+.rating.star label:hover,
+.rating.star label:hover ~ label {
+  color: gold;
+}
+.rating.star input:checked + label,
+.rating.star input:checked + label ~ label {
+  color: gold;
+}
+
+/* --- 丸評価用 --- */
+.rating.circle input {
+  display: none;
+}
+.rating.circle label {
+  color: lightgray;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s;
+}
+.rating.circle input:checked + label {
+  color: dodgerblue; /* 選択中の色 */
+}
+.rating.circle label:hover {
+  color: skyblue; /* ホバー時の色 */
+}
