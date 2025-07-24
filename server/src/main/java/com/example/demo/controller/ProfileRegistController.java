@@ -12,22 +12,20 @@ import com.example.demo.repository.UsersRepository;
 
 @Controller
 public class ProfileRegistController {
-	
-	@Autowired
-	private UsersRepository repository;
-	
-	@GetMapping("/home/userRegist")
-	public String userProfileRegist(Model model) {
-		model.addAttribute("user", new Users()); 
-        return "profileRegister";
-	}
-	
-	@PostMapping("/home/userRegist")
-	public String userProfileRegist(@ModelAttribute Users users) {
-		repository.save(users);
-		 return "profileRegister";
-	}
-	
 
+    @Autowired
+    private UsersRepository repository;
+    
+    @GetMapping("/Users/new/")
+    public String userProfileRegist(Model model) {
+        model.addAttribute("user", new Users());
+        return "profileRegister";  
+    }
+
+    @PostMapping("/Users/new/")
+    public String userProfileRegist(@ModelAttribute Users users) {
+        repository.save(users);
+        return "redirect:http://localhost:3000/Users/new/";  // React の URL にリダイレクト
+    }
 
 }
