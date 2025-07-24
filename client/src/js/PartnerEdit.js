@@ -81,19 +81,69 @@ class PartnerEdit extends React.Component {
 
           <hr />
 
-          <div>
-            <p>スペック（1〜5）</p>
-            {['', 'コミュ力', 'economicPower', 'appearance', 'consideration'].map(key => (
-              <label key={key}>
-                {key}:
-                <input type="number" name={key} min="1" max="5" value={partner[key] ?? ''} onChange={this.handleChange} />
-              </label>
-            ))}
+          
+            <p>スペック</p>
+ <p>家事スキル</p>
+                                <div className="rating star">
+                                    <input
+                                        type="radio"
+                                        id="skill5"
+                                        name="homeSkill"
+                                        value="5"
+                                        style={{ display: 'none' }}
+                                        checked={this.state.homeSkill === '5'}
+                                        onChange={this.handleChange}
+                                    />
+                                    <label htmlFor="skill5" title="5 stars">★</label>
+
+                                    <input
+                                        type="radio"
+                                        id="skill4"
+                                        name="homeSkill"
+                                        value="4"
+                                        style={{ display: 'none' }}
+                                        checked={this.state.homeSkill === '4'}
+                                        onChange={this.handleChange}
+                                    />
+                                    <label htmlFor="skill4" title="4 stars">★</label>
+
+                                    <input
+                                        type="radio"
+                                        id="skill3"
+                                        name="homeSkill"
+                                        value="3"
+                                        style={{ display: 'none' }}
+                                        checked={this.state.homeSkill === '3'}
+                                        onChange={this.handleChange}
+                                    />
+                                    <label htmlFor="skill3" title="3 stars">★</label>
+
+                                    <input
+                                        type="radio"
+                                        id="skill2"
+                                        name="homeSkill"
+                                        value="2"
+                                        style={{ display: 'none' }}
+                                        checked={this.state.homeSkill === '2'}
+                                        onChange={this.handleChange}
+                                    />
+                                    <label htmlFor="skill2" title="2 stars">★</label>
+
+                                    <input
+                                        type="radio"
+                                        id="skill1"
+                                        name="homeSkill"
+                                        value="1"
+                                        style={{ display: 'none' }}
+                                        checked={this.state.homeSkill === '1'}
+                                        onChange={this.handleChange}
+                                    />
+                                    <label htmlFor="skill1" title="1 star">★</label>
           </div>
 
           <hr />
 
-          {['contactFreq', 'personality', 'financialSense', 'initiative', 'marriageIntent', 'smoker', 'alcohol', 'gamble'].map(key => (
+          {['連絡頻度', '性格', '金銭感覚', '主体性', '婚活真剣度', '喫煙', '飲酒', 'ギャンブル'].map(key => (
             <div key={key}>
               <p>{key}</p>
               {[1, 2, 3, 4, 5].map(v => (
