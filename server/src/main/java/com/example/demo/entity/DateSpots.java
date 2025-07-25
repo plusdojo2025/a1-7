@@ -27,6 +27,7 @@ public class DateSpots {
     private String noNextId;
     private String prevId;
     private String conclusion;
+    private String description;
 
     private Timestamp createdAt;
     private Timestamp updatedAt;
