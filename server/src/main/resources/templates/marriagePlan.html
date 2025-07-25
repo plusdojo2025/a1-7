@@ -20,14 +20,13 @@
 
         <form th:action="@{/marriage-plans/result/}" method="post" th:object="${marriagePlans}">
             <label for="marriageYear">年：</label>
-            <select th:field="*{marriageYear}" id="marriageYear">
-                <option value="">-- 年を選択 --</option>
+            <select th:field="*{marriageYear}" id="marriageYear">              
                 <option th:each="y : ${#numbers.sequence(2025, 2100)}" th:value="${y}" th:text="${y}">2025</option>
             </select>
 
             <label for="marriageMonth">月：</label>
             <select th:field="*{marriageMonth}" id="marriageMonth">
-                <option value="">-- 月を選択 --</option>
+                <!--初期値を入れたければここに設定 <option value=""></option> -->
                 <option th:each="m : ${#numbers.sequence(1, 12)}" th:value="${m}" th:text="${m + '月'}">1月</option>
             </select>
 

@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,11 +21,12 @@ public class MessageController {
 	@PostMapping("/messages/ideas/")
 	public String submitMessage(@ModelAttribute Messages messages, Model model) {
 		System.out.println("出力テスト");
-//		入力チェック
+//		↓入力チェック
 		if (messages.getPartnersId() == null || messages.getMood() == null || messages.getMatter() == null) {
 			model.addAttribute("errorMessage", "未選択の項目があります");
-//			フォーム再表示用
+//			↓フォーム再表示用
 			model.addAttribute("messageIdea", messages);
+//			↓処理を止める
 			return "message";
 		}
 
@@ -43,6 +46,14 @@ public class MessageController {
 		messages.setPrompt(prompt);
 //		結果表示とフォーム再表示
 		model.addAttribute("messageIdea", messages);
+
+//		プロンプトを複数表示
+		model.addAttribute("prompts", Arrays.asList(
+			    "こんにちは！今日の気分はどう？",
+			    "趣味の話しませんか？",
+			    "最近ハマってるものは？"
+			));
+
 
 		repository.save(messages);
 		

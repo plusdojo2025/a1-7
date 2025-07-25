@@ -25,6 +25,7 @@ public class MarriagePlans {
     private String marriageTiming;
     private Integer marriageYear;
     private Integer marriageMonth;
+//    private Integer thisMonth;
     private Integer spanId;
     private Integer span;
     private double percentage;
