@@ -16,6 +16,7 @@ export default class Impression extends React.Component {
       errorMessage: "",
       error: null, // エラーハンドリング用
       loading: true, // ローディング状態
+      showModal: false, // モーダル表示用
     };
   }
 
@@ -45,10 +46,17 @@ export default class Impression extends React.Component {
   }
 
   // searchTerm のstate値を更新
-  onInput = (e) => {
-    const { value } = e.target;
-    this.setState({ searchTerm: value });
-  };
+  // onInput = (e) => {
+  //   const { value } = e.target;
+  //   this.setState({ searchTerm: value });
+  // };
+
+  // 追加
+  handleInputChange = (e) => {
+  const { name, value } = e.target;
+  this.setState({ [name]: value });
+};
+
 
   // 印象ログをフィルタリングするメソッド
   filterItems = () => {
@@ -66,6 +74,62 @@ export default class Impression extends React.Component {
     this.setState({ filteredItems: newFilteredItems });
   };
 
+
+  // ↓追加部分
+  //モーダルウィンドウの表示メソッド
+  toggleModal = () => {
+    const { showModal } = this.state;
+    this.setState({
+      showModal: !showModal
+    });
+  }
+
+  // 画像のアップロード処理
+  handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      this.setState({ imageData: reader.result.split(',')[1] }); // base64 文字列のみ
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // 登録処理
+  registerImpression = () => {
+    const { recordDate, impression, imageData } = this.state;
+    const { partnerProfilesId } = this.props;
+
+    const data = {
+      partnerProfilesId,
+      recordDate,
+      impression,
+      imageData
+    };
+
+    axios.post("/impressions/add/", data)
+      .then(() => {
+        alert("登録完了");
+        this.toggleModal();
+        this.componentDidMount(); // 再取得
+      })
+      .catch(error => {
+        console.error("登録失敗", error);
+      });
+  };
+
+  // リセット処理
+  resetForm = () => {
+    this.setState({
+      recordDate: "",
+      impression: "",
+      imageData: ""
+    });
+  };
+
   render() {
     const { searchTerm, filteredItems, loading, error } = this.state;
 
@@ -81,7 +145,7 @@ export default class Impression extends React.Component {
       <div>
         {/* 検索フォーム */}
         <div className="search-box">
-          <input type="text" value={searchTerm} onChange={this.onInput} />
+          <input type="text" name="searchTerm" value={this.state.searchTerm} onChange={this.handleInputChange} />
           <button
             type="button"
             className="search-button"
@@ -93,12 +157,45 @@ export default class Impression extends React.Component {
 
         {/* モーダルウィンドウ */}
         <div>
+          {this.state.showModal && (
+            <div id="modal">
+              <h2>新規記録</h2>
 
+              <form>
+                <div>
+                  <label>
+                    日付：
+                    <input type="date" name="recordDate" value={this.state.recordDate} onChange={this.handleInputChange} />
+                  </label>
+                </div>
+
+                <div>
+                  <label>
+                    画像：
+                    <input type="file" accept="image/*" onChange={this.handleImageUpload} />
+                  </label>
+                </div>
+
+                <div>
+                  <label>
+                    印象：
+                   <textarea name="impression" value={this.state.impression} onChange={this.handleInputChange} />
+                  </label>
+                </div>
+                
+                <div>
+                  <button type="button" onClick={this.registerImpression}>登録</button>
+                  <button type="button" onClick={this.resetForm}>リセット</button>
+                  <button type="button" onClick={this.toggleModal}>閉じる</button>
+                </div>
+              </form>
+            </div>
+          )}
         </div>
 
         {/* 印象登録ボタン */}
         <div>
-
+          <button onClick={this.toggleModal}>新規記録</button>
         </div>
 
         {/* 印象ログ表示部 */}
@@ -111,9 +208,8 @@ export default class Impression extends React.Component {
                   <p>印象：{log.impression}</p>
                   {log.imageData && (
                     <img
-                      src={`data:${log.mimeType || "image/png"};base64,${
-                        log.imageData
-                      }`}
+                      src={`data:${log.mimeType || "image/png"};base64,${log.imageData
+                        }`}
                       alt="印象画像"
                       style={{
                         width: "100px",
