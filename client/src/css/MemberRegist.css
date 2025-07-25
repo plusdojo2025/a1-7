@@ -124,10 +124,10 @@ input::placeholder {
   color: #888;   
 }
 
-html, body, #root {
+html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #af0b0b !important;
+  background-color: #130652 !important;
 }
 
