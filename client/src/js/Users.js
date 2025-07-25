@@ -90,7 +90,7 @@ export default class Users extends React.Component {
 
 
     showTab = (tabNo) => {
-        const { currentTab } = this.state;  // ←ここでcurrentTabを取得
+        const { currentTab } = this.state;  
 
         if (currentTab !== tabNo) {
             const confirmSwitch = window.confirm("このタブを切り替えると、現在の入力内容はリセットされます。よろしいですか？");
@@ -199,7 +199,7 @@ export default class Users extends React.Component {
 
 
                                 <div className="form-inline">
-                                    <span className="label-text">家事スキル</span>  {/* ここはhtmlForなしでOK */}
+                                    <span className="label-text">家事スキル</span>  {}
                                     <div className="rating star">
                                         <input
                                             type="radio"
@@ -259,7 +259,7 @@ export default class Users extends React.Component {
                                 </div>
 
                                 <div className="form-inline">
-                                    <span className="label-text">コミュ力</span>  {/* ここはhtmlForなしでOK */}
+                                    <span className="label-text">コミュ力</span>  {}
 
                                     <div className="rating star">
                                         <input
@@ -320,7 +320,7 @@ export default class Users extends React.Component {
                                 </div>
 
                                 <div className="form-inline">
-                                    <span className="label-text">経済力</span>  {/* ここはhtmlForなしでOK */}
+                                    <span className="label-text">経済力</span>  {}
                                     <div className="rating star">
                                         <input
                                             type="radio"
@@ -380,7 +380,7 @@ export default class Users extends React.Component {
                                 </div>
 
                                 <div className="form-inline">
-                                    <span className="label-text">容姿</span>  {/* ここはhtmlForなしでOK */}
+                                    <span className="label-text">容姿</span>  {}
                                     <div className="rating star">
                                         <input
                                             type="radio"
@@ -440,7 +440,7 @@ export default class Users extends React.Component {
                                 </div>
 
                                 <div className="form-inline">
-                                    <span className="label-text">経済力</span>  {/* ここはhtmlForなしでOK */}
+                                    <span className="label-text">経済力</span>  {}
                                     <div className="rating star">
                                         <input
                                             type="radio"
@@ -513,7 +513,7 @@ export default class Users extends React.Component {
                             <div className="basic-info-box">
                                 <h1>理想スペック</h1>
                                 <div className="form-inline">
-                                    <span className="label-text">家事スキル</span>  {/* ここはhtmlForなしでOK */}
+                                    <span className="label-text">家事スキル</span>  {}
                                     <div className="rating star">
                                         <input
                                             type="radio"
@@ -573,7 +573,7 @@ export default class Users extends React.Component {
                                 </div>
 
                                 <div className="form-inline">
-                                    <span className="label-text">コミュ力</span>  {/* ここはhtmlForなしでOK */}
+                                    <span className="label-text">コミュ力</span>  {}
                                     <div className="rating star">
                                         <input
                                             type="radio"
@@ -633,7 +633,7 @@ export default class Users extends React.Component {
                                 </div>
 
                                 <div className="form-inline">
-                                    <span className="label-text">経済力</span>  {/* ここはhtmlForなしでOK */}
+                                    <span className="label-text">経済力</span>  {}
                                     <div className="rating star">
                                         <input
                                             type="radio"
@@ -693,7 +693,7 @@ export default class Users extends React.Component {
                                 </div>
 
                                 <div className="form-inline">
-                                    <span className="label-text">容姿</span>  {/* ここはhtmlForなしでOK */}
+                                    <span className="label-text">容姿</span>  {}
                                     <div className="rating star">
                                         <input
                                             type="radio"
@@ -753,7 +753,7 @@ export default class Users extends React.Component {
                                 </div>
 
                                 <div className="form-inline">
-                                    <span className="label-text">気遣い</span>  {/* ここはhtmlForなしでOK */}
+                                    <span className="label-text">気遣い</span>  {}
                                     <div className="rating star">
                                         <input
                                             type="radio"
@@ -1367,18 +1367,12 @@ export default class Users extends React.Component {
                                             </select>
                                         </div>
                                     </div>
-
-
-                                   
-
                                 </div>
-                                
-                                    </div>
-                                     <div className="buttons">
-                                        <button type="button" onClick={this.handleReset}>元に戻す</button>
-                                        <button type="submit">更新</button>
                             </div>
-
+                            <div className="buttons">
+                                <button type="button" onClick={this.handleReset}>元に戻す</button>
+                                <button type="submit">更新</button>
+                            </div>
                         </div>)}
                 </form>
             </div>

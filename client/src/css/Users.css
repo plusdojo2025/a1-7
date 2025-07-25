@@ -10,11 +10,11 @@
 /* --- 星評価用 --- */
 .rating.star {
   display: inline-flex;
-  flex-wrap: nowrap; /* 折り返さない */
+  flex-wrap: nowrap; 
   gap: 4px;
   direction: ltr;
   flex-direction: row-reverse;
-  align-items: center; /* ここで縦中央揃え */
+  align-items: center; 
 }
 
 .rating.star input {
@@ -26,7 +26,7 @@
   cursor: pointer;
   user-select: none;
   font-size: 2rem;
-  line-height: 2rem; /* 星とラベルの高さを揃える */
+  line-height: 2rem; 
 }
 
 .rating.star input:checked ~ label,
@@ -43,7 +43,7 @@
 /* --- 丸評価用 --- */
 .rating.circle {
   display: flex;
-  flex-wrap: nowrap; /* 改行しない */
+  flex-wrap: nowrap; 
   justify-content: flex-start;
   align-items: center;
 }
@@ -61,11 +61,11 @@
 }
 
 .rating.circle input:checked + label {
-  color: dodgerblue; /* 選択中の色 */
+  color: dodgerblue; 
 }
 
 .rating.circle label:hover {
-  color: skyblue; /* ホバー時の色 */
+  color: skyblue;
 }
 
 .tabs {
@@ -154,26 +154,26 @@ html, body {
 
 .form-inline {
   display: flex;
-  align-items: center; /* 縦中央揃え */
+  align-items: center; 
   gap: 16px;
-  flex-wrap: nowrap; /* 折り返さない */
+  flex-wrap: nowrap; 
 }
 
 .form-inline label {
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  width: 200px;          /* ラベルの固定幅 */
-  white-space: nowrap;   /* 改行禁止 */
+  width: 200px;         
+  white-space: nowrap;   
   overflow: hidden;
 
   font-weight: bold;
   font-size: 1rem;
-  line-height: 2rem; /* 星と揃える */
+  line-height: 2rem;
 }
 
 .basic-info-box {
-  position: relative; /* 相対位置指定を追加 */
+  position: relative;
   border: 2px solid #007bff;
   border-radius: 8px;
   padding: 20px;
@@ -200,20 +200,20 @@ html, body {
 }
 
 .label-text {
-  width: 100px; /* 文字の幅を固定したいなら調整 */
+  width: 100px; 
   font-weight: bold;
 }
 
 .form-inline {
   display: flex;
-  align-items: center;  /* 縦中央揃え */
-  gap: 10px;            /* ラベルと星の間に余白 */
-  flex-wrap: nowrap;    /* 折り返さないように */
+  align-items: center;  
+  gap: 10px;          
+  flex-wrap: nowrap;    
 }
 
 .label-text {
-  white-space: nowrap;  /* ラベルが改行しないように */
-  min-width: 80px;      /* 必要に応じて幅調整（例：家事スキル分） */
+  white-space: nowrap; 
+  min-width: 80px;  
 }
 .form-inline {
   display: flex;
@@ -237,7 +237,7 @@ html, body {
   gap: 4px;
   flex-shrink: 1;
   overflow: hidden;
-  max-width: calc(100% - 90px); /* ラベル分の幅を確保 */
+  max-width: calc(100% - 90px);
 }
 
 .rating.star label {
@@ -256,8 +256,8 @@ html, body {
 .buttons button {
   padding: 10px 24px;
   border: none;
-  border-radius: 999px; /* ここがカプセル形のポイント */
-  background-color: #4CAF50; /* 好みの色に */
+  border-radius: 999px;
+  background-color: #4CAF50; 
   color: white;
   font-size: 16px;
   font-weight: bold;
@@ -275,21 +275,21 @@ html, body {
   justify-content: center;
   gap: 16px;
   margin-top: 20px;
-  flex-wrap: wrap; /* 画面幅が狭いときに折り返し可 */
+  flex-wrap: wrap; 
 }
 
 .buttons button {
   padding: 10px 24px;
   border: none;
-  border-radius: 999px; /* カプセル型 */
+  border-radius: 999px;
   background-color: #4CAF50;
   color: white;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  white-space: nowrap; /* ← 改行を防ぐ */
-  min-width: 120px;     /* ← 最低幅を広げる */
+  white-space: nowrap; 
+  min-width: 120px;    
 }
 
 .section-divider {
@@ -303,38 +303,38 @@ html, body {
   text-align: left;
   margin-left: 0;
   padding-left: 0;
-  font-weight: bold; /* 必要に応じて強調 */
+  font-weight: bold; 
 }
 
 .rating.circle label {
-  display: inline-block; /* または inline-flex */
-  margin-right: 4px;      /* ラベル同士の間隔調整 */
+  display: inline-block;
+  margin-right: 4px;     
   cursor: pointer;
-  font-size: 24px;        /* 〇の大きさ調整（必要に応じて） */
-  user-select: none;      /* クリック時に文字選択されないように */
-  white-space: nowrap;    /* 改行させない */
+  font-size: 24px;       
+  user-select: none;      
+  white-space: nowrap;   
 }
 
 .rating-row {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* 両端にスペースを空ける */
-  gap: 8px; /* ラベルと〇の間の余白調整（必要に応じて） */
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .label-left,
 .label-right {
-  flex-shrink: 0; /* テキストの縮小を防ぐ */
-  width: 50px; /* 幅は必要に応じて調整してください */
+  flex-shrink: 0; 
+  width: 50px; 
   font-size: 14px;
-  text-align: center; /* 中央揃え */
+  text-align: center; 
 }
 
 .rating.circle {
   display: flex;
-  gap: 4px; /* 〇同士の間隔 */
-  flex-grow: 1; /* 真ん中の部分を伸ばす */
-  justify-content: center; /* 〇を中央に寄せる */
+  gap: 4px; 
+  flex-grow: 1;
+  justify-content: center;
 }
 
 .rating-row {
@@ -343,7 +343,7 @@ html, body {
   justify-content: space-between;
   gap: 6px;
   max-width: 100%;
-  overflow-x: hidden; /* はみ出し防止 */
+  overflow-x: hidden; 
   padding: 0 8px;
   box-sizing: border-box;
 }
@@ -351,10 +351,10 @@ html, body {
 .label-left,
 .label-right {
   flex-shrink: 0;
-  width: 40px;          /* スマホに合わせて少し狭く */
-  font-size: 12px;      /* 小さめフォント */
+  width: 40px;          
+  font-size: 12px;     
   text-align: center;
-  white-space: nowrap;  /* 改行防止 */
+  white-space: nowrap;  
 }
 
 .rating.circle {
@@ -362,16 +362,16 @@ html, body {
   gap: 4px;
   flex-grow: 1;
   justify-content: center;
-  min-width: 0;         /* 横縮小を許容 */
+  min-width: 0;        
 }
 
 .rating.circle label {
-  font-size: 20px;      /* 星や丸のサイズ */
+  font-size: 20px;     
   cursor: pointer;
   user-select: none;
 }
 
-/* もしもっと小さくしたい場合はここで調整 */
+
 @media (max-width: 400px) {
   .label-left,
   .label-right {
@@ -397,10 +397,10 @@ html, body {
 .label-left,
 .label-right {
   flex-shrink: 0;
-  width: 90px;               /* 長い文字に対応した広めの固定幅 */
+  width: 90px;        
   font-size: 12px;
   text-align: center;
-  white-space: nowrap;       /* 改行禁止 */
+  white-space: nowrap;     
 
 
 }
@@ -437,7 +437,7 @@ html, body {
   gap: 6px;
   max-width: 100%;
   overflow-x: hidden;
-  padding-left: 0; /* ←ここで左の余白をなくす */
+  padding-left: 0; 
   padding-right: 8px;
   box-sizing: border-box;
 }
@@ -445,25 +445,25 @@ html, body {
 .label-left,
 .label-right {
   flex-shrink: 0;
-  width: 90px; /* 幅はそのまま */
+  width: 90px;
   font-size: 12px;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-left: 0; /* 余白があるならここで消す */
+  margin-left: 0;
 }
 
 .label-left,
 .label-right {
   flex-shrink: 0;
-  width: 90px;             /* 固定幅 */
+  width: 90px;            
   font-size: 12px;
   text-align: center;
-  white-space: normal;     /* nowrap → normal に変更して改行OKに */
-  overflow: visible;       /* overflow hiddenを解除 */
-  text-overflow: unset;    /* ellipsis解除 */
-  word-break: break-word;  /* 必要に応じて単語内改行もOK */
+  white-space: normal;   
+  overflow: visible;       
+  text-overflow: unset;   
+  word-break: break-word;  
   margin-left: 0;
 }
 
@@ -476,7 +476,7 @@ html, body {
 
 .form-column {
   flex: 1 1 48%;
-  min-width: 140px; /* 小さめスマホでも2列維持 */
+  min-width: 140px; 
 }
 .form-two-column {
   display: flex;
