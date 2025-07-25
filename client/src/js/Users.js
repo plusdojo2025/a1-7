@@ -6,6 +6,7 @@ export default class Users extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            currentTab: 1,
             childWish: '0',
             liveWithParents: '0',
             dualIncome: '0',
@@ -39,16 +40,110 @@ export default class Users extends React.Component {
         this.setState({ [name]: value });
     };
 
+    handleReset = () => {
+        const confirmReset = window.confirm("このタブの入力内容をリセットしますか？");
+        if (!confirmReset) return;
+
+        if (this.state.currentTab === 1) {
+            this.setState({
+                childWish: '0',
+                liveWithParents: '0',
+                dualIncome: '0',
+                homeSkill: '3',
+                communication: '3',
+                economicPower: '3',
+                appearance: '3',
+                consideration: '3',
+            });
+        } else if (this.state.currentTab === 2) {
+            this.setState({
+                idealHomeSkill: '3',
+                idealCommunication: '3',
+                idealEconomicPower: '3',
+                idealAppearance: '3',
+                idealConsideration: '3',
+                idealContactFreq: '3',
+                idealPersonality: '3',
+                idealFinancialSense: '3',
+                idealInitiative: '3',
+                idealMarriageIntent: '3',
+                idealSmoker: '3',
+                idealAlcohol: '3',
+                idealGamble: '3',
+                idealDriverLicense: '0',
+                idealTransferable: '0',
+                idealHasDivorce: '0',
+                idealHasChildren: '0',
+            });
+        }
+    };
+
+    handleSubmit = (e) => {
+        const confirmSubmit = window.confirm("更新内容を確定しますか？");
+        if (!confirmSubmit) {
+            e.preventDefault();
+        }
+
+    };
+
+
+
+
     showTab = (tabNo) => {
+        const currentTab = document.getElementById("tab1").style.display === "block" ? 1 : 2;
+
+        if (currentTab !== tabNo) {
+            const confirmSwitch = window.confirm("このタブを切り替えると、現在の入力内容はリセットされます。よろしいですか？");
+            if (!confirmSwitch) return;
+
+
+            if (currentTab === 1) {
+                this.setState({
+                    childWish: '0',
+                    liveWithParents: '0',
+                    dualIncome: '0',
+                    homeSkill: '3',
+                    communication: '3',
+                    economicPower: '3',
+                    appearance: '3',
+                    consideration: '3',
+                });
+            }
+
+
+            if (currentTab === 2) {
+                this.setState({
+                    idealHomeSkill: '3',
+                    idealCommunication: '3',
+                    idealEconomicPower: '3',
+                    idealAppearance: '3',
+                    idealConsideration: '3',
+                    idealContactFreq: '3',
+                    idealPersonality: '3',
+                    idealFinancialSense: '3',
+                    idealInitiative: '3',
+                    idealMarriageIntent: '3',
+                    idealSmoker: '3',
+                    idealAlcohol: '3',
+                    idealGamble: '3',
+                    idealDriverLicense: '0',
+                    idealTransferable: '0',
+                    idealHasDivorce: '0',
+                    idealHasChildren: '0',
+                });
+            }
+        }
+
+        // タブ切り替え
         document.getElementById("tab1").style.display = tabNo === 1 ? "block" : "none";
         document.getElementById("tab2").style.display = tabNo === 2 ? "block" : "none";
     };
-        
+
 
     render() {
         return (
             <div>
-                <form method="POST" action="/Users/new/">
+                <form method="POST" action="/Users/new/"　onSubmit={this.handleSubmit}>
                     <button type="button" onClick={() => this.showTab(1)}>ユーザー情報</button>
                     <button type="button" onClick={() => this.showTab(2)}>理想像設定</button>
 
@@ -378,8 +473,11 @@ export default class Users extends React.Component {
 
                         </div>
                         <div className="buttons">
-                            <button type="reset">元に戻す</button>
-                            <button type="submit">更新</button>
+                            <div className="buttons">
+                                <button type="button" onClick={this.handleReset}>元に戻す</button>
+                                <button type="submit">更新</button>
+                            </div>
+
                         </div>
                     </div>
 
@@ -1224,7 +1322,7 @@ export default class Users extends React.Component {
                                 </select>
 
                                 <div className="buttons">
-                                    <button type="reset">元に戻す</button>
+                                    <button type="button" onClick={this.handleReset}>元に戻す</button>
                                     <button type="submit">更新</button>
                                 </div>
 

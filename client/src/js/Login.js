@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 // withNavigation をインポートしてクラスコンポーネントに navigate を渡す
 import { withNavigation } from "../hoc/withNavigation";
+import '../css/Login.css';
 
 // default export は withNavigation で行う（コード末尾参照）
 class Login extends React.Component {
@@ -106,7 +107,6 @@ class Login extends React.Component {
           <label
             htmlFor="mail_address" // ※ input の id と一致させる
           >
-            メールアドレス
           </label>
           <br />
           <input
@@ -115,11 +115,12 @@ class Login extends React.Component {
             id="mail_address"
             value={mailAddress}
             onChange={this.onInput}
+            placeholder="メールアドレス"
             required // 入力必須に
           />
-          <br />
+          
 
-          <label htmlFor="password">パスワード</label>
+          <label htmlFor="password"></label>
           <br />
           <input
             type="password"
@@ -127,9 +128,10 @@ class Login extends React.Component {
             id="password"
             value={password}
             onChange={this.onInput}
+            placeholder="パスワード"
             required
           />
-          <br />
+      
 
           {/* エラーメッセージがある場合のみ表示 */}
           {errorMessage && (
@@ -138,12 +140,16 @@ class Login extends React.Component {
             </p>
           )}
 
-          <input
-            type="reset"
-            name="reset"
-            value="リセット"
-            onClick={this.handleReset}
-          />
+          <div className="reset-button">
+            <input
+              type="reset"
+              name="reset"
+              value="リセット"
+              onClick={this.handleReset}
+            />
+          </div>
+
+       
           <input
             type="submit"
             name="submit"
@@ -151,6 +157,7 @@ class Login extends React.Component {
             disabled={loading} // フォーム送信中にボタンを無効化
           />
         </form>
+        <br/>
 
         <a href="/signup/">新規登録はこちら</a>
       </div>

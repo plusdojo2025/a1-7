@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { withNavigation } from "../hoc/withNavigation";
+import '../css/MemberRegist.css';
 
 class MemberRegist extends React.Component {
   constructor(props) {
@@ -103,6 +104,8 @@ if (response.status === 200 || response.status === 201) {
     } = this.state;
     return (
       <div>
+
+        <h1>会員登録</h1>
         <form onSubmit={this.addUser}>
           <label htmlFor="birthday">生年月日</label>
           <input
@@ -126,41 +129,44 @@ if (response.status === 200 || response.status === 201) {
           />
           <br />
 
-          <label htmlFor="mailAddress">メールアドレス</label>
-          <br />
+          <label htmlFor="mailAddress"></label>
+          
           <input
             type="text"
             name="mailAddress"
             id="mail_address"
             value={mailAddress}
             onChange={this.onInput}
+            placeholder="メールアドレス"
             required
           />
-          <br />
+         
 
-          <label htmlFor="password1">パスワード</label>
-          <br />
+          <label htmlFor="password1"></label>
+          
           <input
             type="password"
             name="password1"
             id="password1"
             value={password1}
             onChange={this.onInput}
+            placeholder="パスワード"
             required
           />
-          <br />
+        
 
-          <label htmlFor="password2">パスワード（確認用）</label>
-          <br />
+          <label htmlFor="password2"></label>
+         
           <input
             type="password"
             name="password2"
             id="password2"
             value={password2}
             onChange={this.onInput}
+            placeholder="パスワード(確認用)"
             required
           />
-          <br />
+         
 
           <input type="submit" name="submit" value="登録" />
         </form>
