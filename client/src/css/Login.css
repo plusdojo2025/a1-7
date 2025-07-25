@@ -26,7 +26,7 @@ input[type="submit"]{
 .reset-button {
   text-align: right;
   margin-top: 1px;
-  margin-left: 8cm;
+  margin-left: 2cm;
 }
 
 input[type="submit"]:hover,
