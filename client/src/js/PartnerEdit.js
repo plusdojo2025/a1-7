@@ -18,9 +18,9 @@ class PartnerEdit extends React.Component {
 
   // 初期表示用に相手情報を取得
   fetchPartnerData = () => {
-    const { partnerId } = this.props;
+    const { id } = this.props;
     axios
-      .get(`/api/partner/${partnerId}`)
+      .get(`/api/partner/${id}/edit`)
       .then((response) => this.setState({ partner: response.data }))
       .catch((error) => {
         console.error(error);
@@ -42,9 +42,9 @@ class PartnerEdit extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    const { partnerId } = this.props;
+    const { id } = this.props;
     axios
-      .post(`/api/partner/${partnerId}/update`, this.state.partner)
+      .post(`/api/partner/${id}/update`, this.state.partner)
       .then(() => this.setState({ message: "お相手情報を更新しました。" }))
       .catch((err) => console.error(err));
   };

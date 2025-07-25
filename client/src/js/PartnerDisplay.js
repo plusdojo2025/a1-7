@@ -1,11 +1,38 @@
 import React from "react";
+import axios from "axios";
 import Chart from "chart.js/auto";
+import { withNavigation } from "../hoc/withNavigation";
 
-export default class PartnerDisplay extends React.Component {
+class PartnerDisplay extends React.Component {
   constructor(props) {
     super(props);
     this.chartRef = React.createRef();
     this.chartInstance = null;
+
+    this.state = {
+      partner: null, // お相手の基本情報（名前、年齢など）
+      partnerName: null,
+      partnerAge: null,
+      partnerBirthday: null,
+      partnerFirstMetDay: null,
+      partnerMetEvent: null,
+      partnerFirstImpression: null,
+
+      // JSON文字列として取得し、後でパース
+      idealJson: null,
+      partnerJson: null,
+      userJson: null,
+
+      // パース後のオブジェクト（直接使用する）
+      detailedIdealScores: {},
+      detailedPartnerScores: {},
+      partnerFlags: {},
+      idealFlags: {},
+      userFlags: {},
+
+      loading: true,
+      error: null,
+    };
 
     // 〇×比較の項目固定
     this.flagKeys = [
@@ -14,34 +41,168 @@ export default class PartnerDisplay extends React.Component {
       "運転免許",
       "両親との同棲希望",
       "共働き",
-      "子供希望"
+      "子供希望",
     ];
   }
 
   componentDidMount() {
-    this.drawChart();
+    this.fetchPartnerDetail();
   }
 
-  componentDidUpdate(prevProps) {
-    if (
-      prevProps.idealJson !== this.props.idealJson ||
-      prevProps.partnerJson !== this.props.partnerJson ||
-      prevProps.userJson !== this.props.userJson
+  componentDidUpdate(prevProps, prevState) {
+    // URLのIDが変わった場合
+    const currentPartnerId = this.props.router.params.id;
+    const prevPartnerId = prevProps.router.params.id;
+
+    if (currentPartnerId !== prevPartnerId) {
+      this.fetchPartnerDetail();
+    }
+    // JSONデータが更新された場合のみチャートを再描画
+    else if (
+      prevState.idealJson !== this.state.idealJson ||
+      prevState.partnerJson !== this.state.partnerJson ||
+      prevState.userJson !== this.state.userJson
     ) {
       this.drawChart();
     }
   }
 
+  fetchPartnerDetail = async () => {
+    const { id } = this.props.router.params; // URLからIDを取得
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!id) {
+      this.setState({ error: "お相手IDが見つかりません。", loading: false });
+      return;
+    }
+    if (!accessToken) {
+      this.setState({
+        error: "認証情報がありません。ログインしてください。",
+        loading: false,
+      });
+      this.props.router.navigate("/login/");
+      return;
+    }
+
+    this.setState({ loading: true, error: null });
+
+    try {
+      const response = await axios.get(`/api/partner/${id}/showView`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const partnerData = response.data.data;
+
+      // JSON文字列をパースしてstateに保存
+      const idealJson = partnerData.idealScoresJson || "{}";
+      const partnerJson = partnerData.partnerScoresJson || "{}";
+      const userJson = partnerData.userScoresJson || "{}"; // 自己評価スコア
+
+      this.setState(
+        {
+          partner: partnerData, // 必要であればオブジェクト全体を保存
+          partnerName: partnerData.name || "N/A",
+          partnerAge: partnerData.age || "N/A",
+          partnerBirthday: partnerData.birthday || "N/A",
+          partnerFirstMetDay: partnerData.firstMetDay || "N/A",
+          partnerMetEvent: partnerData.metEvent || "N/A",
+          partnerFirstImpression: partnerData.firstImpression || "N/A",
+
+          idealJson: idealJson,
+          partnerJson: partnerJson,
+          userJson: userJson,
+
+          // 各種詳細スコアとフラグをパースして state に保持
+          detailedIdealScores: JSON.parse(idealJson),
+          detailedPartnerScores: JSON.parse(partnerJson),
+          // フラグデータが直接オブジェクトとして返されることを想定
+          partnerFlags: partnerData.partnerFlags || {},
+          idealFlags: partnerData.idealFlags || {}, // 理想の相手のフラグ
+          userFlags: partnerData.userFlags || {}, // 自己評価フラグ
+
+          loading: false,
+        },
+        () => {
+          // stateが更新された後にチャートを描画
+          this.drawChart();
+        }
+      );
+    } catch (error) {
+      console.error("Failed to fetch partner detail:", error);
+      let errorMessage = "お相手詳細の取得に失敗しました。";
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          if (error.response.status === 401) {
+            errorMessage = "認証切れです。再ログインしてください。";
+            this.props.router.navigate("/login/");
+          } else if (error.response.status === 404) {
+            errorMessage = "指定されたお相手は見つかりませんでした。";
+          } else {
+            errorMessage = `エラー: ${error.response.status} - ${
+              error.response.data.message || error.message
+            }`;
+          }
+        } else if (error.request) {
+          errorMessage =
+            "サーバーからの応答がありません。ネットワークを確認してください。";
+        }
+      }
+      this.setState({ error: errorMessage, loading: false });
+    }
+  };
+
+  handleEditClick = () => {
+    const { id } = this.props.router.params;
+    if (id) {
+      this.props.router.navigate(`/partner/${id}/edit/`);
+    } else {
+      console.error("Partner ID is missing for navigation.");
+      // Optionally, show an alert to the user or redirect to a default page
+    }
+  };
+
   drawChart() {
-    const { idealJson, partnerJson, userJson } = this.props;
+    const { idealJson, partnerJson, userJson } = this.state;
+
+    // JSON文字列が未定義またはnullの場合は描画しない
+    if (!idealJson || !partnerJson || !userJson) {
+      console.warn("Chart data (JSON props) is not yet available.");
+      // 既存のチャートがあれば破棄
+      if (this.chartInstance) {
+        this.chartInstance.destroy();
+        this.chartInstance = null;
+      }
+      return;
+    }
 
     if (this.chartInstance) {
       this.chartInstance.destroy();
     }
 
-    const idealObj = JSON.parse(idealJson);
-    const partnerObj = JSON.parse(partnerJson);
-    const userObj = JSON.parse(userJson);
+    let idealObj, partnerObj, userObj;
+    try {
+      idealObj = JSON.parse(idealJson);
+      partnerObj = JSON.parse(partnerJson);
+      userObj = JSON.parse(userJson);
+    } catch (e) {
+      console.error("Failed to parse JSON for chart:", e);
+      // JSONパースに失敗した場合も描画を停止
+      if (this.chartInstance) {
+        this.chartInstance.destroy();
+        this.chartInstance = null;
+      }
+      return;
+    }
+
+    // if (this.chartInstance) {
+    //   this.chartInstance.destroy();
+    // }
+
+    // const idealObj = JSON.parse(idealJson);
+    // const partnerObj = JSON.parse(partnerJson);
+    // const userObj = JSON.parse(userJson);
 
     const labels = Object.keys(idealObj);
 
@@ -55,7 +216,7 @@ export default class PartnerDisplay extends React.Component {
           backgroundColor: "rgba(0, 128, 0, 0.3)",
           borderColor: "green",
           borderWidth: 2,
-          pointRadius: 5
+          pointRadius: 5,
         },
         {
           label: "お相手",
@@ -64,7 +225,7 @@ export default class PartnerDisplay extends React.Component {
           backgroundColor: "rgba(216, 30, 5, 0.3)",
           borderColor: "rgb(216, 30, 5)",
           borderWidth: 2,
-          pointRadius: 5
+          pointRadius: 5,
         },
         {
           label: "あなた",
@@ -73,9 +234,9 @@ export default class PartnerDisplay extends React.Component {
           backgroundColor: "rgba(0, 0, 0, 0.2)",
           borderColor: "black",
           borderWidth: 2,
-          pointRadius: 5
-        }
-      ]
+          pointRadius: 5,
+        },
+      ],
     };
 
     const config = {
@@ -89,19 +250,26 @@ export default class PartnerDisplay extends React.Component {
             ticks: { stepSize: 1 },
             pointLabels: {
               font: {
-                size: 14
-              }
-            }
-          }
+                size: 14,
+              },
+            },
+          },
         },
         plugins: { legend: { position: "top" } },
         responsive: true,
-        maintainAspectRatio: false
-      }
+        maintainAspectRatio: false,
+      },
     };
 
-    const ctx = this.chartRef.current.getContext("2d");
-    this.chartInstance = new Chart(ctx, config);
+    const ctx = this.chartRef.current; // ここでcanvas要素そのものを取得
+    if (ctx) {
+      // ctxがnullでないか確認
+      this.chartInstance = new Chart(ctx.getContext("2d"), config);
+    } else {
+      console.warn(
+        "Chart canvas reference is not available when drawing chart."
+      );
+    }
   }
 
   // 〇×表示用
@@ -130,17 +298,31 @@ export default class PartnerDisplay extends React.Component {
       partnerFirstImpression,
       detailedIdealScores,
       detailedPartnerScores,
+      idealJson,
+      partnerJson,
+      userJson,
       partnerFlags,
       idealFlags,
-      userFlags
-    } = this.props;
+      userFlags,
+    } = this.state;
+    const { navigate } = this.props.router;
 
     return (
       <div style={{ fontFamily: "Arial, sans-serif", margin: 20 }}>
-        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ border: "1px solid #000", padding: "5px 10px" }}>ロゴ</div>
+        <header
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ border: "1px solid #000", padding: "5px 10px" }}>
+            ロゴ
+          </div>
           <div>
-            <div style={{ fontWeight: "bold" }}>{partnerName}さんのプロフィール</div>
+            <div style={{ fontWeight: "bold" }}>
+              {partnerName}さんのプロフィール
+            </div>
             <hr />
             <div style={{ marginBottom: 4 }}>
               <span>年齢：{partnerAge}歳</span> &nbsp;&nbsp;
@@ -154,21 +336,34 @@ export default class PartnerDisplay extends React.Component {
               第一印象：<span>{partnerFirstImpression}</span>
             </div>
           </div>
-          <div style={{ fontWeight: "bold", fontSize: 24, cursor: "pointer" }}>≡</div>
+          <div style={{ fontWeight: "bold", fontSize: 24, cursor: "pointer" }}>
+            ≡
+          </div>
         </header>
+        <button onClick={this.handleEditClick}>編集</button>
 
         <h1 style={{ color: "#d81e05" }}>お相手評価シート</h1>
 
         <div
           id="chartContainer"
-          style={{ width: 600, maxWidth: "90vw", margin: "20px auto", height: 400 }}
+          style={{
+            width: 600,
+            maxWidth: "90vw",
+            margin: "20px auto",
+            height: 400,
+          }}
         >
           <canvas ref={this.chartRef} id="radarChart"></canvas>
         </div>
 
         <div
           id="names"
-          style={{ textAlign: "center", marginTop: -40, marginBottom: 20, fontWeight: "bold" }}
+          style={{
+            textAlign: "center",
+            marginTop: -40,
+            marginBottom: 20,
+            fontWeight: "bold",
+          }}
         >
           <span style={{ color: "#000", margin: "0 20px" }}>あなた</span>
           <span style={{ color: "#008000", margin: "0 20px" }}>理想</span>
@@ -176,7 +371,9 @@ export default class PartnerDisplay extends React.Component {
         </div>
 
         {/* 5段階評価比較 */}
-        <h2 style={{ maxWidth: 700, margin: "40px auto 10px", color: "#d81e05" }}>
+        <h2
+          style={{ maxWidth: 700, margin: "40px auto 10px", color: "#d81e05" }}
+        >
           詳細スコア比較（5段階評価）
         </h2>
         <table
@@ -184,7 +381,7 @@ export default class PartnerDisplay extends React.Component {
             borderCollapse: "collapse",
             width: "100%",
             maxWidth: 700,
-            margin: "20px auto"
+            margin: "20px auto",
           }}
         >
           <thead>
@@ -195,7 +392,7 @@ export default class PartnerDisplay extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {Object.entries(detailedIdealScores).map(([key, val]) => (
+            {Object.entries(detailedIdealScores || {}).map(([key, val]) => (
               <tr key={key}>
                 <td style={tdStyle}>{key}</td>
                 <td style={tdStyle}>{val}</td>
@@ -206,7 +403,9 @@ export default class PartnerDisplay extends React.Component {
         </table>
 
         {/* 〇×比較 */}
-        <h2 style={{ maxWidth: 700, margin: "40px auto 10px", color: "#d81e05" }}>
+        <h2
+          style={{ maxWidth: 700, margin: "40px auto 10px", color: "#d81e05" }}
+        >
           詳細スコア比較（〇×比較）
         </h2>
         <table
@@ -214,7 +413,7 @@ export default class PartnerDisplay extends React.Component {
             borderCollapse: "collapse",
             width: "100%",
             maxWidth: 700,
-            margin: "20px auto"
+            margin: "20px auto",
           }}
         >
           <thead>
@@ -249,11 +448,14 @@ const thStyle = {
   border: "1px solid #999",
   padding: "6px 8px",
   textAlign: "center",
-  backgroundColor: "#f0f0f0"
+  backgroundColor: "#f0f0f0",
 };
 
 const tdStyle = {
   border: "1px solid #999",
   padding: "6px 8px",
-  textAlign: "center"
+  textAlign: "center",
 };
+
+// withNavigation でラップしてエクスポート
+export default withNavigation(PartnerDisplay);

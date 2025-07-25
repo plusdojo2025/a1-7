@@ -4,15 +4,13 @@ import java.beans.PropertyEditorSupport;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal; // 認証済みのユーザープリンシパルを取得
-import org.springframework.security.core.userdetails.UserDetails; // UserDetails インターフェース
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -63,29 +61,13 @@ public class PartnerDetailController {
 		return ResponseEntity.ok(partner); // 200 OK と共にパートナー情報を返す
 	}
 
-	// // ログイン済みのユーザーに紐づくお相手リストを全て取得
-	@GetMapping("/home/")
-	public ResponseEntity<List<Partners>> getPartnersForCurrentUser(@AuthenticationPrincipal UserDetails currentUser) { // @AuthenticationPrincipal
-																														// で現在認証されているユーザーの詳細情報を取得
-		Integer userId;
-		try {
-			userId = Integer.parseInt(currentUser.getUsername());
-		} catch (NumberFormatException e) {
-			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-					"Cannot parse user ID from authenticated principal.", e);
-		}
-		List<Partners> partners = partnersRepository.findByUserId(userId);
-		return ResponseEntity.ok(partners);
-
+	// 編集画面（表示と同時に編集可能）
+	@GetMapping("/{id}/edit/")
+	public String showEditForm(@PathVariable("id") Integer id, Model model) {
+		Partners partner = partnersRepository.findById(id).get();
+		model.addAttribute("partner", partner);
+		return "partneredit";
 	}
-
-//	// 編集画面（表示と同時に編集可能）
-//	@GetMapping("/{id}/edit/")
-//	public String showEditForm(@PathVariable("id") Integer id, Model model) {
-//		Partners partner = partnersRepository.findById(id).get();
-//		model.addAttribute("partner", partner);
-//		return "partneredit";
-//	}
 
 	// 更新処理（handleSubmitで呼び出し）
 	@PutMapping("/{id}/update/")

@@ -38,7 +38,8 @@ class Login extends React.Component {
     });
 
     const { mailAddress, password } = this.state;
-    const { navigate, onLoginSuccess } = this.props; // ルーティング機能にアクセス
+    const { navigate } = this.props.router; // ルーティング機能にアクセス
+    const { onLoginSuccess } = this.props;
 
     try {
       // 1. バックエンドAPIへのリクエスト
