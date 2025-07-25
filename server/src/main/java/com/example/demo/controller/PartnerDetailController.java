@@ -4,11 +4,14 @@ import java.beans.PropertyEditorSupport;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal; // 認証済みのユーザープリンシパルを取得
+import org.springframework.security.core.userdetails.UserDetails; // UserDetails インターフェース
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -60,6 +63,22 @@ public class PartnerDetailController {
 		return ResponseEntity.ok(partner); // 200 OK と共にパートナー情報を返す
 	}
 
+	// // ログイン済みのユーザーに紐づくお相手リストを全て取得
+	@GetMapping("/home/")
+	public ResponseEntity<List<Partners>> getPartnersForCurrentUser(@AuthenticationPrincipal UserDetails currentUser) { // @AuthenticationPrincipal
+																														// で現在認証されているユーザーの詳細情報を取得
+		Integer userId;
+		try {
+			userId = Integer.parseInt(currentUser.getUsername());
+		} catch (NumberFormatException e) {
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+					"Cannot parse user ID from authenticated principal.", e);
+		}
+		List<Partners> partners = partnersRepository.findByUserId(userId);
+		return ResponseEntity.ok(partners);
+
+	}
+
 //	// 編集画面（表示と同時に編集可能）
 //	@GetMapping("/{id}/edit/")
 //	public String showEditForm(@PathVariable("id") Integer id, Model model) {
@@ -74,11 +93,11 @@ public class PartnerDetailController {
 	public ResponseEntity<String> updatePartner(@PathVariable("id") Integer id, @RequestBody Partners formPartner) {
 		Optional<Partners> existingPartner = partnersRepository.findById(id);
 		if (existingPartner.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Partner not found with ID: " + id);
-        }
-		
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Partner not found with ID: " + id);
+		}
+
 		formPartner.setId(id); // IDの上書き防止
-		
+
 		try {
 			partnersRepository.save(formPartner);
 			return ResponseEntity.ok("お相手情報を更新しました。");
@@ -86,6 +105,8 @@ public class PartnerDetailController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("お相手情報の更新に失敗しました: " + e.getMessage());
 		}
 	}
+
+	// 元に戻すメソッドは画面上のstate値をリセットする（DB内のデータを書き換えない）ので、React上のみの実装でOK
 
 //	// 元に戻す（編集前に戻る）
 //	@PostMapping("/{id}/reset/")

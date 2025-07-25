@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,9 @@ public class MemberRegistController {
 
 	@Autowired
 	private UsersRepository repository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	// Reactでルートページを扱っているため、Thymeleafテンプレートを返す@GetMapping("/signup/") メソッドは不要
 
@@ -28,7 +32,12 @@ public class MemberRegistController {
 			if (existingUser.isPresent()) {
 				return ResponseEntity.status(HttpStatus.CONFLICT).body("このメールアドレスは既に登録されています。");
 			}
-			// 2. 重複がなければユーザー登録を実行
+			
+			// 2.パスワードをハッシュ化する
+			String encodedPassword = passwordEncoder.encode(users.getPassword());
+			users.setPassword(encodedPassword);
+			
+			// 3. 重複がなければユーザー登録を実行
 			repository.save(users);
 			return ResponseEntity.ok("");
 		} catch (Exception e) {

@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 // withNavigation をインポートしてクラスコンポーネントに navigate を渡す
 import { withNavigation } from "../hoc/withNavigation";
 
@@ -41,10 +42,22 @@ class Login extends React.Component {
     try {
       // 1. バックエンドAPIへのリクエスト
       const data = { mailAddress, password };
-      const response = await axios.post("/login/", data);
+      // LoginControllerにデータをPOSTして、@PostMapping("/login/")が付与されているloginメソッドを実行
+      const response = await axios.post("/api/login/", data);
 
       // ２．ログイン成功時の処理
       console.log("ログイン成功:", response.data); // デバッグ用
+
+      // JWTアクセストークンをlocalStorageに保存
+      const accessToken = response.data.accessToken;
+      if (accessToken) {
+        // userId はバックエンドで認証情報から取得するため、React上では保存不要
+        localStorage.setItem("accessToken", accessToken);
+      } else {
+        // トークンが返ってこない場合のエラー処理
+        throw new Error("アクセストークンがレスポンスに含まれていません。");
+      }
+
       // 親コンポーネントにログイン成功を通知する（認証状態を更新するため）
       if (onLoginSuccess) {
         onLoginSuccess();
@@ -60,7 +73,7 @@ class Login extends React.Component {
       // エラーがAxiosのものかどうかを確認
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          // サーバーからのエラーレスポンスがある場合
+          // サーバーからのエラーレスポンスがある（ログインAPIは通常、認証失敗時に401を返す）
           if (error.response.status === 401) {
             message = "メールアドレスまたはパスワードが間違っています。";
             // サーバーが具体的なエラーメッセージを返した場合
@@ -82,7 +95,7 @@ class Login extends React.Component {
         // Axios以外の予期せぬエラー
         message = "予期せぬエラーが発生しました: ${error.message}";
       }
-      this.setState({ errorMessage: message });
+      this.setState({ errorMessage: message }); // エラーメッセージをセット
     } finally {
       // ４．ローディング終了
       this.setState({ loading: false });
@@ -152,7 +165,7 @@ class Login extends React.Component {
           />
         </form>
 
-        <a href="/signup/">新規登録はこちら</a>
+        <Link to="/signup/">新規登録はこちら</Link>
       </div>
     );
   }

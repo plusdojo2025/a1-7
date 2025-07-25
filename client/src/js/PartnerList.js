@@ -1,80 +1,76 @@
 import React from "react";
 import axios from "axios";
-export default class PartnerList extends React.Component {
+import { Link } from "react-router-dom";
+import { withNavigation } from "../hoc/withNavigation";
+
+class PartnerList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      birthday: "",
-      marriageStart: "",
-      mailAddress: "",
-      password1: "",
-      password2: "",
-      errorMessage: "",
+      partners: [],
+      loading: true,
+      errorMessage: null,
     };
   }
+
+  componentDidMount() {
+    this.fetchPartners();
+  }
+
+  fetchPartners = async () => {
+    this.setState({ loading: true, error: null });
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+      this.setState({
+        error: "認証情報が見つかりません。再ログインしてください。",
+        loading: false,
+      });
+      this.props.navigate("/login/"); // ログイン画面へリダイレクト
+      return;
+    }
+
+    try {
+      const response = await axios.get("/api/home/showView/", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      this.setState({
+        partners: response.data.data,
+        loading: false,
+      });
+    } catch (error) {
+      console.error("Failed to fetch partners:", error); // デバック用
+
+      if (error.response && error.response.status === 401) {
+        this.props.navigate("/login/");
+      }
+      this.setState({
+        error: "パートナー情報の取得に失敗しました。",
+        loading: false,
+      });
+    }
+  };
+
   render() {
+    const { partners, loading, error } = this.state;
     return (
       <div>
-        <p>わあ</p>
+        <ul>
+          {partners.map((partner) => (
+            <li key={partner.id}>
+              {/* 各パートナーの詳細表示へのリンク */}
+              <Link to={`/partner/${partner.id}/`}> 
+                {partner.name} ({partner.age}歳)
+              </Link>
+            </li>
+          ))}
+        </ul>
+        
       </div>
     );
   }
 }
 
-
-//sample
-// import React, { Component } from 'react';
-// import PartnerFormModal from './PartnerFormModal';
-
-// class PartnerList extends Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       partners: [],
-//       showModal: false
-//     };
-//   }
-
-//   componentDidMount() {
-//     fetch('/api/partners')
-//       .then(res => res.json())
-//       .then(data => {
-//         this.setState({ partners: data });
-//       });
-//   }
-
-//   handleRegister = async (newPartner) => {
-//     const res = await fetch('/api/partners', {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify(newPartner)
-//     });
-
-//     if (res.ok) {
-//       const updatedList = await res.json();
-//       this.setState({ partners: updatedList });
-//     }
-//   };
-
-//   render() {
-//     return (
-//       <div>
-//         <button onClick={() => this.setState({ showModal: true })}>＋ お相手追加</button>
-
-//         <ul>
-//           {this.state.partners.map(p => (
-//             <li key={p.id}>{p.name}（{p.age}歳）</li>
-//           ))}
-//         </ul>
-
-//         <PartnerFormModal
-//           show={this.state.showModal}
-//           handleClose={() => this.setState({ showModal: false })}
-//           onRegister={this.handleRegister}
-//         />
-//       </div>
-//     );
-//   }
-// }
-
-// export default PartnerList;
+export default withNavigation(PartnerList);

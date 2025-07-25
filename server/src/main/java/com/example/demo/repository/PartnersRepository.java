@@ -9,5 +9,8 @@ import com.example.demo.entity.Partners;
 
 @Repository
 public interface PartnersRepository extends JpaRepository<Partners, Integer> {
-	List<Partners> findByNameContaining(String search);
+	
+	// userIdを外部キーとするお相手レコードを、PartnersEntityから全件取得してリストとして返す
+	List<Partners> findByUserId(Integer userId);
+	
 }

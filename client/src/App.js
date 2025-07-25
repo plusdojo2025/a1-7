@@ -1,6 +1,13 @@
 // BrowserRouter, Routes, Route は、通常、アプリケーションのトップレベルのコンポーネントで設定するため、
 // 子コンポーネント自体がこれらのコンポーネントを直接インポートする必要はない
-import { BrowserRouter, Routes, Route, Link, Navigate, useParams } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+  useParams,
+} from "react-router-dom";
 
 // PrivateRoute コンポーネント
 import PrivateRoute from "./hoc/PrivateRoute";
@@ -27,12 +34,13 @@ import MessageIdea from "./js/MessageIdea";
 import MessageCorrect from "./js/MessageCorrect";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // * あとで false に戻す *
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // * あとで false に戻す * //
 
   // アプリケーション起動時に認証状態をチェック
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
+      // * トークンの有効期限をチェックをするならここでtry-catch * //
       setIsAuthenticated(true);
     }
   }, []);
@@ -42,18 +50,50 @@ function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    setIsAuthenticated(false);
+    localStorage.removeItem("accessToken"); // ローカルストレージからトークンを削除
+    // 未認証状態になり、PrivateRoute で自動的にログイン画面へ遷移
+    setIsAuthenticated(false); 
   };
+
+  // URLパラメータにIDを要する（ useParams を使用する）コンポーネントのためのラッパー
+  const PartnerDisplayWrapper = () => {
+    const { id } = useParams(); // URLパスから id を取得
+    return <PartnerDisplay partnerId={id} />; // PartnerDisplay に partnerId として渡す
+  };
+
+  const PartnerEditWrapper = () => {
+    const { id } = useParams();
+    return <PartnerEdit partnerId={id} />;
+  };
+
+  const ImpressionWrapper = () => {
+    const { id } = useParams();
+    return <Impression partnerId={id} />;
+  };
+
+  const PhaseWrapper = () => {
+    const { id } = useParams();
+    return <Phase partnerId={id} />;
+  };
+
 
   return (
     <div className="App">
-      <header className="App-header">
-        {/* ルートの定義 */}
-        <BrowserRouter>
+      <BrowserRouter>
+        <header className="App-header">
+          {/* 認証済みの場合のみ表示される、共通コンテンツ */}
+          {isAuthenticated && (
+            <nav>
+              <Link to="/home/">ホーム</Link> |{" "}
+              {/* <Link to="/home/">ホーム</Link> |{" "} */}
+              <button onClick={handleLogout}>ログアウト</button>
+            </nav>
+          )}
+
+          {/* ルートの定義 */}
           <Routes>
             {/* 公開ルート */}
-            {/* index アクセス時に、ログイン済みなら /home/ へ、未ログインなら /login/ へ飛ばす */}
+            {/* index アクセス時に、ログイン済みなら /home/:userId へ、未ログインなら /login/ へ飛ばす */}
             <Route
               path="/"
               element={
@@ -81,18 +121,19 @@ function App() {
               }
             />
             <Route
-              path="/users/:id/"
+              path="/user/edit/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
                   <Users />
                 </PrivateRoute>
               }
             />
+            {/* useParams を使用するコンポーネントはラッパー経由で渡す */}
             <Route
               path="/partner/:id/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <PartnerDisplay />
+                  <PartnerDisplayWrapper />
                 </PrivateRoute>
               }
             />
@@ -100,7 +141,7 @@ function App() {
               path="/partner/:id/edit/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <PartnerEdit />
+                  <PartnerEditWrapper />
                 </PrivateRoute>
               }
             />
@@ -108,15 +149,15 @@ function App() {
               path="/partner/:id/impressions/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <Impression />
+                  <ImpressionWrapper />
                 </PrivateRoute>
               }
             />
             <Route
-              path="/phases/"
+              path="/partner/:id/phases/"
               element={
                 <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <Phase />
+                  <PhaseWrapper />
                 </PrivateRoute>
               }
             />
@@ -179,22 +220,10 @@ function App() {
 
             {/* 存在しないパスへのアクセス (404 Not Found) */}
             <Route path="*" element={<h2>404 Not Found</h2>} />
+            
           </Routes>
-        </BrowserRouter>
-
-        {/* <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a> */}
-      </header>
+        </header>
+      </BrowserRouter>
     </div>
   );
 }
