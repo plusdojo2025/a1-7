@@ -1,0 +1,122 @@
+
+
+
+
+/* ラベルと入力を横並びに揃える */
+label {
+  display: inline-block;
+  width: 140px;
+  text-align: right;
+  margin-right: 10px;
+}
+
+/* 入力欄のスタイル統一 */
+input[type="date"],
+input[type="text"],
+input[type="password"] {
+  width: 250px;
+  height: 36px;
+  font-size: 16px;
+  padding: 6px 10px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+
+
+
+label {
+  display: inline-block;
+  width: 140px;      
+  text-align: right;
+  margin-right: 10px;
+  margin-bottom: 8px; 
+}
+
+label[for="birthday"],
+label[for="marriageStart"] {
+  width: 120px;       
+  white-space: nowrap; 
+  text-align: right;
+  margin-right: 10px;
+}
+
+
+input#birthday {
+  width: 200px; 
+}
+
+input[type="date"], 
+input[type="text"], 
+input[type="password"] {
+  width: 250px; 
+  height: 36px; 
+  font-size: 16px;
+  padding: 6px 10px;
+  box-sizing: border-box; 
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+}
+
+
+
+
+
+input#marriage_start {
+  width: 200px; 
+}
+
+label[for="mailAddress"] {
+  margin-top: 32px; 
+  
+}
+
+label[for="password1"] {
+  margin-top: 16px; 
+ 
+}
+
+
+label[for="password2"] {
+  margin-top: 16px; 
+ 
+}
+
+/* メールアドレス、パスワード、確認用パスワードを中央に配置 */
+#mail_address,
+#password1,
+#password2 {
+  display: block;
+  margin: 0 auto;
+  width: 260px;     
+  height: 44px;     
+  font-size: 18px; 
+}
+
+label[for="mailAddress"],
+label[for="password1"],
+label[for="password2"] {
+  display: block;
+  text-align: center;
+  margin-top: 24px;
+  margin-bottom: 8px; 
+}
+
+input[type="submit"][name="submit"] {
+  width: 160px;       /* 幅 */
+  height: 48px;       /* 高さ */
+  font-size: 18px;    /* 文字サイズ */
+  font-weight: bold;  /* 太字 */
+  border-radius: 6px; /* 角丸 */
+  cursor: pointer;    /* マウスオーバーでポインター */
+  background-color: #db0a0a; 
+  color: white;       /* 文字色 */
+  border: none;       
+  margin-top: 20px;   /* 上に余白 */
+  transition: background-color 0.3s ease;
+}
+
+input[type="submit"][name="submit"]:hover {
+  background-color: #c3586c; /* ホバー時の色*/
+}
