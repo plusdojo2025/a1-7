@@ -13,6 +13,12 @@ label {
 <body>
 	<h2>メッセージ提案</h2>
 
+	<h4>プロンプト一覧：</h4>
+	<ul>
+		<li th:each="prompt : ${prompts}" th:text="${prompt}"></li>
+	</ul>
+
+
 	<!-- 表示専用（命令文とプロンプト） -->
 	<div th:if="${messageIdea.commandSentence}">
 		<h4>命令文：</h4>
@@ -39,8 +45,7 @@ label {
 		th:object="${messageIdea}">
 
 
-		<label
-			for="partnersId">さん宛に</label> <input type="text"
+		<label for="partnersId">さん宛に</label> <input type="text"
 			th:field="*{partnersId}" /> <br /> <label for="mood">な雰囲気で</label>
 		<input type="text" th:field="*{mood}" /> <br /> <label for="matter">ためのメッセージを考えて</label>
 		<input type="text" th:field="*{matter}" /> <br /> <br />
