@@ -104,6 +104,7 @@ if (response.status === 200 || response.status === 201) {
     } = this.state;
     return (
       <div>
+
         <h1>会員登録</h1>
         <form onSubmit={this.addUser}>
           <label htmlFor="birthday">生年月日</label>
@@ -136,6 +137,7 @@ if (response.status === 200 || response.status === 201) {
             id="mail_address"
             value={mailAddress}
             onChange={this.onInput}
+            placeholder="メールアドレス"
             required
           />
          
@@ -148,6 +150,7 @@ if (response.status === 200 || response.status === 201) {
             id="password1"
             value={password1}
             onChange={this.onInput}
+            placeholder="パスワード"
             required
           />
         
@@ -160,6 +163,7 @@ if (response.status === 200 || response.status === 201) {
             id="password2"
             value={password2}
             onChange={this.onInput}
+            placeholder="パスワード(確認用)"
             required
           />
          
