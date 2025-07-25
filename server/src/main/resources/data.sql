@@ -1,10 +1,20 @@
--- ユーザー情報（仮のユーザー5人）
-INSERT INTO users (id, mail_address, password, birthday, marriage_start, name, marriage_timing) VALUES
-  (1, 'taro.yamada@example.com', 'password123', '1990-05-15', '2020-06-20', '山田 太郎', '2020-06-01'),
-  (2, 'hanako.sato@example.com', 'securepass456', '1988-11-30', '2018-09-15', '佐藤 花子', '2018-08-01'),
-  (3, 'kenji.tanaka@example.com', 'mypassword789', '1992-03-10', '2021-04-10', '田中 健二', NULL),
-  (4, 'yuki.kobayashi@example.com', 'yuki2025!', '1995-07-22', '2023-12-25', '小林 優希', '2023-11-15'),
-  (5, 'naoko.inoue@example.com', 'naoPass321', '1985-01-05', '2010-10-10', '井上 直子', NULL);
+INSERT INTO users (
+  mail_address, password, birthday, marriage_start, name, marriage_timing, 
+  home_skill, economic_power, appearance, communication, consideration, child_wish, 
+  live_with_parents, dual_income, ideal_home_skill, ideal_economic_power, ideal_appearance, 
+  ideal_consideration, ideal_communication, ideal_contact_freq, ideal_initiative, ideal_personality, 
+  ideal_marriage_intent, ideal_financial_sense, ideal_smoker, ideal_alcohol, ideal_gamble, 
+  ideal_has_children, ideal_transferable, ideal_driver_license, ideal_has_divorce, created_at, updated_at
+) VALUES
+  ('user1@example.com', 'pass1', '1990-01-01', '2023-06-01', '山田太郎', '2025-12-01', 3, 3, 3, 3, 3, 0, 0, 0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 0, 0, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('user2@example.com', 'pass2', '1985-05-15', '2024-01-01', '佐藤花子', '2024-11-01', 2, 4, 4, 2, 4, 1, 1, 1, 2, 4, 3, 3, 4, 3, 3, 4, 3, 2, 4, 3, 2, 1, 2, 1, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('user3@example.com', 'pass3', '1992-08-20', '2025-03-01', '鈴木一郎', '2025-06-01', 4, 2, 3, 3, 2, 2, 0, 0, 3, 2, 2, 3, 2, 4, 3, 3, 3, 4, 3, 3, 3, 2, 0, 2, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('user4@example.com', 'pass4', '1988-12-05', '2023-09-01', '高橋美咲', '2024-08-01', 3, 3, 3, 4, 3, 3, 1, 0, 4, 4, 4, 3, 3, 3, 3, 4, 3, 3, 4, 3, 3, 0, 1, 0, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+  ('user5@example.com', 'pass5', '1995-11-30', '2025-05-01', '伊藤健', '2025-07-01', 3, 3, 3, 3, 4, 3, 0, 1, 3, 3, 3, 4, 4, 3, 3, 3, 4, 3, 4, 4, 4, 0, 0, 2, 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+
+
+
 
 -- パートナー情報（各ユーザーに対して複数の出会い履歴）
 INSERT INTO partners (

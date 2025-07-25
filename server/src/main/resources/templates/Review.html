@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>お相手評価シート</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        header { display: flex; justify-content: space-between; align-items: center; }
+        header div { border: 1px solid #000; padding: 5px 10px; }
+        h1 { color: #d81e05; }
+        #chartContainer { width: 600px; max-width: 90vw; margin: 20px auto; height: 400px; }
+        #names { text-align: center; margin-bottom: 10px; }
+        #names span { font-weight: bold; margin: 0 20px; }
+        table { border-collapse: collapse; width: 100%; max-width: 700px; margin: 20px auto; }
+        th, td { border: 1px solid #999; padding: 6px 8px; text-align: center; }
+        th { background-color: #f0f0f0; }
+        .red { color: #d81e05; }
+        .green { color: #008000; }
+        .gray { color: #999; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>ロゴ</div>
+    <div>
+        <div th:text="${partnerNameRead} + 'さんのプロフィール'"></div>
+        <hr/>
+        <div>
+            <span>年齢：<span th:text="${partnerAge} + '歳'"></span></span>
+            &nbsp;&nbsp;
+            <span>生年月日：<span th:text="${partnerBirthday}"></span></span>
+            &nbsp;&nbsp;
+            <span>出会った日：<span th:text="${partnerFirstMetDay}"></span></span>
+        </div>
+        <div>出会った経緯：<span th:text="${partnerMetEvent}"></span></div>
+        <div>第一印象：<span th:text="${partnerFirstImpression}"></span></div>
+    </div>
+    <div>≡</div>
+</header>
+
+<h1>お相手評価シート</h1>
+
+<div id="chartContainer">
+    <canvas id="radarChart"></canvas>
+</div>
+
+<div id="names" style="margin-top: -40px;">
+    <span style="color:#000;">あなた</span>
+    <span style="color:#008000;">理想</span>
+    <span style="color:#d81e05;">お相手</span>
+</div>
+
+<!-- レーダーチャートスクリプト -->
+<script th:inline="javascript">
+/*<![CDATA[*/
+const ideal = /*[[${idealJson}]]*/ '{}';
+const partner = /*[[${partnerJson}]]*/ '{}';
+const user = /*[[${userJson}]]*/ '{}';
+
+const idealObj = JSON.parse(ideal);
+const partnerObj = JSON.parse(partner);
+const userObj = JSON.parse(user);
+
+const labels = Object.keys(idealObj);
+
+const data = {
+    labels: labels,
+    datasets: [
+        {
+            label: '理想',
+            data: Object.values(idealObj),
+            fill: true,
+            backgroundColor: 'rgba(0, 128, 0, 0.3)',
+            borderColor: 'green',
+            borderWidth: 2,
+            pointRadius: 5,
+        },
+        {
+            label: 'お相手',
+            data: Object.values(partnerObj),
+            fill: true,
+            backgroundColor: 'rgba(216, 30, 5, 0.3)',
+            borderColor: 'rgb(216, 30, 5)',
+            borderWidth: 2,
+            pointRadius: 5,
+        },
+        {
+            label: 'あなた',
+            data: Object.values(userObj),
+            fill: true,
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            borderColor: 'black',
+            borderWidth: 2,
+            pointRadius: 5,
+        }
+    ]
+};
+
+const config = {
+    type: 'radar',
+    data: data,
+    options: {
+        scales: {
+            r: {
+                min: 0,
+                max: 5,
+                ticks: {
+                    stepSize: 1
+                },
+                pointLabels: {
+                    font: {
+                        size: 14
+                    }
+                }
+            }
+        },
+        plugins: {
+            legend: { position: 'top' }
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+    }
+};
+
+const ctx = document.getElementById('radarChart').getContext('2d');
+new Chart(ctx, config);
+/*]]>*/
+</script>
+
+<!-- 詳細スコア比較（5段階評価） -->
+<h2 style="max-width:700px; margin: 40px auto 10px; color:#d81e05;">詳細スコア比較（5段階評価）</h2>
+<table>
+    <thead>
+        <tr>
+            <th>項目</th>
+            <th>理想</th>
+            <th>お相手</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="entry : ${detailedIdealScores}">
+            <td th:text="${entry.key}"></td>
+            <td th:text="${entry.value}"></td>
+            <td th:text="${detailedPartnerScores[entry.key]}"></td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- 〇×比較 -->
+<h2 style="max-width:700px; margin: 40px auto 10px; color:#d81e05;">詳細スコア比較（〇×比較）</h2>
+<table>
+    <thead>
+        <tr>
+            <th>項目</th>
+            <th class="red">お相手</th>
+            <th class="green">理想</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="key : ${#lists.arrayList('連れ子の有無', '転勤の有無', '運転免許', '両親との同棲希望', '共働き', '子供希望')}">
+            <td th:text="${key}"></td>
+
+            <!-- お相手 -->
+            <td class="red" th:switch="${partnerFlags[key]}">
+                <span th:case="0">未設定</span>
+                <span th:case="1">〇</span>
+                <span th:case="2">どちらでもよい</span>
+                <span th:case="3">×</span>
+                <span th:case="*">不明</span>
+            </td>
+
+            <!-- 理想 -->
+            <td class="green" th:switch="${key == '子供希望' || key == '両親との同棲希望' || key == '共働き' ? userFlags[key] : idealFlags[key]}">
+                <span th:case="0">未設定</span>
+                <span th:case="1">〇</span>
+                <span th:case="2">どちらでもよい</span>
+                <span th:case="3">×</span>
+                <span th:case="*">不明</span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+
+</body>
+</html>
