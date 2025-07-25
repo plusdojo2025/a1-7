@@ -25,8 +25,7 @@ export default class Impression extends React.Component {
     const { partnerProfilesId } = this.props;
 
     // axios.get()で ImpressionController から json を受け取り、fullItemsList と filteredItems にセット
-    axios
-      .get("/impressions/${partnerProfilesId}/")
+    axios.get(`/impressions/${partnerProfilesId}/`)
       .then((response) => {
         console.log(response.data);
         this.setState({
@@ -51,11 +50,11 @@ export default class Impression extends React.Component {
   //   this.setState({ searchTerm: value });
   // };
 
-  // 追加
+  // ↑だとsearchTermにしか適用されないので追加しました
   handleInputChange = (e) => {
-  const { name, value } = e.target;
-  this.setState({ [name]: value });
-};
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  };
 
 
   // 印象ログをフィルタリングするメソッド
@@ -99,7 +98,7 @@ export default class Impression extends React.Component {
   };
 
   // 登録処理
-  registerImpression = () => {
+  addImpression = () => {
     const { recordDate, impression, imageData } = this.state;
     const { partnerProfilesId } = this.props;
 
@@ -112,12 +111,12 @@ export default class Impression extends React.Component {
 
     axios.post("/impressions/add/", data)
       .then(() => {
-        alert("登録完了");
+        alert("印象記録を登録しました。");
         this.toggleModal();
         this.componentDidMount(); // 再取得
       })
       .catch(error => {
-        console.error("登録失敗", error);
+        console.error("印象記録の登録に失敗しました。", error);
       });
   };
 
@@ -179,12 +178,12 @@ export default class Impression extends React.Component {
                 <div>
                   <label>
                     印象：
-                   <textarea name="impression" value={this.state.impression} onChange={this.handleInputChange} />
+                    <textarea name="impression" value={this.state.impression} onChange={this.handleInputChange} />
                   </label>
                 </div>
-                
+
                 <div>
-                  <button type="button" onClick={this.registerImpression}>登録</button>
+                  <button type="button" onClick={this.addImpression}>登録</button>
                   <button type="button" onClick={this.resetForm}>リセット</button>
                   <button type="button" onClick={this.toggleModal}>閉じる</button>
                 </div>

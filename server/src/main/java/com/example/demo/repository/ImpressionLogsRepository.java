@@ -16,4 +16,8 @@ public interface ImpressionLogsRepository extends JpaRepository<ImpressionLogs, 
 	// 印象内容で部分一致検索
 	List<ImpressionLogs> findByImpressionLike(String impression);
 	
+	List<ImpressionLogs> findByPartnerProfilesId(Integer partnerProfilesId);
+
+    List<ImpressionLogs> findByPartnerProfilesIdAndImpressionContaining(Integer partnerProfilesId, String impression);
+
 }
