@@ -1,31 +1,36 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>lovephase|恋愛フェーズ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>恋愛フェーズ</title>
 </head>
-<!-- lovephase.html -->
-
 <body>
-    <h1>恋愛フェーズ</h1>
-    <form action="/phases/" method="POST">
-        <label for="phaseName">フェーズ名</label>
-        <input type="text" id="phaseName" name="phaseName" value="${phase.phaseName}" />
+	
 
-        <label for="achievementRate">進捗率</label>
-        <input type="text" id="achievementRate" name="achievementRate" value="${phase.achievementRate}" />
+	<!-- フェーズ名を表示する部分 -->
+	<div>
+		<h2>フェーズ一覧</h2>
+		<ul>
 
-        <!-- 他のフィールドも追加 -->
+			<th:block th:each="phase : ${phases}">
+				<li>フェーズ名: <span th:text="${phase.phase}"></span>
+				</li>
+			</th:block>
+		</ul>
+	</div>
+	<!-- Spring Bootから渡されたデータをJS変数に埋め込む -->
+	<script th:inline="javascript">
+    let phaseList = [[${phases}]];
+  </script>
 
-        <button type="submit">保存</button>
-    </form>
+	<!-- Reactアプリのマウント先 -->
+	<div id="phase-root"></div>
 
-    <!-- 入力された値の確認用 -->
-    <div>
-        <h2>入力内容:</h2>
-        <p>フェーズ名: ${phase.phaseName}</p>
-        <p>進捗率: ${phase.achievementRate}</p>
-    </div>
+	<!-- Reactアプリ（ビルド済み）を読み込む -->
+	<script src="/js/phase.bundle.js"></script>
+
+
+	</form>
 </body>
 </html>
-
