@@ -11,9 +11,16 @@ class MarriageResult extends React.Component {
             // Marriage.js から渡されるデータの初期値
             span: null,
             percentage: null,
-            proposedPhases: null,
+            proposedPhases: {},
 
             marriageTiming: "",
+            marriageYear: "",
+            marriageMonth: "",
+
+            startYear: Response.data.startYear,
+            startMonth: Response.data.startMonth,
+
+
             span_id: "",
             span: "",
             percentage: "",
@@ -22,6 +29,8 @@ class MarriageResult extends React.Component {
 
     }
 
+    
+
     componentDidMount() {
         // Marriage.js から navigate の state 経由でデータを受け取る
         if (this.props.router.location.state && this.props.router.location.state.planData) {
@@ -29,7 +38,7 @@ class MarriageResult extends React.Component {
             this.setState({
                 span: planData.span,
                 percentage: planData.percentage,
-                proposedPhases: planData.proposedPhases,
+                proposedPhases: planData.proposedPhases || {},
                 errorMessage: planData.message && !planData.success ? planData.message : "", // エラーメッセージがあれば表示
             });
         } else {
@@ -43,7 +52,7 @@ class MarriageResult extends React.Component {
     }
    
     render() {
-        const { span, percentage, proposedPhases, errorMessage } = this.state;
+        const {startYear, startMonth , span, percentage, proposedPhases, errorMessage } = this.state;
 
         // 各フェーズの情報を取得
         const phase1 = proposedPhases.phase1 || {};
@@ -64,16 +73,19 @@ class MarriageResult extends React.Component {
 
                 {/* 期間ごとのイベント */}
                 {/* 計算から期間を算出 */}
-                <h3>{phase1.year}年{phase1.month}月～{phase2.year}年{phase2.month}月：</h3>
+                <h3>{startYear}年 {startMonth}月 ～ {phase1.year}年 {phase1.month}月：</h3>
                 <h4>プロフィール完成、活動開始</h4>
-                <h3>　月～　月：</h3>
+                <h3>{phase1.year}年 {phase1.month}月 ～ {phase2.year}年 {phase2.month}月：</h3>                
                 <h4>初対面、メッセージのやり取りを開始</h4>
-                <h3>　月～　月：</h3>
+                <h3>{phase2.year}年 {phase2.month}月 ～ {phase3.year}年 {phase3.month}月：</h3>                
                 <h4>交際開始、共通価値観の確認</h4>
-                <h3>　月～　月：</h3>
+                <h3>{phase3.year}年 {phase3.month}月 ～ {phase4.year}年 {phase4.month}月：</h3>                
                 <h4>交際安定、将来の話を始める</h4>
-                <h3>　月～　月：</h3>
+                <h3>{phase4.year}年 {phase4.month}月 ～ {phase5.year}年 {phase5.month}月：</h3>                
                 <h4>両家挨拶、式場予約</h4>
+
+                <h3>希望時期：{phase5.year}年 {phase5.month}月</h3>
+                <h3>想定期間：{span}ヶ月</h3>
 
             </div>
         );

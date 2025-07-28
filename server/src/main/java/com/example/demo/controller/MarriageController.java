@@ -48,6 +48,15 @@ public class MarriageController {
 		Map<String, Object> response = new HashMap<>();
 		response.put("success", false); // デフォルトは失敗
 
+//		phase1を設定
+		Map<String, Object> phase1 = new HashMap<>();
+		phase1.put("year", 2025);
+		phase1.put("month", 9);
+		response.put("phase1", phase1);
+		
+		
+
+		
 //		marriagePlansの中身を確認（デバッグ用）
 		System.out.println("Received request: " + marriagePlans);
 
@@ -73,6 +82,11 @@ public class MarriageController {
 			response.put("message", "半年以降で入力してください");
 			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
+		
+//		今年と今月をフロントに返す
+		response.put("startYear", today.getYear());
+		response.put("startMonth", today.getMonthValue());
+
 
 ////      結婚希望時期を設定
 //		model.addAttribute("marriageYear", marriagePlans.getMarriageYear());

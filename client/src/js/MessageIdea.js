@@ -152,7 +152,7 @@ class MessageIdea extends React.Component {
     }
 
     const partnerOptions = partnerList.map((partner) => (
-      <option key={partner.id} value={partner.id}>
+      <option key={partner.id} value={partner.name}>
         {partner.name}
       </option>
     ));
