@@ -1,1381 +1,570 @@
 import React from "react";
-import '../css/Users.css';
+import axios from "axios";
+import "../css/Users.css";
+import { withNavigation } from "../hoc/withNavigation";
+import StarRating from "./StarRating";
+import RadioRating from "./RadioRating";
 
+class Users extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      id: "",
+      currentTab: 1,
+      childWish: "0",
+      liveWithParents: "0",
+      dualIncome: "0",
+      homeSkill: "3",
+      communication: "3",
+      economicPower: "3",
+      appearance: "3",
+      consideration: "3",
+      idealHomeSkill: "3",
+      idealCommunication: "3",
+      idealEconomicPower: "3",
+      idealAppearance: "3",
+      idealConsideration: "3",
+      idealContactFreq: "3",
+      idealPersonality: "3",
+      idealFinancialSense: "3",
+      idealInitiative: "3",
+      idealMarriageIntent: "3",
+      idealSmoker: "3",
+      idealAlcohol: "3",
+      idealGamble: "3",
+      idealDriverLicense: "0",
+      idealTransferable: "0",
+      idealHasDivorce: "0",
+      idealHasChildren: "0",
+    };
+    // APIから取得したオリジナルのデータを保持するプロパティ（リセット用）
+    this.initialStateFromApi = {};
+  }
 
-export default class Users extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            currentTab: 1,
-            childWish: '0',
-            liveWithParents: '0',
-            dualIncome: '0',
-            homeSkill: '3',
-            communication: '3',
-            economicPower: '3',
-            appearance: '3',
-            consideration: '3',
-            idealHomeSkill: '3',
-            idealCommunication: '3',
-            idealEconomicPower: '3',
-            idealAppearance: '3',
-            idealConsideration: '3',
-            idealContactFreq: '3',
-            idealPersonality: '3',
-            idealFinancialSense: '3',
-            idealInitiative: '3',
-            idealMarriageIntent: '3',
-            idealSmoker: '3',
-            idealAlcohol: '3',
-            idealGamble: '3',
-            idealDriverLicense: '0',
-            idealTransferable: '0',
-            idealHasDivorce: '0',
-            idealHasChildren: '0',
-        };
+  componentDidMount() {
+    this.fetchUserData();
+  }
+
+  fetchUserData = async () => {
+    // JWTをlocalStorageから取得
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      // トークンがなければログインページへリダイレクト
+      this.setState({
+        errorMessage: "認証が必要です。ログインしてください。",
+        loading: false,
+      });
+      this.props.router.navigate("/login/");
+      return;
+    }
+    this.setState({ loading: true, errorMessage: "" });
+    try {
+      const response = await axios.get("/api/user/", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      console.log("APIから取得したデータ:", response.data);
+      const fetchedData = response.data.data;
+
+      // APIから取得したデータでstateを更新
+      this.setState((prevState) => {
+        const newState = { ...prevState };
+        for (const key in fetchedData) {
+          if (Object.prototype.hasOwnProperty.call(newState, key)) {
+            newState[key] = String(fetchedData[key]);
+          }
+        }
+        // ローディングとエラーメッセージの状態を更新
+        newState.loading = false;
+        newState.errorMessage = "";
+
+        this.initialStateFromApi = { ...newState }; // 更新後のstateを初期値として保存
+        return newState;
+      });
+    } catch (error) {
+      console.error("API呼び出しエラー:", error);
+      this.setState({
+        errorMessage:
+          "データの取得に失敗しました。時間をおいて再度お試しください。",
+        loading: false,
+      });
+    }
+  };
+
+  handleChange = (e) => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  };
+
+  handleReset = (showConfirmation = true) => {
+    if (showConfirmation) {
+      const confirmReset = window.confirm(
+        "このタブの入力内容をリセットしますか？"
+      );
+      if (!confirmReset) return;
+
+      // APIから取得した初期値に戻す
+      const fieldsToReset = {};
+      if (this.state.currentTab === 1) {
+        // ユーザー情報タブの項目をリセット
+        [
+          "childWish",
+          "liveWithParents",
+          "dualIncome",
+          "homeSkill",
+          "communication",
+          "economicPower",
+          "appearance",
+          "consideration",
+        ].forEach((key) => {
+          fieldsToReset[key] = this.initialStateFromApi[key] || "0";
+        });
+      } else if (this.state.currentTab === 2) {
+        // 理想像設定タブの項目をリセット
+        [
+          "idealHomeSkill",
+          "idealCommunication",
+          "idealEconomicPower",
+          "idealAppearance",
+          "idealConsideration",
+          "idealContactFreq",
+          "idealPersonality",
+          "idealFinancialSense",
+          "idealInitiative",
+          "idealMarriageIntent",
+          "idealSmoker",
+          "idealAlcohol",
+          "idealGamble",
+          "idealDriverLicense",
+          "idealTransferable",
+          "idealHasDivorce",
+          "idealHasChildren",
+        ].forEach((key) => {
+          fieldsToReset[key] = this.initialStateFromApi[key] || "3";
+          if (
+            [
+              "idealDriverLicense",
+              "idealTransferable",
+              "idealHasDivorce",
+              "idealHasChildren",
+            ].includes(key)
+          ) {
+            fieldsToReset[key] = this.initialStateFromApi[key] || "0";
+          }
+        });
+      }
+      this.setState(fieldsToReset);
+    }
+  };
+
+  handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const confirmSubmit = window.confirm("更新内容を確定しますか？");
+    if (!confirmSubmit) {
+      return;
     }
 
-    handleChange = (e) => {
-        const { name, value } = e.target;
-        this.setState({ [name]: value });
-    };
-
-    handleReset = () => {
-        const confirmReset = window.confirm("このタブの入力内容をリセットしますか？");
-        if (!confirmReset) return;
-
-        if (this.state.currentTab === 1) {
-            this.setState({
-                childWish: '0',
-                liveWithParents: '0',
-                dualIncome: '0',
-                homeSkill: '3',
-                communication: '3',
-                economicPower: '3',
-                appearance: '3',
-                consideration: '3',
-            });
-        } else if (this.state.currentTab === 2) {
-            this.setState({
-                idealHomeSkill: '3',
-                idealCommunication: '3',
-                idealEconomicPower: '3',
-                idealAppearance: '3',
-                idealConsideration: '3',
-                idealContactFreq: '3',
-                idealPersonality: '3',
-                idealFinancialSense: '3',
-                idealInitiative: '3',
-                idealMarriageIntent: '3',
-                idealSmoker: '3',
-                idealAlcohol: '3',
-                idealGamble: '3',
-                idealDriverLicense: '0',
-                idealTransferable: '0',
-                idealHasDivorce: '0',
-                idealHasChildren: '0',
-            });
-        }
-    };
-
-    handleSubmit = (e) => {
-        const confirmSubmit = window.confirm("更新内容を確定しますか？");
-        if (!confirmSubmit) {
-            e.preventDefault();
-        }
-
-    };
-
-
-
-
-    showTab = (tabNo) => {
-        const { currentTab } = this.state;  
-
-        if (currentTab !== tabNo) {
-            const confirmSwitch = window.confirm("このタブを切り替えると、現在の入力内容はリセットされます。よろしいですか？");
-            if (!confirmSwitch) return;
-
-            if (currentTab === 1) {
-                this.setState({
-                    childWish: '0',
-                    liveWithParents: '0',
-                    dualIncome: '0',
-                    homeSkill: '3',
-                    communication: '3',
-                    economicPower: '3',
-                    appearance: '3',
-                    consideration: '3',
-                });
-            } else if (currentTab === 2) {
-                this.setState({
-                    idealHomeSkill: '3',
-                    idealCommunication: '3',
-                    idealEconomicPower: '3',
-                    idealAppearance: '3',
-                    idealConsideration: '3',
-                    idealContactFreq: '3',
-                    idealPersonality: '3',
-                    idealFinancialSense: '3',
-                    idealInitiative: '3',
-                    idealMarriageIntent: '3',
-                    idealSmoker: '3',
-                    idealAlcohol: '3',
-                    idealGamble: '3',
-                    idealDriverLicense: '0',
-                    idealTransferable: '0',
-                    idealHasDivorce: '0',
-                    idealHasChildren: '0',
-                });
-            }
-
-            this.setState({ currentTab: tabNo });
-        }
-    };
-
-
-
-    render() {
-        return (
-            <div className="form-container">
-                <form method="POST" action="/Users/new/" onSubmit={this.handleSubmit}>
-                    <div className="tabs">
-                        <button
-                            type="button"
-                            className={`tab-button ${this.state.currentTab === 1 ? "active" : ""}`}
-                            onClick={() => this.showTab(1)}
-                        >
-                            ユーザー情報
-                        </button>
-                        <button
-                            type="button"
-                            className={`tab-button ${this.state.currentTab === 2 ? "active" : ""}`}
-                            onClick={() => this.showTab(2)}
-                        >
-                            理想像設定
-                        </button>
-                    </div>
-
-                    {this.state.currentTab === 1 && (
-                        <div id="tab1" style={{ display: "block" }} >
-
-
-                            <div className="basic-info-box">
-                                <h1>基本情報</h1>
-                                <div className="form-inline">
-                                    <label>子供が欲しいか</label>
-                                    <select name="childWish" value={this.state.childWish} onChange={this.handleChange}>
-                                        <option value="0">未設定</option>
-                                        <option value="1">はい</option>
-                                        <option value="2">どちらでもよい</option>
-                                        <option value="3">いいえ</option>
-                                    </select>
-                                </div>
-
-                                <div className="form-inline">
-                                    <label>両親との同棲希望か</label>
-                                    <select name="liveWithParents" value={this.state.liveWithParents} onChange={this.handleChange}>
-                                        <option value="0">未設定</option>
-                                        <option value="1">はい</option>
-                                        <option value="2">どちらでもよい</option>
-                                        <option value="3">いいえ</option>
-                                    </select>
-                                </div>
-
-                                <div className="form-inline">
-                                    <label>共働き希望か</label>
-                                    <select name="dualIncome" value={this.state.dualIncome} onChange={this.handleChange}>
-                                        <option value="0">未設定</option>
-                                        <option value="1">はい</option>
-                                        <option value="2">どちらでもよい</option>
-                                        <option value="3">いいえ</option>
-                                    </select>
-                                </div>
-                            </div>
-
-
-                            <div className="basic-info-box">
-                                <h1>自己評価</h1>
-
-
-                                <div className="form-inline">
-                                    <span className="label-text">家事スキル</span>  {}
-                                    <div className="rating star">
-                                        <input
-                                            type="radio"
-                                            id="skill5"
-                                            name="homeSkill"
-                                            value="5"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.homeSkill === '5'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="skill5" title="5 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="skill4"
-                                            name="homeSkill"
-                                            value="4"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.homeSkill === '4'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="skill4" title="4 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="skill3"
-                                            name="homeSkill"
-                                            value="3"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.homeSkill === '3'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="skill3" title="3 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="skill2"
-                                            name="homeSkill"
-                                            value="2"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.homeSkill === '2'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="skill2" title="2 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="skill1"
-                                            name="homeSkill"
-                                            value="1"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.homeSkill === '1'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="skill1" title="1 star">★</label>
-                                    </div>
-                                </div>
-
-                                <div className="form-inline">
-                                    <span className="label-text">コミュ力</span>  {}
-
-                                    <div className="rating star">
-                                        <input
-                                            type="radio"
-                                            id="comm5"
-                                            name="communication"
-                                            value="5"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.communication === '5'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="comm5" title="5 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="comm4"
-                                            name="communication"
-                                            value="4"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.communication === '4'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="comm4" title="4 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="comm3"
-                                            name="communication"
-                                            value="3"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.communication === '3'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="comm3" title="3 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="comm2"
-                                            name="communication"
-                                            value="2"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.communication === '2'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="comm2" title="2 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="comm1"
-                                            name="communication"
-                                            value="1"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.communication === '1'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="comm1" title="1 star">★</label>
-                                    </div>
-                                </div>
-
-                                <div className="form-inline">
-                                    <span className="label-text">経済力</span>  {}
-                                    <div className="rating star">
-                                        <input
-                                            type="radio"
-                                            id="eco5"
-                                            name="economicPower"
-                                            value="5"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.economicPower === '5'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="eco5" title="5 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="eco4"
-                                            name="economicPower"
-                                            value="4"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.economicPower === '4'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="eco4" title="4 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="eco3"
-                                            name="economicPower"
-                                            value="3"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.economicPower === '3'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="eco3" title="3 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="eco2"
-                                            name="economicPower"
-                                            value="2"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.economicPower === '2'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="eco2" title="2 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="eco1"
-                                            name="economicPower"
-                                            value="1"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.economicPower === '1'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="eco1" title="1 star">★</label>
-                                    </div>
-                                </div>
-
-                                <div className="form-inline">
-                                    <span className="label-text">容姿</span>  {}
-                                    <div className="rating star">
-                                        <input
-                                            type="radio"
-                                            id="appear5"
-                                            name="appearance"
-                                            value="5"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.appearance === '5'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="appear5" title="5 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="appear4"
-                                            name="appearance"
-                                            value="4"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.appearance === '4'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="appear4" title="4 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="appear3"
-                                            name="appearance"
-                                            value="3"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.appearance === '3'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="appear3" title="3 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="appear2"
-                                            name="appearance"
-                                            value="2"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.appearance === '2'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="appear2" title="2 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="appear1"
-                                            name="appearance"
-                                            value="1"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.appearance === '1'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="appear1" title="1 star">★</label>
-                                    </div>
-                                </div>
-
-                                <div className="form-inline">
-                                    <span className="label-text">経済力</span>  {}
-                                    <div className="rating star">
-                                        <input
-                                            type="radio"
-                                            id="consider5"
-                                            name="consideration"
-                                            value="5"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.consideration === '5'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="consider5" title="5 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="consider4"
-                                            name="consideration"
-                                            value="4"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.consideration === '4'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="consider4" title="4 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="consider3"
-                                            name="consideration"
-                                            value="3"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.consideration === '3'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="consider3" title="3 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="consider2"
-                                            name="consideration"
-                                            value="2"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.consideration === '2'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="consider2" title="2 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="consider1"
-                                            name="consideration"
-                                            value="1"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.consideration === '1'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="consider1" title="1 star">★</label>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div className="buttons">
-                                <div className="buttons">
-                                    <button type="button" onClick={this.handleReset}>元に戻す</button>
-                                    <button type="submit">更新</button>
-                                </div>
-
-                            </div>
-                        </div>)}
-                    {this.state.currentTab === 2 && (
-                        <div id="tab2">
-                            <div className="basic-info-box">
-                                <h1>理想スペック</h1>
-                                <div className="form-inline">
-                                    <span className="label-text">家事スキル</span>  {}
-                                    <div className="rating star">
-                                        <input
-                                            type="radio"
-                                            id="idealSkill5"
-                                            name="idealHomeSkill"
-                                            value="5"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealHomeSkill === '5'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealSkill5" title="5 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealSkill4"
-                                            name="idealHomeSkill"
-                                            value="4"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealHomeSkill === '4'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealSkill4" title="4 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealSkill3"
-                                            name="idealHomeSkill"
-                                            value="3"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealHomeSkill === '3'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealSkill3" title="3 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealSkill2"
-                                            name="idealHomeSkill"
-                                            value="2"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealHomeSkill === '2'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealSkill2" title="2 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealSkill1"
-                                            name="idealHomeSkill"
-                                            value="1"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealHomeSkill === '1'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealSkill1" title="1 star">★</label>
-                                    </div>
-                                </div>
-
-                                <div className="form-inline">
-                                    <span className="label-text">コミュ力</span>  {}
-                                    <div className="rating star">
-                                        <input
-                                            type="radio"
-                                            id="idealComm5"
-                                            name="idealCommunication"
-                                            value="5"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealCommunication === '5'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealComm5" title="5 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealComm4"
-                                            name="idealCommunication"
-                                            value="4"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealCommunication === '4'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealComm4" title="4 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealComm3"
-                                            name="idealCommunication"
-                                            value="3"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealCommunication === '3'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealComm3" title="3 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealComm2"
-                                            name="idealCommunication"
-                                            value="2"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealCommunication === '2'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealComm2" title="2 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealComm1"
-                                            name="idealCommunication"
-                                            value="1"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealCommunication === '1'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealComm1" title="1 star">★</label>
-                                    </div>
-                                </div>
-
-                                <div className="form-inline">
-                                    <span className="label-text">経済力</span>  {}
-                                    <div className="rating star">
-                                        <input
-                                            type="radio"
-                                            id="idealPower5"
-                                            name="idealEconomicPower"
-                                            value="5"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealEconomicPower === '5'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealPower5" title="5 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealPower4"
-                                            name="idealEconomicPower"
-                                            value="4"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealEconomicPower === '4'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealPower4" title="4 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealPower3"
-                                            name="idealEconomicPower"
-                                            value="3"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealEconomicPower === '3'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealPower3" title="3 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealPower2"
-                                            name="idealEconomicPower"
-                                            value="2"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealEconomicPower === '2'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealPower2" title="2 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealPower1"
-                                            name="idealEconomicPower"
-                                            value="1"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealEconomicPower === '1'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealPower1" title="1 star">★</label>
-                                    </div>
-                                </div>
-
-                                <div className="form-inline">
-                                    <span className="label-text">容姿</span>  {}
-                                    <div className="rating star">
-                                        <input
-                                            type="radio"
-                                            id="idealAppear5"
-                                            name="idealAppearance"
-                                            value="5"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealAppearance === '5'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealAppear5" title="5 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealAppear4"
-                                            name="idealAppearance"
-                                            value="4"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealAppearance === '4'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealAppear4" title="4 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealAppear3"
-                                            name="idealAppearance"
-                                            value="3"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealAppearance === '3'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealAppear3" title="3 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealAppear2"
-                                            name="idealAppearance"
-                                            value="2"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealAppearance === '2'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealAppear2" title="2 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealAppear1"
-                                            name="idealAppearance"
-                                            value="1"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealAppearance === '1'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealAppear1" title="1 star">★</label>
-                                    </div>
-                                </div>
-
-                                <div className="form-inline">
-                                    <span className="label-text">気遣い</span>  {}
-                                    <div className="rating star">
-                                        <input
-                                            type="radio"
-                                            id="idealConsider5"
-                                            name="idealConsideration"
-                                            value="5"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealConsideration === '5'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealConsider5" title="5 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealConsider4"
-                                            name="idealConsideration"
-                                            value="4"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealConsideration === '4'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealConsider4" title="4 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealConsider3"
-                                            name="idealConsideration"
-                                            value="3"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealConsideration === '3'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealConsider3" title="3 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealConsider2"
-                                            name="idealConsideration"
-                                            value="2"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealConsideration === '2'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealConsider2" title="2 stars">★</label>
-
-                                        <input
-                                            type="radio"
-                                            id="idealConsider1"
-                                            name="idealConsideration"
-                                            value="1"
-                                            style={{ display: 'none' }}
-                                            checked={this.state.idealConsideration === '1'}
-                                            onChange={this.handleChange}
-                                        />
-                                        <label htmlFor="idealConsider1" title="1 star">★</label>
-                                    </div>
-                                </div>
-                                <hr className="section-divider" />
-
-
-                                <div className="rating-block">
-                                    <p className="rating-title">連絡頻度</p>
-
-                                    <div className="rating-row">
-                                        <span className="label-left">少なめ</span>
-                                        <div className="rating circle">
-                                            <input
-                                                type="radio"
-                                                id="idealContact5"
-                                                name="idealContactFreq"
-                                                value="5"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealContactFreq === '5'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealContact5" title="5 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealContact4"
-                                                name="idealContactFreq"
-                                                value="4"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealContactFreq === '4'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealContact4" title="4 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealContact3"
-                                                name="idealContactFreq"
-                                                value="3"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealContactFreq === '3'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealContact3" title="3 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealContact2"
-                                                name="idealContactFreq"
-                                                value="2"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealContactFreq === '2'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealContact2" title="2 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealContact1"
-                                                name="idealContactFreq"
-                                                value="1"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealContactFreq === '1'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealContact1" title="1 star">〇</label>
-                                        </div>
-                                        <span className="label-right">多め</span>
-                                    </div>
-
-                                    <p className="rating-title">性格</p>
-                                    <div className="rating-row">
-                                        <span className="label-left">内向的</span>
-                                        <div className="rating circle">
-                                            <input
-                                                type="radio"
-                                                id="idealPerson5"
-                                                name="idealPersonality"
-                                                value="5"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealPersonality === '5'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealPerson5" title="5 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealPerson4"
-                                                name="idealPersonality"
-                                                value="4"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealPersonality === '4'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealPerson4" title="4 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealPerson3"
-                                                name="idealPersonality"
-                                                value="3"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealPersonality === '3'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealPerson3" title="3 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealPerson2"
-                                                name="idealPersonality"
-                                                value="2"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealPersonality === '2'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealPerson2" title="2 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealPerson1"
-                                                name="idealPersonality"
-                                                value="1"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealPersonality === '1'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealPerson1" title="1 star">〇</label>
-                                        </div>
-                                        <span className="label-right">外交的</span>
-                                    </div>
-
-                                    <p className="rating-title">金銭感覚</p>
-                                    <div className="rating-row">
-                                        <span className="label-left">節約家</span>
-                                        <div className="rating circle">
-                                            <input
-                                                type="radio"
-                                                id="idealFinan5"
-                                                name="idealFinancialSense"
-                                                value="5"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealFinancialSense === '5'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealFinan5" title="5 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealFinan4"
-                                                name="idealFinancialSense"
-                                                value="4"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealFinancialSense === '4'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealFinan4" title="4 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealFinan3"
-                                                name="idealFinancialSense"
-                                                value="3"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealFinancialSense === '3'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealFinan3" title="3 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealFinan2"
-                                                name="idealFinancialSense"
-                                                value="2"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealFinancialSense === '2'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealFinan2" title="2 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealFinan1"
-                                                name="idealFinancialSense"
-                                                value="1"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealFinancialSense === '1'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealFinan1" title="1 star">〇</label>
-                                        </div>
-                                        <span className="label-right">浪費家</span>
-                                    </div>
-
-                                    <p className="rating-title">主体性</p>
-                                    <div className="rating-row">
-                                        <span className="label-left">受動的</span>
-                                        <div className="rating circle">
-                                            <input
-                                                type="radio"
-                                                id="idealInitia5"
-                                                name="idealInitiative"
-                                                value="5"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealInitiative === '5'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealInitia5" title="5 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealInitia4"
-                                                name="idealInitiative"
-                                                value="4"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealInitiative === '4'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealInitia4" title="4 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealInitia3"
-                                                name="idealInitiative"
-                                                value="3"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealInitiative === '3'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealInitia3" title="3 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealInitia2"
-                                                name="idealInitiative"
-                                                value="2"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealInitiative === '2'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealInitia2" title="2 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealInitia1"
-                                                name="idealInitiative"
-                                                value="1"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealInitiative === '1'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealInitia1" title="1 star">〇</label>
-                                        </div>
-                                        <span className="label-right">主体的</span>
-                                    </div>
-
-                                    <p className="rating-title">婚活真剣度</p>
-                                    <div className="rating-row">
-                                        <span className="label-left">低め</span>
-                                        <div className="rating circle">
-                                            <input
-                                                type="radio"
-                                                id="idealMarr5"
-                                                name="idealMarriageIntent"
-                                                value="5"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealMarriageIntent === '5'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealMarr5" title="5 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealMarr4"
-                                                name="idealMarriageIntent"
-                                                value="4"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealMarriageIntent === '4'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealMarr4" title="4 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealMarr3"
-                                                name="idealMarriageIntent"
-                                                value="3"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealMarriageIntent === '3'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealMarr3" title="3 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealMarr2"
-                                                name="idealMarriageIntent"
-                                                value="2"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealMarriageIntent === '2'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealMarr2" title="2 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealMarr1"
-                                                name="idealMarriageIntent"
-                                                value="1"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealMarriageIntent === '1'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealMarr1" title="1 star">〇</label>
-                                        </div>
-                                        <span className="label-right">高め</span>
-                                    </div>
-
-
-                                    <p className="rating-title">喫煙</p>
-                                    <div className="rating-row">
-                                        <span className="label-left">まったく<br />吸わない</span>
-                                        <div className="rating circle">
-                                            <input
-                                                type="radio"
-                                                id="idealSmo5"
-                                                name="idealSmoker"
-                                                value="5"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealSmoker === '5'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealSmo5" title="5 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealSmo4"
-                                                name="idealSmoker"
-                                                value="4"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealSmoker === '4'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealSmo4" title="4 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealSmo3"
-                                                name="idealSmoker"
-                                                value="3"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealSmoker === '3'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealSmo3" title="3 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealSmo2"
-                                                name="idealSmoker"
-                                                value="2"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealSmoker === '2'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealSmo2" title="2 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealSmo1"
-                                                name="idealSmoker"
-                                                value="1"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealSmoker === '1'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealSmo1" title="1 star">〇</label>
-                                        </div>
-                                        <span className="label-right">よく吸う</span>
-                                    </div>
-
-                                    <p className="rating-title">飲酒</p>
-                                    <div className="rating-row">
-                                        <span className="label-left">まったく<br />飲まない</span>
-                                        <div className="rating circle">
-                                            <input
-                                                type="radio"
-                                                id="idealAlc5"
-                                                name="idealAlcohol"
-                                                value="5"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealAlcohol === '5'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealAlc5" title="5 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealAlc4"
-                                                name="idealAlcohol"
-                                                value="4"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealAlcohol === '4'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealAlc4" title="4 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealAlc3"
-                                                name="idealAlcohol"
-                                                value="3"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealAlcohol === '3'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealAlc3" title="3 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealAlc2"
-                                                name="idealAlcohol"
-                                                value="2"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealAlcohol === '2'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealAlc2" title="2 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealAlc1"
-                                                name="idealAlcohol"
-                                                value="1"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealAlcohol === '1'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealAlc1" title="1 star">〇</label>
-                                        </div>
-                                        <span className="label-right">よく飲む</span>
-                                    </div>
-
-                                    <p className="rating-title">ギャンブル</p>
-                                    <div className="rating-row">
-                                        <span className="label-left">まったく<br />しない</span>
-                                        <div className="rating circle">
-                                            <input
-                                                type="radio"
-                                                id="idealGam5"
-                                                name="idealGamble"
-                                                value="5"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealGamble === '5'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealGam5" title="5 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealGam4"
-                                                name="idealGamble"
-                                                value="4"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealGamble === '4'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealGam4" title="4 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealGam3"
-                                                name="idealGamble"
-                                                value="3"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealGamble === '3'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealGam3" title="3 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealGam2"
-                                                name="idealGamble"
-                                                value="2"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealGamble === '2'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealGam2" title="2 stars">〇</label>
-
-                                            <input
-                                                type="radio"
-                                                id="idealGam1"
-                                                name="idealGamble"
-                                                value="1"
-                                                style={{ display: 'none' }}
-                                                checked={this.state.idealGamble === '1'}
-                                                onChange={this.handleChange}
-                                            />
-                                            <label htmlFor="idealGam1" title="1 star">〇</label>
-                                        </div>
-                                        <span className="label-right">よくする</span>
-                                    </div>
-                                    <hr className="section-divider" />
-
-                                    <div className="form-two-column">
-                                        <div className="form-column">
-                                            <h3>運転免許</h3>
-                                            <select
-                                                name="idealDriverLicense"
-                                                value={this.state.idealDriverLicense}
-                                                onChange={this.handleChange}
-                                            >
-                                                <option value="0">未設定</option>
-                                                <option value="1">はい</option>
-                                                <option value="2">どちらでもよい</option>
-                                                <option value="3">いいえ</option>
-                                            </select>
-
-                                            <h3>転勤の有無</h3>
-                                            <select
-                                                name="idealTransferable"
-                                                value={this.state.idealTransferable}
-                                                onChange={this.handleChange}
-                                            >
-                                                <option value="0">未設定</option>
-                                                <option value="1">はい</option>
-                                                <option value="2">どちらでもよい</option>
-                                                <option value="3">いいえ</option>
-                                            </select>
-                                        </div>
-
-                                        <div className="form-column">
-                                            <h3>既婚歴</h3>
-                                            <select
-                                                name="idealHasDivorce"
-                                                value={this.state.idealHasDivorce}
-                                                onChange={this.handleChange}
-                                            >
-                                                <option value="0">未設定</option>
-                                                <option value="1">はい</option>
-                                                <option value="2">どちらでもよい</option>
-                                                <option value="3">いいえ</option>
-                                            </select>
-
-                                            <h3>子供の有無</h3>
-                                            <select
-                                                name="idealHasChildren"
-                                                value={this.state.idealHasChildren}
-                                                onChange={this.handleChange}
-                                            >
-                                                <option value="0">未設定</option>
-                                                <option value="1">はい</option>
-                                                <option value="2">どちらでもよい</option>
-                                                <option value="3">いいえ</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="buttons">
-                                <button type="button" onClick={this.handleReset}>元に戻す</button>
-                                <button type="submit">更新</button>
-                            </div>
-                        </div>)}
-                </form>
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      this.setState({
+        errorMessage: "認証が必要です。ログインしてください。",
+      });
+      this.props.router.navigate("/login/");
+      return;
+    }
+    this.setState({ loading: true, errorMessage: "" });
+
+    const currentUserId = localStorage.getItem("id");
+
+    try {
+      // 現在のstateの全データを送信
+      const dataToSend = { ...this.state };
+      dataToSend.id = parseInt(this.state.id, 10);
+
+      // 不要なstateプロパティを削除
+      delete dataToSend.currentTab;
+      delete dataToSend.loading;
+      delete dataToSend.errorMessage;
+      delete dataToSend.fetchedData;
+
+      const response = await axios.post("/api/user/update/", dataToSend, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+      console.log("更新成功:", response.data);
+      alert("情報が正常に更新されました。");
+      // フォーム送信成功後、initialStateFromApiを現在のstateで更新
+      this.initialStateFromApi = {
+        ...this.state,
+        loading: false,
+        errorMessage: "",
+      };
+    } catch (error) {
+      console.error("更新エラー:", error);
+      this.setState({
+        errorMessage: "情報の更新に失敗しました。",
+      });
+    } finally {
+      this.setState({ loading: false });
+    }
+  };
+
+  showTab = (tabNo) => {
+    const { currentTab } = this.state;
+
+    if (currentTab !== tabNo) {
+      const confirmSwitch = window.confirm(
+        "このタブを切り替えると、現在の入力内容はリセットされます。よろしいですか？"
+      );
+      if (!confirmSwitch) return;
+
+      // handleResetを呼び出す際に、確認ダイアログをスキップする
+      this.handleReset(false);
+
+      this.setState({ currentTab: tabNo });
+    }
+  };
+
+  render() {
+    const {
+      currentTab,
+      childWish,
+      liveWithParents,
+      dualIncome,
+      homeSkill,
+      communication,
+      economicPower,
+      appearance,
+      consideration,
+      idealHomeSkill,
+      idealCommunication,
+      idealEconomicPower,
+      idealAppearance,
+      idealConsideration,
+      idealContactFreq,
+      idealPersonality,
+      idealFinancialSense,
+      idealInitiative,
+      idealMarriageIntent,
+      idealSmoker,
+      idealAlcohol,
+      idealGamble,
+      idealDriverLicense,
+      idealTransferable,
+      idealHasDivorce,
+      idealHasChildren,
+      loading,
+      errorMessage,
+    } = this.state;
+
+    // ローディング中の表示
+    if (loading) {
+      return (
+        <div className="form-container">
+          <p>読み込み中...</p>
+        </div>
+      );
+    }
+
+    // エラーメッセージの表示
+    if (errorMessage) {
+      return (
+        <div className="form-container">
+          <p className="error-message">{errorMessage}</p>
+          <button onClick={this.fetchUserData}>再試行</button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="form-container">
+        <form onSubmit={this.handleSubmit}>
+          <div className="tabs">
+            <button
+              type="button"
+              className={`tab-button ${
+                this.state.currentTab === 1 ? "active" : ""
+              }`}
+              onClick={() => this.showTab(1)}
+            >
+              ユーザー情報
+            </button>
+            <button
+              type="button"
+              className={`tab-button ${
+                this.state.currentTab === 2 ? "active" : ""
+              }`}
+              onClick={() => this.showTab(2)}
+            >
+              理想像設定
+            </button>
+          </div>
+
+          {this.state.currentTab === 1 && (
+            <div id="tab1" style={{ display: "block" }}>
+              <div className="basic-info-box">
+                <h1>基本情報</h1>
+                <div className="form-inline">
+                  <label>子供が欲しいか</label>
+                  <select
+                    name="childWish"
+                    value={childWish}
+                    onChange={this.handleChange}
+                  >
+                    <option value="0">未設定</option>
+                    <option value="1">はい</option>
+                    <option value="2">どちらでもよい</option>
+                    <option value="3">いいえ</option>
+                  </select>
+                </div>
+
+                <div className="form-inline">
+                  <label>両親との同棲希望か</label>
+                  <select
+                    name="liveWithParents"
+                    value={liveWithParents}
+                    onChange={this.handleChange}
+                  >
+                    <option value="0">未設定</option>
+                    <option value="1">はい</option>
+                    <option value="2">どちらでもよい</option>
+                    <option value="3">いいえ</option>
+                  </select>
+                </div>
+
+                <div className="form-inline">
+                  <label>共働き希望か</label>
+                  <select
+                    name="dualIncome"
+                    value={dualIncome}
+                    onChange={this.handleChange}
+                  >
+                    <option value="0">未設定</option>
+                    <option value="1">はい</option>
+                    <option value="2">どちらでもよい</option>
+                    <option value="3">いいえ</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="basic-info-box">
+                <h1>自己評価</h1>
+
+                <StarRating
+                  label="家事スキル"
+                  name="homeSkill"
+                  value={homeSkill}
+                  onChange={this.handleChange}
+                />
+                <StarRating
+                  label="コミュ力"
+                  name="communication"
+                  value={communication}
+                  onChange={this.handleChange}
+                />
+                <StarRating
+                  label="経済力"
+                  name="economicPower"
+                  value={economicPower}
+                  onChange={this.handleChange}
+                />
+                <StarRating
+                  label="容姿"
+                  name="appearance"
+                  value={appearance}
+                  onChange={this.handleChange}
+                />
+                <StarRating
+                  label="気遣い"
+                  name="consideration"
+                  value={consideration}
+                  onChange={this.handleChange}
+                />
+              </div>
+              <div className="buttons">
+                <button type="button" onClick={this.handleReset}>
+                  元に戻す
+                </button>
+                <button type="submit">更新</button>
+              </div>
             </div>
-        );
-    }
+          )}
+          {this.state.currentTab === 2 && (
+            <div id="tab2">
+              <div className="basic-info-box">
+                <h1>理想スペック</h1>
+                {/* StarRatingコンポーネントを使用 */}
+                <StarRating
+                  label="家事スキル"
+                  name="idealHomeSkill"
+                  value={idealHomeSkill}
+                  onChange={this.handleChange}
+                />
+                <StarRating
+                  label="コミュ力"
+                  name="idealCommunication"
+                  value={idealCommunication}
+                  onChange={this.handleChange}
+                />
+                <StarRating
+                  label="経済力"
+                  name="idealEconomicPower"
+                  value={idealEconomicPower}
+                  onChange={this.handleChange}
+                />
+                <StarRating
+                  label="容姿"
+                  name="idealAppearance"
+                  value={idealAppearance}
+                  onChange={this.handleChange}
+                />
+                <StarRating
+                  label="気遣い"
+                  name="idealConsideration"
+                  value={idealConsideration}
+                  onChange={this.handleChange}
+                />
+
+                <hr className="section-divider" />
+
+                {/* RadioRatingコンポーネントを使用 */}
+                <RadioRating
+                  label="連絡頻度"
+                  name="idealContactFreq"
+                  value={idealContactFreq}
+                  onChange={this.handleChange}
+                  minLabel="少なめ"
+                  maxLabel="多め"
+                />
+                <RadioRating
+                  label="性格"
+                  name="idealPersonality"
+                  value={idealPersonality}
+                  onChange={this.handleChange}
+                  minLabel="内向的"
+                  maxLabel="外交的"
+                />
+                <RadioRating
+                  label="金銭感覚"
+                  name="idealFinancialSense"
+                  value={idealFinancialSense}
+                  onChange={this.handleChange}
+                  minLabel="節約家"
+                  maxLabel="浪費家"
+                />
+                <RadioRating
+                  label="主体性"
+                  name="idealInitiative"
+                  value={idealInitiative}
+                  onChange={this.handleChange}
+                  minLabel="受動的"
+                  maxLabel="主体的"
+                />
+                <RadioRating
+                  label="婚活真剣度"
+                  name="idealMarriageIntent"
+                  value={idealMarriageIntent}
+                  onChange={this.handleChange}
+                  minLabel="低め"
+                  maxLabel="高め"
+                />
+                <RadioRating
+                  label="喫煙"
+                  name="idealSmoker"
+                  value={idealSmoker}
+                  onChange={this.handleChange}
+                  minLabel="まったく吸わない"
+                  maxLabel="よく吸う"
+                />
+                <RadioRating
+                  label="飲酒"
+                  name="idealAlcohol"
+                  value={idealAlcohol}
+                  onChange={this.handleChange}
+                  minLabel="まったく飲まない"
+                  maxLabel="よく飲む"
+                />
+                <RadioRating
+                  label="ギャンブル"
+                  name="idealGamble"
+                  value={idealGamble}
+                  onChange={this.handleChange}
+                  minLabel="まったくしない"
+                  maxLabel="よくする"
+                />
+
+                <hr className="section-divider" />
+
+                <div className="form-two-column">
+                  <div className="form-column">
+                    <h3>運転免許</h3>
+                    <select
+                      name="idealDriverLicense"
+                      value={idealDriverLicense}
+                      onChange={this.handleChange}
+                    >
+                      <option value="0">未設定</option>
+                      <option value="1">はい</option>
+                      <option value="2">どちらでもよい</option>
+                      <option value="3">いいえ</option>
+                    </select>
+
+                    <h3>転勤の有無</h3>
+                    <select
+                      name="idealTransferable"
+                      value={idealTransferable}
+                      onChange={this.handleChange}
+                    >
+                      <option value="0">未設定</option>
+                      <option value="1">はい</option>
+                      <option value="2">どちらでもよい</option>
+                      <option value="3">いいえ</option>
+                    </select>
+                  </div>
+
+                  <div className="form-column">
+                    <h3>既婚歴</h3>
+                    <select
+                      name="idealHasDivorce"
+                      value={idealHasDivorce}
+                      onChange={this.handleChange}
+                    >
+                      <option value="0">未設定</option>
+                      <option value="1">はい</option>
+                      <option value="2">どちらでもよい</option>
+                      <option value="3">いいえ</option>
+                    </select>
+
+                    <h3>子供の有無</h3>
+                    <select
+                      name="idealHasChildren"
+                      value={idealHasChildren}
+                      onChange={this.handleChange}
+                    >
+                      <option value="0">未設定</option>
+                      <option value="1">はい</option>
+                      <option value="2">どちらでもよい</option>
+                      <option value="3">いいえ</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div className="buttons">
+                <button type="button" onClick={this.handleReset}>
+                  元に戻す
+                </button>
+                <button type="submit">更新</button>
+              </div>
+            </div>
+          )}
+        </form>
+      </div>
+    );
+  }
 }
+export default withNavigation(Users);
