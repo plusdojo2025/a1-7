@@ -80,7 +80,7 @@ label[for="password2"] {
  
 }
 
-/* メールアドレス、パスワード、確認用パスワードを中央に配置 */
+
 #mail_address,
 #password1,
 #password2 {
@@ -101,21 +101,21 @@ label[for="password2"] {
 }
 
 input[type="submit"][name="submit"] {
-  width: 160px;       /* 幅 */
-  height: 48px;       /* 高さ */
-  font-size: 18px;    /* 文字サイズ */
-  font-weight: bold;  /* 太字 */
-  border-radius: 6px; /* 角丸 */
-  cursor: pointer;    /* マウスオーバーでポインター */
+  width: 160px;      
+  height: 48px;     
+  font-size: 18px;   
+  font-weight: bold; 
+  border-radius: 6px; 
+  cursor: pointer;  
   background-color: #db0a0a; 
-  color: white;       /* 文字色 */
+  color: white;     
   border: none;       
-  margin-top: 20px;   /* 上に余白 */
+  margin-top: 20px; 
   transition: background-color 0.3s ease;
 }
 
 input[type="submit"][name="submit"]:hover {
-  background-color: #c3586c; /* ホバー時の色*/
+  background-color: #c3586c; 
 }
 
 
@@ -128,6 +128,6 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
-  background-color: #130652 !important;
+  background-color: #31a359 !important;
 }
 
