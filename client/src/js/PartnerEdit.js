@@ -196,7 +196,7 @@ class PartnerEdit extends React.Component {
                   value={partner.age || ""}
                   onChange={this.handleChange}
                   className="form-input age-input"
-                  placeholder="年齢"
+                  
                   min="0"
                 />
                 <span className="age-unit">歳</span>

@@ -1,7 +1,6 @@
-
 .form-container-3col {
   display: grid;
-  grid-template-columns: 10% 20% 54%; 
+  grid-template-columns: 10% 20% 54%;
   gap: 12px;
   width: 100%;
   max-width: 900px;
@@ -11,14 +10,12 @@
   overflow-wrap: break-word;
 }
 
-
 .column {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  min-width: 0; 
+  min-width: 0;
 }
-
 
 .age-row {
   display: flex;
@@ -26,17 +23,17 @@
   justify-content: center;
 }
 
-
 .age-input-wrapper {
   position: relative;
   width: 100%;
   max-width: 80px;
+  height: 36px;
 }
-
 
 .age-input {
   width: 100%;
-  padding-right: 28px; 
+  height: 36px;
+  padding-right: 28px;
   box-sizing: border-box;
   font-size: 16px;
 }
@@ -51,7 +48,6 @@
   pointer-events: none;
 }
 
-
 .form-input {
   flex-grow: 1;
   width: 100%;
@@ -62,6 +58,7 @@
   border-radius: 6px;
   box-sizing: border-box;
   transition: border-color 0.2s ease;
+  height: 36px;
 }
 
 .form-input:focus {
@@ -80,7 +77,6 @@ input.form-input {
   transition: border-color 0.2s ease !important;
 }
 
-
 .form-row {
   display: flex;
   align-items: center;
@@ -98,21 +94,22 @@ input.form-input {
   font-size: 14px;
   color: #f20a0a;
   white-space: nowrap;
+  height: 36px;
 }
 
 .basic-info-box {
-  width: 100vw;        
+  width: 100vw;
   max-width: 100%;
   padding: 0 8px;
   box-sizing: border-box;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
 
 .basic-info-box .rating.star {
   display: flex;
-  flex-wrap: nowrap; 
+  flex-wrap: nowrap;
   max-width: 100%;
-  overflow-x: hidden;    
+  overflow-x: hidden;
   gap: 4px;
   padding: 0 4px;
   box-sizing: border-box;
@@ -135,11 +132,18 @@ input.form-input {
 }
 
 
+.right-column input[type="date"] {
+  font-size: 12px;
+  padding: 6px 8px;
+  box-sizing: border-box;
+}
+
+
 @media (max-width: 600px) {
   .form-container-3col {
-    grid-template-columns: 25% 35% 40%; 
+    grid-template-columns: 30% 15% 55%;
     gap: 8px;
-    padding: 10px 5px; 
+    padding: 10px 5px;
   }
 
   .right-column {
@@ -153,18 +157,25 @@ input.form-input {
   }
 
   .form-label {
-    width: 30%;         
-    white-space: normal; 
+    width: 30%;
+    white-space: normal;
+    line-height: 28px;
+    height: 28px;
+    font-size: 14px;
   }
 
   .form-input {
     width: 70% !important;
     min-width: 0 !important;
     box-sizing: border-box !important;
+    height: 32px;
+    font-size: 14px;
+    padding: 6px 8px;
   }
 
   .age-input-wrapper {
     max-width: 60px;
+    height: 32px;
   }
 
   .age-row {
@@ -172,9 +183,8 @@ input.form-input {
   }
 
   .right-column .form-input {
-    max-width: 120px;  
+    max-width: 120px;
   }
-
 
   .basic-info-box .rating.star {
     gap: 2px;
@@ -191,7 +201,6 @@ input.form-input {
     margin-top: 20px;
   }
 
-
   .basic-info-box > div {
     display: flex;
     align-items: center;
@@ -202,7 +211,7 @@ input.form-input {
   }
 
   .basic-info-box > div > p {
-    flex: 0 0 90px; 
+    flex: 0 0 90px;
     margin: 0;
     font-weight: 600;
     font-size: 14px;
@@ -212,7 +221,7 @@ input.form-input {
   }
 
   .basic-info-box .rating.star {
-    flex: 1; 
+    flex: 1;
     display: flex;
     justify-content: flex-start;
     gap: 4px;
@@ -227,10 +236,4 @@ input.form-input {
     user-select: none;
     white-space: nowrap;
   }
-
-  .basic-info-box {
-  padding-top: 40px;
-  box-sizing: border-box;
-}
-
 }
