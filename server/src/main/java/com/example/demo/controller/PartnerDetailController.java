@@ -15,7 +15,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -70,7 +70,7 @@ public class PartnerDetailController {
 	}
 
 	// 更新処理（handleSubmitで呼び出し）
-	@PutMapping("/{id}/update/")
+	@PostMapping("/{id}/update/")
 	@Transactional
 	public ResponseEntity<String> updatePartner(@PathVariable("id") Integer id, @RequestBody Partners formPartner) {
 		Optional<Partners> existingPartner = partnersRepository.findById(id);

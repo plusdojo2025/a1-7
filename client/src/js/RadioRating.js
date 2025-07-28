@@ -13,7 +13,7 @@ class RadioRating extends React.PureComponent {
       maxValue,
     } = this.props;
     const options = Array.from({ length: maxValue - minValue + 1 }, (_, i) =>
-      String(minValue + i)
+      minValue + i
     );
 
     return (
@@ -30,7 +30,7 @@ class RadioRating extends React.PureComponent {
                   name={name}
                   value={optionValue}
                   style={{ display: "none" }}
-                  checked={value === optionValue}
+                  checked={Number(value) === optionValue}
                   onChange={onChange}
                 />
                 <label

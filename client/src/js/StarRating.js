@@ -11,9 +11,9 @@ const StarRating = ({ name, value, onChange, label }) => {
               type="radio"
               id={`${name}${starValue}`}
               name={name}
-              value={starValue.toString()}
+              value={starValue}
               style={{ display: "none" }}
-              checked={value === starValue.toString()}
+              checked={Number(value) === starValue} 
               onChange={onChange}
             />
             <label htmlFor={`${name}${starValue}`} title={`${starValue} stars`}>

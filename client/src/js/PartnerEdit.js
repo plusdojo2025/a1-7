@@ -2,30 +2,74 @@ import React from "react";
 import axios from "axios";
 // withNavigation をインポートしてクラスコンポーネントに navigate を渡す
 import { withNavigation } from "../hoc/withNavigation";
+import StarRating from "./StarRating";
+import RadioRating from "./RadioRating";
 
 class PartnerEdit extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      partner: [],
-      message: "",
+      partner: {},
+      errorMessage: "",
+      loading: true,
     };
+    // APIから取得したオリジナルのデータを保持するプロパティ（リセット用）
+    this.initialPartnerState = {};
   }
 
   componentDidMount() {
-    this.fetchPartnerData();
+    const partnerId = this.props.router.params.id;
+    if (partnerId) {
+      this.fetchPartnerData(partnerId);
+    } else {
+      this.setState({
+        errorMessage: "お相手IDが見つかりませんでした。URLを確認してください。",
+        loading: false,
+      });
+    }
   }
 
-  // 初期表示用に相手情報を取得
-  fetchPartnerData = () => {
-    const { id } = this.props;
-    axios
-      .get(`/api/partner/${id}/edit`)
-      .then((response) => this.setState({ partner: response.data }))
-      .catch((error) => {
-        console.error(error);
-        this.setState({ error: "お相手情報の読み込みに失敗しました。" });
+  // 初期表示用にAPIから相手情報を取得(idを引数として受け取る)
+  fetchPartnerData = async (id) => {
+
+    // JWTをlocalStorageから取得
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      // トークンがなければログインページへリダイレクト
+      this.setState({
+        errorMessage: "認証が必要です。ログインしてください。",
+        loading: false,
       });
+      this.props.router.navigate("/login/");
+      return;
+    }
+    this.setState({ loading: true, errorMessage: "" });
+
+    try {
+      const response = await axios.get(`/api/partner/${id}/`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      this.setState({
+        partner: response.data,
+        loading: false,
+        errorMessage: "",
+      });
+
+      this.initialPartnerState = { ...response.data }; // 成功時に initialPartnerState を更新
+      console.log("お相手データ取得成功:", response.data);
+
+    } catch (error) {
+      console.error("お相手情報の読み込みエラー:", error);
+      let message = "お相手情報の読み込みに失敗しました。";
+
+      this.setState({
+        errorMessage: message,
+        loading: false,
+      });
+    }
   };
 
   handleChange = (e) => {
@@ -40,23 +84,75 @@ class PartnerEdit extends React.Component {
     }));
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
-    const { id } = this.props;
-    axios
-      .post(`/api/partner/${id}/update`, this.state.partner)
-      .then(() => this.setState({ message: "お相手情報を更新しました。" }))
-      .catch((err) => console.error(err));
+
+    // 更新前の確認ダイアログ
+    const confirmSubmit = window.confirm("お相手情報を更新しますか？");
+    if (!confirmSubmit) {
+      return; // キャンセルされたら処理を中断
+    }
+
+    const { id } = this.props.router.params;
+    this.setState({ loading: true, errorMessage: "", message: "" }); // 送信前に状態をリセット
+
+    // JWTをlocalStorageから取得
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      // トークンがなければログインページへリダイレクト
+      this.setState({
+        errorMessage: "認証が必要です。ログインしてください。",
+        loading: false,
+      });
+      this.props.router.navigate("/login/");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `/api/partner/${id}/update/`,
+        this.state.partner,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      this.setState({
+        message: "お相手情報を更新しました。",
+        errorMessage: "", // 成功時はエラーをクリア
+        loading: false,
+      });
+      this.initialPartnerState = { ...this.state.partner }; // 更新成功後に初期状態を更新
+      console.log("お相手情報更新成功:", response.data);
+    } catch (error) {
+      console.error("お相手情報の更新エラー:", error);
+      let message = "お相手情報の更新に失敗しました。";
+
+      this.setState({
+        errorMessage: message,
+        message: "", // エラー時は成功メッセージをクリア
+        loading: false,
+      });
+    }
   };
 
   handleReset = () => {
-    this.fetchPartnerData();
-    this.setState({ message: "" });
+    const confirmReset = window.confirm("入力内容をリセットしますか？");
+    if (!confirmReset) {
+      return;
+    }
+    this.setState({
+      partner: { ...this.initialPartnerState }, // 保持している初期値にリセット
+      message: "入力内容をリセットしました。",
+      errorMessage: "",
+    });
   };
 
   render() {
-    const { partner, message } = this.state;
+    const { partner, message, errorMessage, loading } = this.state;
     const starRatingFields = [
+      //// StarRating に渡すフィールド定義
       { key: "homeSkill", label: "家事スキル" },
       { key: "communication", label: "コミュ力" },
       { key: "economicPower", label: "経済力" },
@@ -64,125 +160,170 @@ class PartnerEdit extends React.Component {
       { key: "consideration", label: "気遣い" },
     ];
     const regularRatingFields = [
-      { key: "contactFreq", label: "連絡頻度" },
-      { key: "personality", label: "性格" },
-      { key: "financialSense", label: "金銭感覚" },
-      { key: "initiative", label: "主体性" },
-      { key: "marriageIntent", label: "婚活真剣度" },
-      { key: "smoker", label: "喫煙" },
-      { key: "alcohol", label: "飲酒" },
-      { key: "gamble", label: "ギャンブル" },
+      // RadioRating に渡すフィールド定義
+      {
+        key: "contactFreq",
+        label: "連絡頻度",
+        minLabel: "少なめ",
+        maxLabel: "多め",
+      },
+      {
+        key: "personality",
+        label: "性格",
+        minLabel: "内向的",
+        maxLabel: "外交的",
+      },
+      {
+        key: "financialSense",
+        label: "金銭感覚",
+        minLabel: "節約家",
+        maxLabel: "浪費家",
+      },
+      {
+        key: "initiative",
+        label: "主体性",
+        minLabel: "受動的",
+        maxLabel: "主体的",
+      },
+      {
+        key: "marriageIntent",
+        label: "婚活真剣度",
+        minLabel: "低め",
+        maxLabel: "高め",
+      },
+      {
+        key: "smoker",
+        label: "喫煙",
+        minLabel: "まったく吸わない",
+        maxLabel: "よく吸う",
+      },
+      {
+        key: "alcohol",
+        label: "飲酒",
+        minLabel: "まったく飲まない",
+        maxLabel: "よく飲む",
+      },
+      {
+        key: "gamble",
+        label: "ギャンブル",
+        minLabel: "まったくしない",
+        maxLabel: "よくする",
+      },
     ];
 
+    // ローディング中の表示
+    if (loading) {
+      return <div className="loading-message">読み込み中...</div>;
+    }
+
+    // エラーメッセージの表示
+    // ローディングが完了し、かつエラーメッセージがある場合のみ表示
+    if (errorMessage && !loading) { 
+      return <div className="error-message">{errorMessage}</div>;
+    }
+
     return (
-      <div>
+      <div className="partner-edit-container">
         <h1>{partner.name}さんのプロフィール編集</h1>
         {message && <div style={{ color: "green" }}>{message}</div>}
 
         <form onSubmit={this.handleSubmit}>
           <div>
-            <label>
-              名前:
-              <input
-                type="text"
-                name="name"
-                value={partner.name || ""}
-                onChange={this.handleChange}
-              />
-            </label>
-            <br />
-            <label>
-              ふりがな:
-              <input
-                type="text"
-                name="nameRead"
-                value={partner.nameRead || ""}
-                onChange={this.handleChange}
-              />
-            </label>
-            <br />
-            <label>
-              年齢:
-              <input
-                type="number"
-                name="age"
-                value={partner.age || ""}
-                onChange={this.handleChange}
-              />
-            </label>
-            <br />
-            <label>
-              生年月日:
-              <input
-                type="date"
-                name="birthday"
-                value={partner.birthday || ""}
-                onChange={this.handleChange}
-              />
-            </label>
-            <br />
-            <label>
-              出会った日:
-              <input
-                type="date"
-                name="firstMetDay"
-                value={partner.firstMetDay || ""}
-                onChange={this.handleChange}
-              />
-            </label>
-            <br />
+            <div className="form-group">
+              <label>
+                名前:
+                <input
+                  type="text"
+                  name="name"
+                  value={partner.name}
+                  onChange={this.handleChange}
+                />
+              </label>
+            </div>
+            <div className="form-group">
+              <label>
+                ふりがな:
+                <input
+                  type="text"
+                  name="nameRead"
+                  value={partner.nameRead || ""}
+                  onChange={this.handleChange}
+                />
+              </label>
+            </div>
+            <div className="form-group">
+              <label>
+                年齢:
+                <input
+                  type="number"
+                  name="age"
+                  value={partner.age || ""}
+                  onChange={this.handleChange}
+                />
+              </label>
+            </div>
+            <div className="form-group">
+              <label>
+                生年月日:
+                <input
+                  type="date"
+                  name="birthday"
+                  value={partner.birthday || ""}
+                  onChange={this.handleChange}
+                />
+              </label>
+            </div>
+            <div className="form-group">
+              <label>
+                出会った日:
+                <input
+                  type="date"
+                  name="firstMetDay"
+                  value={partner.firstMetDay || ""}
+                  onChange={this.handleChange}
+                />
+              </label>
+            </div>
           </div>
 
-          <hr />
+          <hr className="divider" />
 
           <p>スペック</p>
-          {starRatingFields.map((field) => (
-            <div key={field.key}>
-              <p>{field.label}</p>
-              <div className="rating star">
-                {[1, 2, 3, 4, 5].map((v) => (
-                  <label key={`${field.key}-${v}`}>
-                    <input
-                      type="radio"
-                      id={`${field.key}${v}`}
-                      name={field.key}
-                      value={v}
-                      style={{ display: "none" }} // 星評価のinputを非表示
-                      checked={Number(partner[field.key]) === v}
-                      onChange={this.handleChange}
-                    />
-                    <label htmlFor={`${field.key}${v}`} title={`${v} stars`}>
-                      ★
-                    </label>
-                  </label>
-                ))}
-              </div>
-            </div>
-          ))}
+          {/* StarRating コンポーネントを使用 */}
+          <div className="section">
+            {starRatingFields.map((field) => (
+              <StarRating
+                key={field.key}
+                label={field.label}
+                name={field.key}
+                value={partner[field.key]} // partner オブジェクトから値を渡す
+                onChange={this.handleChange}
+              />
+            ))}
+          </div>
 
-          <hr />
+          <hr className="divider" />
 
-          {regularRatingFields.map((field) => (
-            <div key={field.key}>
-              <p>{field.label}</p>
-              {[1, 2, 3, 4, 5].map((v) => (
-                <label key={v}>
-                  <input
-                    type="radio"
-                    name={field.key}
-                    value={v}
-                    checked={Number(partner[field.key]) === v}
-                    onChange={this.handleChange}
-                  />
-                  {v}
-                </label>
-              ))}
-            </div>
-          ))}
+          {/* RadioRating コンポーネントを使用 */}
+          <div className="section">
+            {regularRatingFields.map((field) => (
+              <RadioRating
+                key={field.key}
+                label={field.label}
+                name={field.key}
+                value={partner[field.key]} // partner オブジェクトから値を渡す
+                onChange={this.handleChange}
+                minLabel={field.minLabel}
+                maxLabel={field.maxLabel}
+              />
+            ))}
+          </div>
 
-          <hr />
+          <hr className="divider" />
 
-          <div>
+          {/* その他情報セクション */}
+          <div className="section">
+            <div className="form-group">
             <label>
               連れ子の有無:
               <select
@@ -195,8 +336,8 @@ class PartnerEdit extends React.Component {
                 <option value={2}>あり</option>
               </select>
             </label>
-            <br />
-
+            </div>
+            <div className="form-group">
             <label>
               転勤の有無:
               <select
@@ -209,8 +350,8 @@ class PartnerEdit extends React.Component {
                 <option value={2}>あり</option>
               </select>
             </label>
-            <br />
-
+            </div>
+<div className="form-group">
             <label>
               運転免許:
               <select
@@ -223,8 +364,8 @@ class PartnerEdit extends React.Component {
                 <option value={2}>あり</option>
               </select>
             </label>
-            <br />
-
+            </div>
+<div className="form-group">
             <label>
               両親との同棲希望:
               <select
@@ -237,8 +378,8 @@ class PartnerEdit extends React.Component {
                 <option value={2}>希望する</option>
               </select>
             </label>
-            <br />
-
+            </div>
+<div className="form-group">
             <label>
               共働き希望:
               <select
@@ -251,15 +392,17 @@ class PartnerEdit extends React.Component {
                 <option value={2}>希望する</option>
               </select>
             </label>
-            <br />
+            </div>
           </div>
 
-          <hr />
-
+          <hr className="divider" />
+          {/* アクションボタン */}
+          <div className="form-actions">
           <button type="submit">更新</button>
           <button type="button" onClick={this.handleReset}>
             元に戻す
           </button>
+          </div>
         </form>
       </div>
     );
