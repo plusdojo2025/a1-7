@@ -1,26 +1,61 @@
 package com.example.demo.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Messages;
+import com.example.demo.entity.Partners;
 import com.example.demo.repository.MessagesRepository;
+import com.example.demo.repository.PartnersRepository;
+import com.example.demo.security.services.UserDetailsImpl;
 
 
-@CrossOrigin(origins = "http://localhost:3000")
+//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
+@RequestMapping("/api/messages/")
 public class MessageController {
 
 	@Autowired
 	private MessagesRepository repository;
+	
+	@Autowired
+	private PartnersRepository partnersRepository;
+	
+	// お相手一覧取得
+	@GetMapping("/partners/")
+	public ResponseEntity<Map<String, Object>> getMap() {
+		// 1. 現在認証されているユーザーの情報を取得
+				Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-	@PostMapping("/messages/ideas/")
+				// 認証プリンシパルからUserDetailsImplオブジェクトを取得
+				UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+				
+				// UserDetailsImpl からログインユーザーのIDを取得
+				Integer loggedInUserId = userDetails.getId();
+				
+				// 2. ログインユーザーのIDに紐づくパートナーのみを取得
+				List<Partners> partners = partnersRepository.findByUserId(loggedInUserId);
+				
+				Map<String, Object> response = new HashMap<>();
+				response.put("status", "success");
+				response.put("message", "パートナーリストが正常に取得されました。");
+				response.put("data", partners);
+				
+				return ResponseEntity.ok(response); // 200 OK ステータスとともにJSONを返す
+	}
+
+	@PostMapping("/ideas/")
 	public ResponseEntity<?> submitMessage(@RequestBody Messages messages) {
 	    // バリデーション処理
 	    if (messages.getPartnersId() == null || messages.getMood() == null || messages.getMatter() == null) {
@@ -89,11 +124,5 @@ public class MessageController {
 //		return "message";
 //	}
 
-	@GetMapping("/messages/ideas/")
-	public String showMessageForm(Model model) {
-		System.out.println("出力テスト");
-		model.addAttribute("messageIdea", new Messages());
-		return "message";
-	}
-
+	
 }

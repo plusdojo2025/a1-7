@@ -20,6 +20,4 @@ export default class MessageCorrect extends React.Component {
             </div>
         );
     }
-
-
 }
