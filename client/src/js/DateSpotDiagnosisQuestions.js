@@ -1,5 +1,9 @@
 import React from "react";
 import axios from "axios";
+import { withNavigation } from "../hoc/withNavigation";
+
+// ↓ページURL
+// http://localhost:3000/date-spot/questions/
 
 class DateSpotDiagnosisQuestions extends React.Component {
   constructor(props) {
@@ -15,7 +19,23 @@ class DateSpotDiagnosisQuestions extends React.Component {
   }
 
   componentDidMount() {
-    axios.get("/api/date-spot/")
+    this.setState({ loading: true, errorMessage: "" }); // ロード状態を設定
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+        // トークンがなければログインページへリダイレクト
+        this.setState({
+          errorMessage: "認証が必要です。ログインしてください。",
+          loading: false // ローディングを解除
+        });
+        this.props.router.navigate("/login/");
+        return; // リクエストを停止
+      }
+
+    axios.get("/api/date-spot/", {
+        headers: {
+            Authorization: `Bearer ${accessToken}`
+        }
+    })
       .then(response => {
          console.log("APIから取得したデータ:", response.data); 
         const map = {};
@@ -110,4 +130,4 @@ class DateSpotDiagnosisQuestions extends React.Component {
 }
 
 
-export default DateSpotDiagnosisQuestions;
+export default withNavigation(DateSpotDiagnosisQuestions);

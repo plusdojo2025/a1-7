@@ -1,6 +1,9 @@
 
 import React from "react";
+import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+
+// ページURL（http://localhost:3000/date-spot/）
 
 // 🚩 React Router v6 用の withRouter を自作
 function withRouter(Component) {
@@ -23,9 +26,22 @@ class Date extends React.Component {
     };
   }
 
-  qstart = async () => {
+  qstart = async (event) => {
+    event.preventDefault(); // イベントのデフォルト動作を停止
+    
     this.setState({ loading: true, errorMessage: "" });
     try {
+      // JWTをlocalStorageから取得
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
+        // トークンがなければログインページへリダイレクト
+        this.setState({
+          errorMessage: "認証が必要です。ログインしてください。",
+        });
+        this.props.router.navigate("/login/");
+        return;
+      }
+
       await new Promise((resolve) => setTimeout(resolve, 1000));
       // 🚩 router.navigate に変更（React Router v6）
       this.props.router.navigate("/date-spot/questions/");
