@@ -25,8 +25,8 @@ public class Messages {
     private Integer usersId;
     private Integer partnersId;
 //    private String partnersName;
-    private Integer mood;
-    private Integer matter;
+    private String mood;
+    private String matter;
     private String prompt;
 //    private String mood;
 //    private String matter;
