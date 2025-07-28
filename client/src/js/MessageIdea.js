@@ -13,31 +13,52 @@ export default class MessageIdea extends React.Component {
             matter: "",
             prompt: "",
             commandSentence: "",
+            errorMessage: "",
         };
     }
 
     handleChange = (event) => {
-        const { name, value} = event.target;
-        this.setState({[name]:value});
+        const { name, value } = event.target;
+        this.setState({ [name]: value });
     }
 
     submitMessageIdea = (event) => {
         event.preventDefault();
 
-        let { partnersId, mood, matter, errorMessage, } = this.state;
-        if (partnersId === "" || mood === "" || matter === "") {
+        let { partnersId, mood, matter, } = this.state;
+        if (!partnersId || !mood || !matter) {
             let message = "未選択の項目があります";
             this.setState({ errorMessage: message });
             // event.preventDefault();
+            return;
         }
 
+        // 命令文、プロンプトを作成
+        let generatedCommand = `${partnersId}さん宛に、${mood}な雰囲気で「${matter}」という用件のメッセージを考えて。`;
+        let generatedPrompt = `あなたは婚活アプリです。以下に入力する内容で、ユーザーのメッセージ作成をサポートしてください。${partnersId}さん宛に、${mood}な雰囲気で「${matter}」という用件のメッセージを考えて。`;
+
+        this.setState({
+            commandSentence: generatedCommand,
+            prompt: generatedPrompt,
+            // prompt: response.data.prompt,
+            errorMessage: "",
+        });
+
+        // 送信できるようになったらコメント解除
         axios
-            .post("", {
+            .post("/messages/ideas/", {
                 partnersId: this.state.partnersId,
                 mood: this.state.mood,
                 matter: this.state.matter,
+                commandSentence: this.state.commandSentence,
+                prompt: this.state.prompt,
             })
             .then((response) => {
+                this.setState({
+                    // commandSentence: generatedCommand,
+                    // prompt: response.data.prompt,
+                    errorMessage: "",
+                });
                 console.log("成功", response);
             })
             .catch((error) => {
@@ -50,41 +71,100 @@ export default class MessageIdea extends React.Component {
 
 
     render() {
-        let { partnersId, mood, matter, commandSentence, prompt , errorMessage, } = this.state;
+        let { partnersId, mood, matter, commandSentence, prompt, errorMessage, } = this.state;
         return (
             <div>
                 <h2>メッセージ提案</h2>
 
                 {/* 命令文表示エリア */}
-                <p>命令文表示エリア</p>
+                {/* <p>命令文表示エリア</p>
                 <input type="text" name="commandSentence" id="commandSentence" value={commandSentence}></input>
                 <p></p>
                 <br></br>
 
                 {/* プロンプト表示エリア */}
-                <p>プロンプト表示エリア</p>
+                {/* <p>プロンプト表示エリア</p>
                 <input type="text" name="prompt" id="prompt" value={prompt}></input>
                 <p></p>
-                <br></br>
+                <br></br> */}
+
+                {commandSentence && (
+                    <div>
+                        <h4>命令文：</h4>
+                        <p>{commandSentence}</p>
+                    </div>
+                )}
+
+                {prompt && (
+                    <div>
+                        <h4>プロンプト：</h4>
+                        <p>{prompt}</p>
+
+                        {/* 📋 コピー機能付きボタンを追加 */}
+                        <button
+                            onClick={async () => {
+                                try {
+                                    await navigator.clipboard.writeText(prompt);
+                                    alert("プロンプトをコピーしました！");
+                                } catch (err) {
+                                    console.error("コピー失敗:", err);
+                                }
+                            }}
+                        >
+                            プロンプトをコピー
+                        </button>
+
+                    </div>
+                )}
+
 
 
                 <form method="POST">
                     {/* 宛先セレクト */}
                     <input type="text" name="partnersId" id="partnersId" value={partnersId} onChange={this.handleChange}></input>
+                    {/* <select name="partnersId" id="partnersId" value={partnersId} onChange={this.handleChange}>
+                        
+                        <option value=""></option>
+                        <option value="佐藤 健">佐藤 健</option>
+                    </select> */}
                     <label htmlFor="partnersId">さん宛に</label>
                     <br></br>
 
                     {/* 雰囲気セレクト */}
-                    <input type="text" name="mood" id="mood" value={mood} onChange={this.handleChange}></input>
+                    {/* <input type="text" name="mood" id="mood" value={mood} onChange={this.handleChange}></input> */}
+                    <select name="mood" id="mood" value={mood} onChange={this.handleChange}>
+                        <option value=""></option>
+                        <option value="まじめ">まじめ</option>
+                        <option value="さわやか">さわやか</option>
+                        <option value="フレンドリー">フレンドリー</option>
+                        <option value="素直に">素直に</option>
+                        <option value="大人っぽく">大人っぽく</option>
+                        <option value="積極的">積極的</option>
+                        <option value="礼儀正しく">礼儀正しく</option>
+                    </select>
                     <label htmlFor="mood">な雰囲気で</label>
                     <br></br>
 
                     {/* 用件セレクト */}
-                    <input type="text" name="matter" id="matter" value={matter} onChange={this.handleChange}></input>
+                    {/* <input type="text" name="matter" id="matter" value={matter} onChange={this.handleChange}></input> */}
+                    <select name="matter" id="matter" value={matter} onChange={this.handleChange}>
+                        <option value=""></option>
+                        <option value="2人きりのデートに誘いたい（初めて）">2人きりのデートに誘いたい（初めて）</option>
+                        <option value="会ったことない相手をデートに誘いたい">会ったことない相手をデートに誘いたい</option>
+                        <option value="マッチ後初メッセージを送りたい">マッチ後初メッセージを送りたい</option>
+                        <option value="デート後のお礼のメッセージを送りたい">デート後のお礼のメッセージを送りたい</option>
+                        <option value="2回目のデートを提案したい">2回目のデートを提案したい</option>
+                        <option value="ご飯に誘いたい">ご飯に誘いたい</option>
+                        <option value="休日の予定を聞きたい">休日の予定を聞きたい</option>
+                        <option value="電話のお誘いをしたい">電話のお誘いをしたい</option>
+                        <option value="気になる気持ちを伝えたい">気になる気持ちを伝えたい</option>
+                        <option value="励ましたい・力になりたい">励ましたい・力になりたい</option>
+                    </select>
+
                     <label htmlFor="matter">ためのメッセージを考えて</label>
                     <br></br>
 
-                    <button onClick={this.submitMessageIdea}>作成</button>
+                    <button onClick={this.submitMessageIdea} disabled={!partnersId || !mood || !matter}>作成</button>
 
                     {/* エラーメッセージがある場合のみ表示 */}
                     {errorMessage && (
