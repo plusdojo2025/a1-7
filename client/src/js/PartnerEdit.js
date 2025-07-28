@@ -7,7 +7,7 @@ class PartnerEdit extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      partner: {},
+      partner: [],
       message: "",
     };
   }

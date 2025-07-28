@@ -10,18 +10,20 @@ class PartnerDisplay extends React.Component {
     this.chartInstance = null;
 
     this.state = {
-      partner: null, // お相手の基本情報（名前、年齢など）
-      partnerName: null,
-      partnerAge: null,
-      partnerBirthday: null,
-      partnerFirstMetDay: null,
-      partnerMetEvent: null,
-      partnerFirstImpression: null,
+      // お相手の基本情報（名前、年齢など）
+      partnerDetail: {
+      name: "N/A",
+      age: "N/A",
+      birthday: "N/A",
+      firstMetDay: "N/A",
+      metEvent: "N/A",
+      firstImpression: "N/A",
+      },
 
       // JSON文字列として取得し、後でパース
-      idealJson: null,
-      partnerJson: null,
-      userJson: null,
+      idealJson: "{}",
+      partnerJson: "{}",
+      userJson: "{}",
 
       // パース後のオブジェクト（直接使用する）
       detailedIdealScores: {},
@@ -54,17 +56,22 @@ class PartnerDisplay extends React.Component {
     const currentPartnerId = this.props.router.params.id;
     const prevPartnerId = prevProps.router.params.id;
 
+    // URLのIDが変わった場合はデータを再取得
     if (currentPartnerId !== prevPartnerId) {
       this.fetchPartnerDetail();
     }
+
+    // fetchPartnerDetail内でsetStateのコールバックとしてdrawChartを呼ぶようにしたので、ここでのJSON変更による再描画は不要になった。
+    // fetchPartnerDetailはID変更時にも呼ばれるため、state更新時にdrawChartが実行される。
+
     // JSONデータが更新された場合のみチャートを再描画
-    else if (
-      prevState.idealJson !== this.state.idealJson ||
-      prevState.partnerJson !== this.state.partnerJson ||
-      prevState.userJson !== this.state.userJson
-    ) {
-      this.drawChart();
-    }
+    // else if (
+    //   prevState.idealJson !== this.state.idealJson ||
+    //   prevState.partnerJson !== this.state.partnerJson ||
+    //   prevState.userJson !== this.state.userJson
+    // ) {
+    //   this.drawChart();
+    // }
   }
 
   fetchPartnerDetail = async () => {
@@ -84,7 +91,7 @@ class PartnerDisplay extends React.Component {
       return;
     }
 
-    this.setState({ loading: true, error: null });
+    this.setState({ loading: true, error: null }); // ローディング状態を開始
 
     try {
       const response = await axios.get(`/api/partner/${id}/showView`, {
@@ -95,6 +102,9 @@ class PartnerDisplay extends React.Component {
 
       const partnerData = response.data.data;
 
+      // partnerDataが存在しない、またはnullの場合はデフォルト値で初期化
+      const currentPartnerData = partnerData || defaultData;
+
       // JSON文字列をパースしてstateに保存
       const idealJson = partnerData.idealScoresJson || "{}";
       const partnerJson = partnerData.partnerScoresJson || "{}";
@@ -102,13 +112,14 @@ class PartnerDisplay extends React.Component {
 
       this.setState(
         {
-          partner: partnerData, // 必要であればオブジェクト全体を保存
-          partnerName: partnerData.name || "N/A",
-          partnerAge: partnerData.age || "N/A",
-          partnerBirthday: partnerData.birthday || "N/A",
-          partnerFirstMetDay: partnerData.firstMetDay || "N/A",
-          partnerMetEvent: partnerData.metEvent || "N/A",
-          partnerFirstImpression: partnerData.firstImpression || "N/A",
+          partnerDetail: { // 基本情報をまとめて更新
+          name: currentPartnerData.name,
+          age: currentPartnerData.age,
+          birthday: currentPartnerData.birthday,
+          firstMetDay: currentPartnerData.firstMetDay,
+          metEvent: currentPartnerData.metEvent,
+          firstImpression: currentPartnerData.firstImpression,
+          },
 
           idealJson: idealJson,
           partnerJson: partnerJson,
@@ -153,6 +164,7 @@ class PartnerDisplay extends React.Component {
     }
   };
 
+  // お相手情報編集画面に遷移
   handleEditClick = () => {
     const { id } = this.props.router.params;
     if (id) {
@@ -177,8 +189,15 @@ class PartnerDisplay extends React.Component {
       return;
     }
 
+    // 既存のチャートインスタンスがあれば破棄
     if (this.chartInstance) {
       this.chartInstance.destroy();
+    }
+
+    // データが空の場合のハンドリング
+    if (labels.length === 0) {
+      console.warn("No data labels available for chart. Chart not drawn.");
+      return;
     }
 
     let idealObj, partnerObj, userObj;
@@ -204,6 +223,7 @@ class PartnerDisplay extends React.Component {
     // const partnerObj = JSON.parse(partnerJson);
     // const userObj = JSON.parse(userJson);
 
+    // 理想のスコアオブジェクトのキーからラベルを取得
     const labels = Object.keys(idealObj);
 
     const data = {
@@ -321,7 +341,7 @@ class PartnerDisplay extends React.Component {
           </div>
           <div>
             <div style={{ fontWeight: "bold" }}>
-              {partnerName}さんのプロフィール
+              {partnerData.name}さんのプロフィール
             </div>
             <hr />
             <div style={{ marginBottom: 4 }}>
