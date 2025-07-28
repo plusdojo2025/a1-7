@@ -94,16 +94,24 @@ class PartnerDisplay extends React.Component {
     this.setState({ loading: true, error: null }); // ローディング状態を開始
 
     try {
-      const response = await axios.get(`/api/partner/${id}/showView`, {
+      const response = await axios.get(`/api/partner/${id}/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
+      // データが存在しない場合のデフォルト値を設定
+      const defaultData = {
+        name: "N/A", age: "N/A", birthday: "N/A",
+        firstMetDay: "N/A", metEvent: "N/A", firstImpression: "N/A",
+        idealScoresJson: "{}", partnerScoresJson: "{}", userScoresJson: "{}",
+        partnerFlags: {}, idealFlags: {}, userFlags: {},
+      };
+
       const partnerData = response.data.data;
 
       // partnerDataが存在しない、またはnullの場合はデフォルト値で初期化
-      const currentPartnerData = partnerData || defaultData;
+      const currentPartnerData = partnerData;
 
       // JSON文字列をパースしてstateに保存
       const idealJson = partnerData.idealScoresJson || "{}";
@@ -310,17 +318,12 @@ class PartnerDisplay extends React.Component {
 
   render() {
     const {
-      partnerName,
-      partnerAge,
-      partnerBirthday,
-      partnerFirstMetDay,
-      partnerMetEvent,
-      partnerFirstImpression,
+      partnerDetail, // 新しいオブジェクトから情報を取得
       detailedIdealScores,
       detailedPartnerScores,
-      idealJson,
-      partnerJson,
-      userJson,
+      // idealJson,
+      // partnerJson,
+      // userJson,
       partnerFlags,
       idealFlags,
       userFlags,
@@ -341,19 +344,19 @@ class PartnerDisplay extends React.Component {
           </div>
           <div>
             <div style={{ fontWeight: "bold" }}>
-              {partnerData.name}さんのプロフィール
+              {partnerDetail.name}さんのプロフィール
             </div>
             <hr />
             <div style={{ marginBottom: 4 }}>
-              <span>年齢：{partnerAge}歳</span> &nbsp;&nbsp;
-              <span>生年月日：{partnerBirthday}</span> &nbsp;&nbsp;
-              <span>出会った日：{partnerFirstMetDay}</span>
+              <span>年齢：{partnerDetail.age}歳</span> &nbsp;&nbsp;
+              <span>生年月日：{partnerDetail.birthday}</span> &nbsp;&nbsp;
+              <span>出会った日：{partnerDetail.firstMetDay}</span>
             </div>
             <div>
-              出会った経緯：<span>{partnerMetEvent}</span>
+              出会った経緯：<span>{partnerDetail.metEvent}</span>
             </div>
             <div>
-              第一印象：<span>{partnerFirstImpression}</span>
+              第一印象：<span>{partnerDetail.firstImpression}</span>
             </div>
           </div>
           <div style={{ fontWeight: "bold", fontSize: 24, cursor: "pointer" }}>
