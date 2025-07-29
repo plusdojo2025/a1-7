@@ -1,7 +1,8 @@
 import React from "react";
 import axios from "axios";
+import { withNavigation } from "../hoc/withNavigation";
 
-export default class Impression extends React.Component {
+class Impression extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,48 +15,73 @@ export default class Impression extends React.Component {
 
       searchTerm: "", // 検索クエリ
       errorMessage: "",
-      error: null, // エラーハンドリング用
       loading: true, // ローディング状態
       showModal: false, // モーダル表示用
     };
   }
 
-  // マウント後に自動で動作する
+  // コンポーネントがマウントされた後にデータを取得
   componentDidMount() {
-    const { partnerProfilesId } = this.props;
+    // router プロパティが提供されているかチェック
+    if (
+      this.props.router &&
+      this.props.router.params &&
+      this.props.router.params.id
+    ) {
+      this.fetchImpressions(this.props.router.params.id);
+    } else {
+      // ID が取得できない場合のエラーハンドリング
+      this.setState({
+        errorMessage: "パートナーIDが取得できませんでした。",
+        loading: false,
+      });
+    }
+  }
+  fetchImpressions = async (partnerProfilesId) => {
+    this.setState({ loading: true, errorMessage: null });
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+      this.setState({
+        errorMessage: "認証情報が見つかりません。再ログインしてください。",
+        loading: false,
+      });
+      this.props.router.navigate("/login/");
+      return;
+    }
 
     // axios.get()で ImpressionController から json を受け取り、fullItemsList と filteredItems にセット
-    axios.get(`/impressions/${partnerProfilesId}/`)
-      .then((response) => {
-        console.log(response.data);
-        this.setState({
-          fullItemsList: response.data, // 全件リストを保存
-          filteredItems: response.data, // 初期表示では全件を表示
-          loading: false, // データ取得完了にローディングを終了
-        });
-      })
-      // エラーハンドリング
-      .catch((error) => {
-        console.error("データの取得中にエラーが発生しました:", error);
-        this.setState({
-          error: error, // エラー情報を state に保存
-          loading: false, // エラーが発生した場合もローディングを終了
-        });
+    try {
+      const response = await axios.get(
+        `/api/impressions/${partnerProfilesId}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      this.setState({
+        fullItemsList: response.data,
+        filteredItems: response.data,
+        loading: false,
       });
-  }
+    } catch (error) {
+      console.error("印象ログの取得中にエラーが発生しました:", error);
+      if (error.response && error.response.status === 401) {
+        this.props.router.navigate("/login/");
+      }
+      this.setState({
+        errorMessage: "印象ログの取得に失敗しました。",
+        loading: false,
+      });
+    }
+  };
 
-  // searchTerm のstate値を更新
-  // onInput = (e) => {
-  //   const { value } = e.target;
-  //   this.setState({ searchTerm: value });
-  // };
-
-  // ↑だとsearchTermにしか適用されないので追加しました
+  // 各入力フィールドのstate値を更新
   handleInputChange = (e) => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
   };
-
 
   // 印象ログをフィルタリングするメソッド
   filterItems = () => {
@@ -73,15 +99,16 @@ export default class Impression extends React.Component {
     this.setState({ filteredItems: newFilteredItems });
   };
 
-
-  // ↓追加部分
-  //モーダルウィンドウの表示メソッド
+  // モーダルウィンドウの表示メソッド
   toggleModal = () => {
-    const { showModal } = this.state;
-    this.setState({
-      showModal: !showModal
-    });
-  }
+    this.setState((prevState) => ({
+      showModal: !prevState.showModal,
+    }));
+    // モーダルを閉じる際にフォームをリセット
+    if (this.state.showModal) {
+      this.resetForm();
+    }
+  };
 
   // 画像のアップロード処理
   handleImageUpload = (e) => {
@@ -89,7 +116,7 @@ export default class Impression extends React.Component {
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      this.setState({ imageData: reader.result.split(',')[1] }); // base64 文字列のみ
+      this.setState({ imageData: reader.result.split(",")[1] }); // base64 文字列のみ
     };
 
     if (file) {
@@ -97,37 +124,62 @@ export default class Impression extends React.Component {
     }
   };
 
-  // 登録処理
+  // 印象ログの登録処理
   addImpression = () => {
-    const { recordDate, impression, imageData } = this.state;
-    const { partnerProfilesId } = this.props;
+    const { recordDate, impression, imageData, imageMimeType } = this.state;
+    const partnerProfilesId = this.props.router.params.id; // URLからIDを取得
 
     const data = {
       partnerProfilesId,
       recordDate,
       impression,
-      imageData
+      imageData,
+      imageMimeType,
     };
 
-    axios.post("/impressions/add/", data)
-      .then(() => {
-        alert("印象記録を登録しました。");
-        this.toggleModal();
-        this.componentDidMount(); // 再取得
-      })
-      .catch(error => {
-        console.error("印象記録の登録に失敗しました。", error);
+    if (!recordDate || !impression) {
+      alert("日付と印象内容は必須です。");
+      return;
+    }
+
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      this.setState({
+        errorMessage: "認証情報が見つかりません。再ログインしてください。",
       });
+      this.props.router.navigate("/login/");
+      return;
+    }
+    try {
+      axios.post("/api/impressions/add/", data, { 
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        }
+      })
+        alert("印象記録を登録しました。");
+        this.toggleModal(); // モーダルを閉じる
+        this.componentDidMount(); // リストを再取得
+    } catch (error) {
+      console.error("印象記録の登録に失敗しました。", error);
+      if (error.response && error.response.status === 401) {
+        this.props.router.navigate("/login/");
+      }
+      this.setState({ errorMessage: "印象記録の登録に失敗しました。" });
+    }
   };
 
-  // リセット処理
+  // フォームのリセット処理
   resetForm = () => {
     this.setState({
       recordDate: "",
       impression: "",
-      imageData: ""
+      imageData: "",
+      imageMimeType: ""
     });
   };
+
+
 
   render() {
     const { searchTerm, filteredItems, loading, error } = this.state;
@@ -144,7 +196,12 @@ export default class Impression extends React.Component {
       <div>
         {/* 検索フォーム */}
         <div className="search-box">
-          <input type="text" name="searchTerm" value={this.state.searchTerm} onChange={this.handleInputChange} />
+          <input
+            type="text"
+            name="searchTerm"
+            value={searchTerm}
+            onChange={this.handleInputChange}
+          />
           <button
             type="button"
             className="search-button"
@@ -164,28 +221,47 @@ export default class Impression extends React.Component {
                 <div>
                   <label>
                     日付：
-                    <input type="date" name="recordDate" value={this.state.recordDate} onChange={this.handleInputChange} />
+                    <input
+                      type="date"
+                      name="recordDate"
+                      value={this.state.recordDate}
+                      onChange={this.handleInputChange}
+                    />
                   </label>
                 </div>
 
                 <div>
                   <label>
                     画像：
-                    <input type="file" accept="image/*" onChange={this.handleImageUpload} />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={this.handleImageUpload}
+                    />
                   </label>
                 </div>
 
                 <div>
                   <label>
                     印象：
-                    <textarea name="impression" value={this.state.impression} onChange={this.handleInputChange} />
+                    <textarea
+                      name="impression"
+                      value={this.state.impression}
+                      onChange={this.handleInputChange}
+                    />
                   </label>
                 </div>
 
                 <div>
-                  <button type="button" onClick={this.addImpression}>登録</button>
-                  <button type="button" onClick={this.resetForm}>リセット</button>
-                  <button type="button" onClick={this.toggleModal}>閉じる</button>
+                  <button type="button" onClick={this.addImpression}>
+                    登録
+                  </button>
+                  <button type="button" onClick={this.resetForm}>
+                    リセット
+                  </button>
+                  <button type="button" onClick={this.toggleModal}>
+                    閉じる
+                  </button>
                 </div>
               </form>
             </div>
@@ -207,8 +283,9 @@ export default class Impression extends React.Component {
                   <p>印象：{log.impression}</p>
                   {log.imageData && (
                     <img
-                      src={`data:${log.mimeType || "image/png"};base64,${log.imageData
-                        }`}
+                      src={`data:${log.mimeType || "image/png"};base64,${
+                        log.imageData
+                      }`}
                       alt="印象画像"
                       style={{
                         width: "100px",
@@ -234,3 +311,5 @@ export default class Impression extends React.Component {
     );
   }
 }
+
+export default withNavigation(Impression);

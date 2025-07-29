@@ -291,13 +291,13 @@ class PartnerList extends React.Component {
                   <label htmlFor="metEvent">出会った経緯</label>
                   <select name="metEvent">
                     <option value="">選択してください</option>
-                    <option value="matchmaking">お見合い</option>
-                    <option value="machikon">街コン</option>
-                    <option value="goukon">合コン</option>
-                    <option value="app">アプリ</option>
-                    <option value="friend">友達の紹介</option>
-                    <option value="work">仕事</option>
-                    <option value="other">その他</option>
+                    <option value="お見合い">お見合い</option>
+                    <option value="街コン">街コン</option>
+                    <option value="合コン">合コン</option>
+                    <option value="アプリ">アプリ</option>
+                    <option value="友達の紹介">友達の紹介</option>
+                    <option value="仕事">仕事</option>
+                    <option value="その他">その他</option>
                   </select>
                 </div>
                 <div className="form-group">

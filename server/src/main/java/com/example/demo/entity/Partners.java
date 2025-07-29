@@ -41,7 +41,7 @@ public class Partners {
 	private Date birthday;
 
 	@Column(name = "met_event")
-	private Integer metEvent;
+	private String metEvent;
 
 	@Column(name = "first_met_day")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")

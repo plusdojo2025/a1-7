@@ -13,7 +13,7 @@ public interface ImpressionLogsRepository extends JpaRepository<ImpressionLogs, 
 	// お相手の印象記録を全件取得
 	List<ImpressionLogs> findByPartnerProfilesIdOrderByRecordDateDesc(Integer partnerProfilesId);
 	
-	// 印象内容で部分一致検索
+	// 印象内容で部分一致検索(大文字小文字を区別しない)
 	List<ImpressionLogs> findByImpressionLike(String impression);
 	
 	List<ImpressionLogs> findByPartnerProfilesId(Integer partnerProfilesId);
