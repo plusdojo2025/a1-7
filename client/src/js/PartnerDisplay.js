@@ -12,12 +12,12 @@ class PartnerDisplay extends React.Component {
     this.state = {
       // お相手の基本情報（名前、年齢など）
       partnerDetail: {
-      name: "N/A",
-      age: "N/A",
-      birthday: "N/A",
-      firstMetDay: "N/A",
-      metEvent: "N/A",
-      firstImpression: "N/A",
+        name: "",
+        age: "",
+        birthday: "",
+        firstMetDay: "",
+        metEvent: "",
+        firstImpression: "",
       },
 
       // JSON文字列として取得し、後でパース
@@ -30,7 +30,6 @@ class PartnerDisplay extends React.Component {
       detailedPartnerScores: {},
       partnerFlags: {},
       idealFlags: {},
-      userFlags: {},
 
       loading: true,
       error: null,
@@ -43,10 +42,68 @@ class PartnerDisplay extends React.Component {
       "運転免許",
       "両親との同棲希望",
       "共働き",
-      "子供希望",
     ];
   }
 
+//---------ダミーデータ---------//
+//   componentDidMount() {
+//   const dummyIdealJson = JSON.stringify({
+//     家事スキル: 4,
+//     コミュ力: 5,
+//     経済力: 3,
+//     容姿: 2,
+//     気遣い: 4,
+//   });
+
+//   const dummyPartnerJson = JSON.stringify({
+//     家事スキル: 3,
+//     コミュ力: 4,
+//     経済力: 4,
+//     容姿: 2,
+//     気遣い: 3,
+//   });
+
+//   const dummyUserJson = JSON.stringify({
+//     家事スキル: 5,
+//     コミュ力: 3,
+//     経済力: 2,
+//     容姿: 3,
+//     気遣い: 4,
+//   });
+
+//   const dummyFlags = {
+//     "連れ子の有無": 2,
+//     "転勤の有無": 1,
+//     "運転免許": 1,
+//     "両親との同棲希望": 3,
+//     "共働き": 1,
+//     "子供希望": 1,
+//   };
+
+//   this.setState({
+//     partnerDetail: {
+//       name: "山田太郎",
+//       age: 30,
+//       birthday: "1993-03-10",
+//       firstMetDay: "2024-01-01",
+//       metEvent: "友人の紹介",
+//       firstImpression: "優しそうだった",
+//     },
+//     idealJson: dummyIdealJson,
+//     partnerJson: dummyPartnerJson,
+//     userJson: dummyUserJson,
+//     detailedIdealScores: dummyIdealJson,
+//     detailedPartnerScores: dummyPartnerJson,
+//     idealFlags: dummyFlags,
+//     partnerFlags: dummyFlags,
+//     userFlags: dummyFlags,
+//     loading: false,
+//   }, () => {
+//     this.drawChart(); // チャート描画
+//   });
+// }
+
+  
   componentDidMount() {
     this.fetchPartnerDetail();
   }
@@ -94,12 +151,14 @@ class PartnerDisplay extends React.Component {
     this.setState({ loading: true, error: null }); // ローディング状態を開始
 
     try {
-      const response = await axios.get(`/api/partner/${id}/`, {
+      const response = await axios.get(`/partner/${id}/`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
+      const partnerData = response.data;// ここで受け渡している
+      
       // データが存在しない場合のデフォルト値を設定
       const defaultData = {
         name: "N/A", age: "N/A", birthday: "N/A",
@@ -108,25 +167,32 @@ class PartnerDisplay extends React.Component {
         partnerFlags: {}, idealFlags: {}, userFlags: {},
       };
 
-      const partnerData = response.data.data;
-
       // partnerDataが存在しない、またはnullの場合はデフォルト値で初期化
       const currentPartnerData = partnerData;
 
       // JSON文字列をパースしてstateに保存
-      const idealJson = partnerData.idealScoresJson || "{}";
-      const partnerJson = partnerData.partnerScoresJson || "{}";
-      const userJson = partnerData.userScoresJson || "{}"; // 自己評価スコア
+      const idealJson = partnerData.radarChart.ideal || {};
+      const partnerJson = partnerData.radarChart.partner || {};
+      const userJson = partnerData.radarChart.user || {}; // 自己評価スコア
+
+      const detailedIdealScores = partnerData.detailedScores.ideal || {};
+      const detailedPartnerScores = partnerData.detailedScores.partner || {};
+
+       // フラグデータが直接オブジェクトとして返されることを想定
+      const idealFlags = partnerData.flags.ideal || {}; // 理想の相手のフラグ   
+      const partnerFlags = partnerData.flags.partner || {};
+          
+          
 
       this.setState(
         {
           partnerDetail: { // 基本情報をまとめて更新
-          name: currentPartnerData.name,
-          age: currentPartnerData.age,
-          birthday: currentPartnerData.birthday,
-          firstMetDay: currentPartnerData.firstMetDay,
-          metEvent: currentPartnerData.metEvent,
-          firstImpression: currentPartnerData.firstImpression,
+            name: currentPartnerData.profile.name,
+            age: currentPartnerData.profile.age,
+            birthday: currentPartnerData.profile.birthday,
+            firstMetDay: currentPartnerData.profile.firstMetDay,
+            metEvent: currentPartnerData.profile.metEvent,
+            firstImpression: currentPartnerData.profile.firstImpression,
           },
 
           idealJson: idealJson,
@@ -134,12 +200,11 @@ class PartnerDisplay extends React.Component {
           userJson: userJson,
 
           // 各種詳細スコアとフラグをパースして state に保持
-          detailedIdealScores: JSON.parse(idealJson),
-          detailedPartnerScores: JSON.parse(partnerJson),
-          // フラグデータが直接オブジェクトとして返されることを想定
-          partnerFlags: partnerData.partnerFlags || {},
-          idealFlags: partnerData.idealFlags || {}, // 理想の相手のフラグ
-          userFlags: partnerData.userFlags || {}, // 自己評価フラグ
+          detailedIdealScores: detailedIdealScores,
+          detailedPartnerScores: detailedPartnerScores,
+
+          idealFlags:idealFlags,
+          partnerFlags:partnerFlags,
 
           loading: false,
         },
@@ -159,9 +224,8 @@ class PartnerDisplay extends React.Component {
           } else if (error.response.status === 404) {
             errorMessage = "指定されたお相手は見つかりませんでした。";
           } else {
-            errorMessage = `エラー: ${error.response.status} - ${
-              error.response.data.message || error.message
-            }`;
+            errorMessage = `エラー: ${error.response.status} - ${error.response.data.message || error.message
+              }`;
           }
         } else if (error.request) {
           errorMessage =
@@ -197,25 +261,13 @@ class PartnerDisplay extends React.Component {
       return;
     }
 
-    // 既存のチャートインスタンスがあれば破棄
-    if (this.chartInstance) {
-      this.chartInstance.destroy();
-    }
-
-    // データが空の場合のハンドリング
-    if (labels.length === 0) {
-      console.warn("No data labels available for chart. Chart not drawn.");
-      return;
-    }
-
     let idealObj, partnerObj, userObj;
     try {
-      idealObj = JSON.parse(idealJson);
-      partnerObj = JSON.parse(partnerJson);
-      userObj = JSON.parse(userJson);
+      idealObj = idealJson;
+      partnerObj = partnerJson;
+      userObj = userJson;
     } catch (e) {
       console.error("Failed to parse JSON for chart:", e);
-      // JSONパースに失敗した場合も描画を停止
       if (this.chartInstance) {
         this.chartInstance.destroy();
         this.chartInstance = null;
@@ -223,16 +275,19 @@ class PartnerDisplay extends React.Component {
       return;
     }
 
-    // if (this.chartInstance) {
-    //   this.chartInstance.destroy();
-    // }
-
-    // const idealObj = JSON.parse(idealJson);
-    // const partnerObj = JSON.parse(partnerJson);
-    // const userObj = JSON.parse(userJson);
-
     // 理想のスコアオブジェクトのキーからラベルを取得
     const labels = Object.keys(idealObj);
+
+    // データが空の場合のハンドリング
+    if (labels.length === 0) {
+      console.warn("No data labels available for chart. Chart not drawn.");
+      return;
+    }
+
+    // 既存のチャートインスタンスがあれば破棄
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+    }
 
     const data = {
       labels,
@@ -289,16 +344,14 @@ class PartnerDisplay extends React.Component {
       },
     };
 
-    const ctx = this.chartRef.current; // ここでcanvas要素そのものを取得
+    const ctx = this.chartRef.current;
     if (ctx) {
-      // ctxがnullでないか確認
       this.chartInstance = new Chart(ctx.getContext("2d"), config);
     } else {
-      console.warn(
-        "Chart canvas reference is not available when drawing chart."
-      );
+      console.warn("Chart canvas reference is not available when drawing chart.");
     }
   }
+
 
   // 〇×表示用
   displayFlag(val) {
@@ -306,15 +359,51 @@ class PartnerDisplay extends React.Component {
       case 0:
         return "未設定";
       case 1:
-        return "〇";
+        return "×";
       case 2:
         return "どちらでもよい";
       case 3:
-        return "×";
+        return "〇";
       default:
         return "不明";
     }
   }
+
+  // 5段階評価の□を横に並べて色付けするコンポーネント
+  FivePointRating({ partnerScore, idealScore, label, leftLabel, rightLabel }) {
+    const boxes = (score, color) =>
+      [...Array(5)].map((_, i) => (
+        <span
+          key={i}
+          style={{
+            display: "inline-block",
+            width: 20,
+            height: 20,
+            margin: "0 2px",
+            border: "1px solid #999",
+            backgroundColor: i < score ? color : "transparent",
+          }}
+        />
+      ));
+
+    return (
+      <div style={{ display: "flex", alignItems: "center", marginBottom: 8, maxWidth: 700, margin: "10px auto" }}>
+        <div style={{ width: 120 }}>{label}</div>
+        <div style={{ width: 50, textAlign: "right", fontSize: 12 }}>{leftLabel}</div>
+
+        <div style={{ margin: "0 10px" }}>
+          {boxes(partnerScore, "#d81e05")} {/* お相手は赤 */}
+        </div>
+
+        <div style={{ margin: "0 10px" }}>
+          {boxes(idealScore, "#008000")} {/* 理想は緑 */}
+        </div>
+
+        <div style={{ width: 50, fontSize: 12 }}>{rightLabel}</div>
+      </div>
+    );
+  }
+
 
   render() {
     const {
@@ -326,7 +415,6 @@ class PartnerDisplay extends React.Component {
       // userJson,
       partnerFlags,
       idealFlags,
-      userFlags,
     } = this.state;
     const { navigate } = this.props.router;
 
@@ -339,9 +427,6 @@ class PartnerDisplay extends React.Component {
             alignItems: "center",
           }}
         >
-          <div style={{ border: "1px solid #000", padding: "5px 10px" }}>
-            ロゴ
-          </div>
           <div>
             <div style={{ fontWeight: "bold" }}>
               {partnerDetail.name}さんのプロフィール
@@ -358,9 +443,6 @@ class PartnerDisplay extends React.Component {
             <div>
               第一印象：<span>{partnerDetail.firstImpression}</span>
             </div>
-          </div>
-          <div style={{ fontWeight: "bold", fontSize: 24, cursor: "pointer" }}>
-            ≡
           </div>
         </header>
         <button onClick={this.handleEditClick}>編集</button>
@@ -442,21 +524,21 @@ class PartnerDisplay extends React.Component {
           <thead>
             <tr>
               <th style={thStyle}>項目</th>
-              <th style={{ ...thStyle, color: "#d81e05" }}>お相手</th>
               <th style={{ ...thStyle, color: "#008000" }}>理想</th>
+              <th style={{ ...thStyle, color: "#d81e05" }}>お相手</th>
             </tr>
           </thead>
           <tbody>
             {this.flagKeys.map((key) => (
               <tr key={key}>
                 <td style={tdStyle}>{key}</td>
-                <td style={{ ...tdStyle, color: "#d81e05" }}>
-                  {this.displayFlag(partnerFlags[key])}
-                </td>
                 <td style={{ ...tdStyle, color: "#008000" }}>
+                  {this.displayFlag(idealFlags[key])}
+                </td>
+                <td style={{ ...tdStyle, color: "#d81e05" }}>
                   {["子供希望", "両親との同棲希望", "共働き"].includes(key)
-                    ? this.displayFlag(userFlags[key])
-                    : this.displayFlag(idealFlags[key])}
+                    ? this.displayFlag(idealFlags[key])
+                    : this.displayFlag(partnerFlags[key])}
                 </td>
               </tr>
             ))}

@@ -5,19 +5,16 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.entity.Partners;
 import com.example.demo.entity.Users;
 import com.example.demo.repository.PartnersRepository;
 import com.example.demo.repository.UsersRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-@Controller
+@RestController
 public class ReviewController {
 
     @Autowired
@@ -26,106 +23,114 @@ public class ReviewController {
     @Autowired
     private PartnersRepository partnersRepository;
 
-    // ここはログインユーザーIDを仮に1と固定（実際はセッション等で取得）
+    // 仮ログイン中のユーザーID（固定）
     private static final Integer LOGIN_USER_ID = 1;
 
-    @GetMapping("/review/{partnerId}")
-    public String review(
-        @PathVariable Integer partnerId,
-        Model model
-    ) throws JsonProcessingException {
-
-        // ログインユーザー（あなた）
+    // React 側 API 用エンドポイント
+    @GetMapping("/partner/{partnerId}/")
+    public Map<String, Object> getPartnerReviewData(@PathVariable Integer partnerId) {
         Users user = usersRepository.findById(LOGIN_USER_ID).orElse(null);
-        // お相手
         Partners partner = partnersRepository.findById(partnerId).orElse(null);
 
         if (user == null || partner == null) {
-            return "error";
+            return Map.of("success", false, "message", "ユーザーまたはお相手が見つかりません。");
         }
 
-        // 日付フォーマット用
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        // レーダーチャート用データ：理想・お相手・あなた（自分のパラメータ）
-        Map<String, Integer> ideal = new LinkedHashMap<>();
-        ideal.put("家事スキル", user.getIdealHomeSkill());
-        ideal.put("コミュ力", user.getIdealCommunication());
-        ideal.put("経済力", user.getIdealEconomicPower());
-        ideal.put("容姿", user.getIdealAppearance());
-        ideal.put("やさしさ", user.getIdealConsideration());
+        // 上部レーダーチャート（理想 / お相手 / 自分）
+        Map<String, Integer> ideal = Map.of(
+            "家事スキル", user.getIdealHomeSkill(),
+            "コミュ力", user.getIdealCommunication(),
+            "経済力", user.getIdealEconomicPower(),
+            "容姿", user.getIdealAppearance(),
+            "やさしさ", user.getIdealConsideration()
+        );
 
-        Map<String, Integer> partnerScores = new LinkedHashMap<>();
-        partnerScores.put("家事スキル", partner.getHomeSkill());
-        partnerScores.put("コミュ力", partner.getCommunication());
-        partnerScores.put("経済力", partner.getEconomicPower());
-        partnerScores.put("容姿", partner.getAppearance());
-        partnerScores.put("やさしさ", partner.getConsideration());
+        Map<String, Integer> partnerScores = Map.of(
+            "家事スキル", partner.getHomeSkill(),
+            "コミュ力", partner.getCommunication(),
+            "経済力", partner.getEconomicPower(),
+            "容姿", partner.getAppearance(),
+            "やさしさ", partner.getConsideration()
+        );
 
-        Map<String, Integer> userScores = new LinkedHashMap<>();
-        userScores.put("家事スキル", user.getHomeSkill());
-        userScores.put("コミュ力", user.getCommunication());
-        userScores.put("経済力", user.getEconomicPower());
-        userScores.put("容姿", user.getAppearance());
-        userScores.put("やさしさ", user.getConsideration());
+        Map<String, Integer> userScores = Map.of(
+            "家事スキル", user.getHomeSkill(),
+            "コミュ力", user.getCommunication(),
+            "経済力", user.getEconomicPower(),
+            "容姿", user.getAppearance(),
+            "やさしさ", user.getConsideration()
+        );
 
-        ObjectMapper mapper = new ObjectMapper();
-        model.addAttribute("idealJson", mapper.writeValueAsString(ideal));
-        model.addAttribute("partnerJson", mapper.writeValueAsString(partnerScores));
-        model.addAttribute("userJson", mapper.writeValueAsString(userScores));
+        // 上部プロフィール情報
+        Map<String, Object> partnerProfile = new LinkedHashMap<>();
+        partnerProfile.put("name", partner.getName());
+        partnerProfile.put("nameRead", partner.getNameRead());
+        partnerProfile.put("age", partner.getAge());
+        partnerProfile.put("birthday", partner.getBirthday() != null ? sdf.format(partner.getBirthday()) : "");
+        partnerProfile.put("firstMetDay", partner.getFirstMetDay() != null ? sdf.format(partner.getFirstMetDay()) : "");
+        partnerProfile.put("metEvent", partner.getMetEvent());
+        partnerProfile.put("firstImpression", partner.getFirstImpression());
 
-        // 上部プロフィール表示用
-        model.addAttribute("partnerName", partner.getName());
-        model.addAttribute("partnerNameRead", partner.getNameRead());
-        model.addAttribute("partnerAge", partner.getAge());
-        model.addAttribute("partnerBirthday", partner.getBirthday() != null ? sdf.format(partner.getBirthday()) : "");
-        model.addAttribute("partnerFirstMetDay", partner.getFirstMetDay() != null ? sdf.format(partner.getFirstMetDay()) : "");
-        model.addAttribute("partnerMetEvent", partner.getMetEvent());
-        model.addAttribute("partnerFirstImpression", partner.getFirstImpression());
+        // 詳細スコア（5段階）
+        Map<String, Integer> detailedIdealScores = Map.of(
+            "連絡頻度", user.getIdealContactFreq(),
+            "主体性", user.getIdealInitiative(),
+            "性格", user.getIdealPersonality(),
+            "婚活真剣度", user.getIdealMarriageIntent(),
+            "金銭感覚", user.getIdealFinancialSense(),
+            "喫煙", user.getIdealSmoker(),
+            "飲酒", user.getIdealAlcohol(),
+            "ギャンブル", user.getIdealGamble()
+        );
 
-        // 下部詳細比較 5段階評価の項目（理想・お相手）
-        Map<String, Integer> detailedIdealScores = new LinkedHashMap<>();
-        detailedIdealScores.put("連絡頻度", user.getIdealContactFreq());
-        detailedIdealScores.put("主体性", user.getIdealInitiative());
-        detailedIdealScores.put("性格", user.getIdealPersonality());
-        detailedIdealScores.put("婚活真剣度", user.getIdealMarriageIntent());
-        detailedIdealScores.put("金銭感覚", user.getIdealFinancialSense());
-        detailedIdealScores.put("喫煙", user.getIdealSmoker());
-        detailedIdealScores.put("飲酒", user.getIdealAlcohol());
-        detailedIdealScores.put("ギャンブル", user.getIdealGamble());
+        Map<String, Integer> detailedPartnerScores = Map.of(
+            "連絡頻度", partner.getContactFreq(),
+            "主体性", partner.getInitiative(),
+            "性格", partner.getPersonality(),
+            "婚活真剣度", partner.getMarriageIntent(),
+            "金銭感覚", partner.getFinancialSense(),
+            "喫煙", partner.getSmoker(),
+            "飲酒", partner.getAlcohol(),
+            "ギャンブル", partner.getGamble()
+        );
 
-        Map<String, Integer> detailedPartnerScores = new LinkedHashMap<>();
-        detailedPartnerScores.put("連絡頻度", partner.getContactFreq());
-        detailedPartnerScores.put("主体性", partner.getInitiative());
-        detailedPartnerScores.put("性格", partner.getPersonality());
-        detailedPartnerScores.put("婚活真剣度", partner.getMarriageIntent());
-        detailedPartnerScores.put("金銭感覚", partner.getFinancialSense());
-        detailedPartnerScores.put("喫煙", partner.getSmoker());
-        detailedPartnerScores.put("飲酒", partner.getAlcohol());
-        detailedPartnerScores.put("ギャンブル", partner.getGamble());
+        // フラグ比較（〇×形式）
+        Map<String, Integer> idealFlags = Map.of(
+            "連れ子の有無", user.getIdealHasChildren(),
+            "転勤の有無", user.getIdealTransferable(),
+            "運転免許", user.getIdealDriverLicense(),
+            "両親との同棲希望", user.getLiveWithParents(),
+            "共働き", user.getDualIncome()
+        );
 
-        model.addAttribute("detailedIdealScores", detailedIdealScores);
-        model.addAttribute("detailedPartnerScores", detailedPartnerScores);
+        Map<String, Integer> partnerFlags = Map.of(
+            "連れ子の有無", partner.getHasChildren(),
+            "転勤の有無", partner.getTransferable(),
+            "運転免許", partner.getDriverLicense(),
+            "両親との同棲希望", partner.getLiveWithParents(),
+            "共働き", partner.getDualIncome()
+        );
 
-        // 下部詳細比較 〇×形式の項目（理想・お相手）
-        Map<String, Integer> idealFlags = new LinkedHashMap<>();
-        idealFlags.put("連れ子の有無", user.getIdealHasChildren());
-        idealFlags.put("転勤の有無", user.getIdealTransferable());
-        idealFlags.put("運転免許", user.getIdealDriverLicense());
-        idealFlags.put("両親との同棲希望", user.getLiveWithParents());
-        idealFlags.put("共働き", user.getDualIncome());
-        idealFlags.put("子供希望", user.getChildWish());
+        // 全体レスポンス
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("success", true);
+        response.put("radarChart", Map.of(
+            "ideal", ideal,
+            "partner", partnerScores,
+            "user", userScores
+        ));
+        response.put("profile", partnerProfile);
+        response.put("detailedScores", Map.of(
+            "ideal", detailedIdealScores,
+            "partner", detailedPartnerScores
+        ));
+        response.put("flags", Map.of(
+            "ideal", idealFlags,
+            "partner", partnerFlags
+        ));
 
-        Map<String, Integer> partnerFlags = new LinkedHashMap<>();
-        partnerFlags.put("連れ子の有無", partner.getHasChildren());
-        partnerFlags.put("転勤の有無", partner.getTransferable());
-        partnerFlags.put("運転免許", partner.getDriverLicense());
-        partnerFlags.put("両親との同棲希望", partner.getLiveWithParents());
-        partnerFlags.put("共働き", partner.getDualIncome());
-
-        model.addAttribute("idealFlags", idealFlags);
-        model.addAttribute("partnerFlags", partnerFlags);
-
-        return "review"; // review.htmlへ
+        return response;
     }
 }
