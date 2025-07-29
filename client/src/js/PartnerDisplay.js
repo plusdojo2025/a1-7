@@ -45,65 +45,65 @@ class PartnerDisplay extends React.Component {
     ];
   }
 
-//---------ダミーデータ---------//
-//   componentDidMount() {
-//   const dummyIdealJson = JSON.stringify({
-//     家事スキル: 4,
-//     コミュ力: 5,
-//     経済力: 3,
-//     容姿: 2,
-//     気遣い: 4,
-//   });
+  //---------ダミーデータ---------//
+  //   componentDidMount() {
+  //   const dummyIdealJson = JSON.stringify({
+  //     家事スキル: 4,
+  //     コミュ力: 5,
+  //     経済力: 3,
+  //     容姿: 2,
+  //     気遣い: 4,
+  //   });
 
-//   const dummyPartnerJson = JSON.stringify({
-//     家事スキル: 3,
-//     コミュ力: 4,
-//     経済力: 4,
-//     容姿: 2,
-//     気遣い: 3,
-//   });
+  //   const dummyPartnerJson = JSON.stringify({
+  //     家事スキル: 3,
+  //     コミュ力: 4,
+  //     経済力: 4,
+  //     容姿: 2,
+  //     気遣い: 3,
+  //   });
 
-//   const dummyUserJson = JSON.stringify({
-//     家事スキル: 5,
-//     コミュ力: 3,
-//     経済力: 2,
-//     容姿: 3,
-//     気遣い: 4,
-//   });
+  //   const dummyUserJson = JSON.stringify({
+  //     家事スキル: 5,
+  //     コミュ力: 3,
+  //     経済力: 2,
+  //     容姿: 3,
+  //     気遣い: 4,
+  //   });
 
-//   const dummyFlags = {
-//     "連れ子の有無": 2,
-//     "転勤の有無": 1,
-//     "運転免許": 1,
-//     "両親との同棲希望": 3,
-//     "共働き": 1,
-//     "子供希望": 1,
-//   };
+  //   const dummyFlags = {
+  //     "連れ子の有無": 2,
+  //     "転勤の有無": 1,
+  //     "運転免許": 1,
+  //     "両親との同棲希望": 3,
+  //     "共働き": 1,
+  //     "子供希望": 1,
+  //   };
 
-//   this.setState({
-//     partnerDetail: {
-//       name: "山田太郎",
-//       age: 30,
-//       birthday: "1993-03-10",
-//       firstMetDay: "2024-01-01",
-//       metEvent: "友人の紹介",
-//       firstImpression: "優しそうだった",
-//     },
-//     idealJson: dummyIdealJson,
-//     partnerJson: dummyPartnerJson,
-//     userJson: dummyUserJson,
-//     detailedIdealScores: dummyIdealJson,
-//     detailedPartnerScores: dummyPartnerJson,
-//     idealFlags: dummyFlags,
-//     partnerFlags: dummyFlags,
-//     userFlags: dummyFlags,
-//     loading: false,
-//   }, () => {
-//     this.drawChart(); // チャート描画
-//   });
-// }
+  //   this.setState({
+  //     partnerDetail: {
+  //       name: "山田太郎",
+  //       age: 30,
+  //       birthday: "1993-03-10",
+  //       firstMetDay: "2024-01-01",
+  //       metEvent: "友人の紹介",
+  //       firstImpression: "優しそうだった",
+  //     },
+  //     idealJson: dummyIdealJson,
+  //     partnerJson: dummyPartnerJson,
+  //     userJson: dummyUserJson,
+  //     detailedIdealScores: dummyIdealJson,
+  //     detailedPartnerScores: dummyPartnerJson,
+  //     idealFlags: dummyFlags,
+  //     partnerFlags: dummyFlags,
+  //     userFlags: dummyFlags,
+  //     loading: false,
+  //   }, () => {
+  //     this.drawChart(); // チャート描画
+  //   });
+  // }
 
-  
+
   componentDidMount() {
     this.fetchPartnerDetail();
   }
@@ -158,7 +158,7 @@ class PartnerDisplay extends React.Component {
       });
 
       const partnerData = response.data;// ここで受け渡している
-      
+
       // データが存在しない場合のデフォルト値を設定
       const defaultData = {
         name: "N/A", age: "N/A", birthday: "N/A",
@@ -178,11 +178,11 @@ class PartnerDisplay extends React.Component {
       const detailedIdealScores = partnerData.detailedScores.ideal || {};
       const detailedPartnerScores = partnerData.detailedScores.partner || {};
 
-       // フラグデータが直接オブジェクトとして返されることを想定
+      // フラグデータが直接オブジェクトとして返されることを想定
       const idealFlags = partnerData.flags.ideal || {}; // 理想の相手のフラグ   
       const partnerFlags = partnerData.flags.partner || {};
-          
-          
+
+
 
       this.setState(
         {
@@ -203,8 +203,8 @@ class PartnerDisplay extends React.Component {
           detailedIdealScores: detailedIdealScores,
           detailedPartnerScores: detailedPartnerScores,
 
-          idealFlags:idealFlags,
-          partnerFlags:partnerFlags,
+          idealFlags: idealFlags,
+          partnerFlags: partnerFlags,
 
           loading: false,
         },
@@ -532,17 +532,26 @@ class PartnerDisplay extends React.Component {
             {this.flagKeys.map((key) => (
               <tr key={key}>
                 <td style={tdStyle}>{key}</td>
+
                 <td style={{ ...tdStyle, color: "#008000" }}>
-                  {this.displayFlag(idealFlags[key])}
+                  {this.displayFlag(
+                    this.state.idealFlags.hasOwnProperty(key)
+                      ? this.state.idealFlags[key]
+                      : undefined
+                  )}
                 </td>
+
                 <td style={{ ...tdStyle, color: "#d81e05" }}>
-                  {["子供希望", "両親との同棲希望", "共働き"].includes(key)
-                    ? this.displayFlag(idealFlags[key])
-                    : this.displayFlag(partnerFlags[key])}
+                  {this.displayFlag(
+                    this.state.partnerFlags.hasOwnProperty(key)
+                      ? this.state.partnerFlags[key]
+                      : undefined
+                  )}
                 </td>
               </tr>
             ))}
           </tbody>
+
         </table>
       </div>
     );
