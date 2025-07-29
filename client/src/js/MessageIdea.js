@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import '../css/MessageIdea.css';
 import { withNavigation } from "../hoc/withNavigation";
 
 // http://localhost:3000/messages/ideas/
@@ -42,7 +43,7 @@ class MessageIdea extends React.Component {
       .then((response) => {
         console.log("APIから取得したデータ:", response.data);
         const fetchedPartners = response.data.data;
-        
+
         this.setState({
           partnerList: fetchedPartners,
           loading: false,
@@ -68,7 +69,7 @@ class MessageIdea extends React.Component {
     }
 
     // 命令文、プロンプトを作成
-    let generatedCommand = `${partnersId}さん宛に、${mood}な雰囲気で「${matter}」という用件のメッセージを考えて。`;
+    let generatedCommand = `『${partnersId}』さん宛に、『${mood}』な雰囲気で『${matter}』ためのメッセージを考えて。`;
     let generatedPrompt = `あなたは婚活アプリです。以下に入力する内容で、ユーザーのメッセージ作成をサポートしてください。${partnersId}さん宛に、${mood}な雰囲気で「${matter}」という用件のメッセージを考えて。`;
 
     await new Promise((resolve) => {
@@ -162,31 +163,21 @@ class MessageIdea extends React.Component {
         <h2>メッセージ提案</h2>
 
         {/* 命令文表示エリア */}
-        {/* <p>命令文表示エリア</p>
-                <input type="text" name="commandSentence" id="commandSentence" value={commandSentence}></input>
-                <p></p>
-                <br></br>
-
-                {/* プロンプト表示エリア */}
-        {/* <p>プロンプト表示エリア</p>
-                <input type="text" name="prompt" id="prompt" value={prompt}></input>
-                <p></p>
-                <br></br> */}
-
         {commandSentence && (
           <div>
-            <h4>命令文：</h4>
-            <p>{commandSentence}</p>
+            {/* <h4>命令文：</h4> */}
+            <p className="output-command-sentence">{commandSentence}</p>
           </div>
         )}
 
+        {/* プロンプト表示エリア */}
         {prompt && (
-          <div>
-            <h4>プロンプト：</h4>
-            <p>{prompt}</p>
+          <div className="output-prompt-container">
+            {/* <h4>プロンプト：</h4> */}
+            <p className="output-prompt">{prompt}</p>
 
             {/* 📋 コピー機能付きボタンを追加 */}
-            <button
+            <button className="copy-prompt-button"
               onClick={async () => {
                 try {
                   await navigator.clipboard.writeText(prompt);
@@ -216,78 +207,90 @@ class MessageIdea extends React.Component {
                         <option value="佐藤 健">佐藤 健</option>
                     </select> */}
           {/* <br></br> */}
+          <div className="input-command-container">
+            <div className="input-message-box">
+              <select
+                name="partnersId"
+                id="partnersId"
+                value={partnersId}
+                onChange={this.handleChange}
+              >
+                <option value="">お相手</option>
+                {partnerOptions} {/* ここで map したオプションを表示 */}
+              </select>
+            </div>
+            <label className="message-idea-label" htmlFor="partnersId">さん宛に</label>
+            <br></br>
+          </div>
 
-          <select
-            name="partnersId"
-            id="partnersId"
-            value={partnersId}
-            onChange={this.handleChange}
-          >
-            <option value="">選択してください</option>
-            {partnerOptions} {/* ここで map したオプションを表示 */}
-          </select>
-          <label htmlFor="partnersId">さん宛に</label>
-          <br></br>
 
           {/* 雰囲気セレクト */}
           {/* <input type="text" name="mood" id="mood" value={mood} onChange={this.handleChange}></input> */}
-          <select
-            name="mood"
-            id="mood"
-            value={mood}
-            onChange={this.handleChange}
-          >
-            <option value=""></option>
-            <option value="まじめ">まじめ</option>
-            <option value="さわやか">さわやか</option>
-            <option value="フレンドリー">フレンドリー</option>
-            <option value="素直に">素直に</option>
-            <option value="大人っぽく">大人っぽく</option>
-            <option value="積極的">積極的</option>
-            <option value="礼儀正しく">礼儀正しく</option>
-          </select>
-          <label htmlFor="mood">な雰囲気で</label>
-          <br></br>
+          <div className="input-command-container">
+            <div className="input-message-box">
+              <select
+                name="mood"
+                id="mood"
+                value={mood}
+                onChange={this.handleChange}
+              >
+                <option value="">雰囲気</option>
+                <option value="まじめ">まじめ</option>
+                <option value="さわやか">さわやか</option>
+                <option value="フレンドリー">フレンドリー</option>
+                <option value="素直に">素直</option>
+                <option value="大人っぽく">大人っぽく</option>
+                <option value="積極的">積極的</option>
+                <option value="礼儀正しく">礼儀正しく</option>
+              </select>
+            </div>
+              <label className="message-idea-label" htmlFor="mood">な雰囲気で</label>
+            <br></br>
+          </div>
 
           {/* 用件セレクト */}
           {/* <input type="text" name="matter" id="matter" value={matter} onChange={this.handleChange}></input> */}
-          <select
-            name="matter"
-            id="matter"
-            value={matter}
-            onChange={this.handleChange}
-          >
-            <option value=""></option>
-            <option value="2人きりのデートに誘いたい（初めて）">
-              2人きりのデートに誘いたい（初めて）
-            </option>
-            <option value="会ったことない相手をデートに誘いたい">
-              会ったことない相手をデートに誘いたい
-            </option>
-            <option value="マッチ後初メッセージを送りたい">
-              マッチ後初メッセージを送りたい
-            </option>
-            <option value="デート後のお礼のメッセージを送りたい">
-              デート後のお礼のメッセージを送りたい
-            </option>
-            <option value="2回目のデートを提案したい">
-              2回目のデートを提案したい
-            </option>
-            <option value="ご飯に誘いたい">ご飯に誘いたい</option>
-            <option value="休日の予定を聞きたい">休日の予定を聞きたい</option>
-            <option value="電話のお誘いをしたい">電話のお誘いをしたい</option>
-            <option value="気になる気持ちを伝えたい">
-              気になる気持ちを伝えたい
-            </option>
-            <option value="励ましたい・力になりたい">
-              励ましたい・力になりたい
-            </option>
-          </select>
+          <div className="input-command-container">
+            <div className="input-message-box">
+              <select
+                name="matter"
+                id="matter"
+                value={matter}
+                onChange={this.handleChange}
+              >
+                <option value="">用件</option>
+                <option value="2人きりのデートに誘う（初めて）">
+                  2人きりのデートに誘う（初めて）
+                </option>
+                <option value="会ったことない相手をデートに誘う">
+                  会ったことない相手をデートに誘う
+                </option>
+                <option value="マッチ後初メッセージを送る">
+                  マッチ後初メッセージを送る
+                </option>
+                <option value="デート後のお礼のメッセージを送る">
+                  デート後のお礼のメッセージを送る
+                </option>
+                <option value="2回目のデートを提案する">
+                  2回目のデートを提案する
+                </option>
+                <option value="ご飯に誘う">ご飯に誘う</option>
+                <option value="休日の予定を聞く">休日の予定を聞く</option>
+                <option value="電話のお誘いをする">電話のお誘いをする</option>
+                <option value="気になる気持ちを伝える">
+                  気になる気持ちを伝える
+                </option>
+                <option value="励ます・力になる">
+                  励ます・力になる
+                </option>
+              </select>
+            </div>
 
-          <label htmlFor="matter">ためのメッセージを考えて</label>
-          <br></br>
+            <label className="message-idea-label" htmlFor="matter">ためのメッセージを考えて</label>
+            <br></br>
+          </div>
 
-          <button
+          <button className="create-message-button"
             onClick={this.submitMessageIdea}
             disabled={!partnersId || !mood || !matter}
           >

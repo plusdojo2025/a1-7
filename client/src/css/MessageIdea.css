@@ -1,0 +1,56 @@
+/* MessageIdea.css */
+
+/* メッセージ提案　命令文作成部分 */
+/* 入力欄用 */
+.input-message-box {
+    width: 30%;
+    margin: 0 0 0 5%;
+}
+/* 入力欄とラベルを横並べ */
+.input-command-container {
+    display: flex;
+}
+/* ラベル表示用 */
+.message-idea-label {
+    text-align: left;
+    margin: 0 0 0 5%;
+    width: fit-content;
+}
+/* 作成ボタン用 */
+.create-message-button {
+    border-radius: 10px;
+    margin: 3% 0 10% 70%;
+    width: 20%;    
+}
+
+/* メッセージ提案　命令文表示部 */
+.output-command-sentence {
+    width: 85%;
+    margin: 0 0 0 13%;
+    /* font-size: 0.9rem; */
+    border-left: 2px solid #FFFFFF;
+}
+
+/* メッセージ提案　プロンプト配置 */
+.output-prompt {
+    width: 95%;
+    margin: 0 5% 0 2%;
+}
+/* プロンプト表示エリア */
+.output-prompt-container {
+    border: 2px solid #FFFFFF;
+    border-top-left-radius: 35px;
+    border-top-right-radius: 35px;
+    border-bottom-right-radius: 35px;
+    padding: 10px;
+    margin: 5% 2% 5% 2%;
+}
+
+
+/* プロンプトコピーボタン */
+.copy-prompt-button {
+    border-radius: 10px;
+    width: fit-content;   
+    margin: 0 0 0 55%;
+}
+

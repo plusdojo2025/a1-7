@@ -163,6 +163,7 @@ class Marriage extends React.Component {
 
         <form method="POST">
           {/* 年と月を入力にする */}
+          <div className="input-marriage-timing">
           <select
             name="marriageYear"
             id="marriageYear"
@@ -188,8 +189,9 @@ class Marriage extends React.Component {
             ))}
           </select>
           <label htmlFor="marriageMonth"></label>
+          </div>
 
-          <button onClick={this.handlePlan}>調べる</button>
+          <button onClick={this.handlePlan} className="marriage-check-button">調べる</button>
 
           {/* エラーメッセージがある場合のみ表示 */}
           {errorMessage && (
