@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { withNavigation } from "../hoc/withNavigation";
+import '../css/DateSpotDiagnosis.css';
 
 // ↓ページURL
 // http://localhost:3000/date-spot/questions/
@@ -124,13 +125,17 @@ class DateSpotDiagnosisQuestions extends React.Component {
 
     // 質問画面
     return (
-      <div>
+      <div className="main-card">
         <h2>{currentItem.question}</h2>
-        <button onClick={() => this.handleAnswer("yes")}>YES</button>
-        <button onClick={() => this.handleAnswer("no")}>No</button>
+        {/* YES, NO ボタンをまとめるラッパー */}
+        <div className="answer-buttons">
+          <button onClick={() => this.handleAnswer("yes")}>YES</button>
+          <button onClick={() => this.handleAnswer("no")}>No</button>
+        </div>
 
         {history.length > 0 && (
-          <button onClick={this.handleBack} disabled={history.length === 0}>←前の質問に戻る</button>
+          <button onClick={this.handleBack} disabled={history.length === 0} className="back-button">←前の質問に戻る
+          </button>
         )}
       </div>
     );
