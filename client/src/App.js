@@ -7,6 +7,7 @@ import {
   Link,
   Navigate,
   useParams,
+  useLocation,// ハンバガ用
 } from "react-router-dom";
 
 // PrivateRoute コンポーネント
@@ -35,7 +36,11 @@ import MessageCorrect from "./js/MessageCorrect";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(true); // * あとで false に戻す * //
+  const [isMenuOpen, setIsMenuOpen] = useState(false);// ここ（初期画面はハンバガ閉じているのでfalse）
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);// サブメニュー用（提案の3つ）
 
+
+  const location = useLocation();// ここ
   // アプリケーション起動時に認証状態をチェック
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -45,6 +50,10 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {//  location が変わったらメニュー閉じる（他ページに遷移したら勝手にメニューが閉じる）
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
   };
@@ -52,7 +61,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("accessToken"); // ローカルストレージからトークンを削除
     // 未認証状態になり、PrivateRoute で自動的にログイン画面へ遷移
-    setIsAuthenticated(false); 
+    setIsAuthenticated(false);
   };
 
   // URLパラメータにIDを要する（ useParams を使用する）コンポーネントのためのラッパー
@@ -79,151 +88,176 @@ function App() {
 
   return (
     <div className="App">
-      <BrowserRouter>
-        <header className="App-header">
-          {/* 認証済みの場合のみ表示される、共通コンテンツ */}
-          {isAuthenticated && (
-            <nav>
-              <Link to="/home/">ホーム</Link> |{" "}
-              {/* <Link to="/home/">ホーム</Link> |{" "} */}
-              <button onClick={handleLogout}>ログアウト</button>
-            </nav>
-          )}
+      {/* <BrowserRouter> */}
+      <header className="App-header">
+        {/* 認証済みの場合のみ表示される、共通コンテンツ */}
+        {isAuthenticated && (
+          <nav>
+            {/* ハンバーガーアイコン */}
+            <button className="hamburger" onClick={() => setIsMenuOpen(true)}>
+              ☰
+            </button>
 
-          {/* ルートの定義 */}
-          <Routes>
-            {/* 公開ルート */}
-            {/* index アクセス時に、ログイン済みなら /home/:userId へ、未ログインなら /login/ へ飛ばす */}
-            <Route
-              path="/"
-              element={
-                isAuthenticated ? (
-                  <Navigate to="/home/" replace />
-                ) : (
-                  <Navigate to="/login/" replace />
-                )
-              }
-            />
+            {/* スライドメニュー */}
+            <div className={`slide-menu ${isMenuOpen ? "open" : ""}`}>
+              <button className="close-button" onClick={() => setIsMenuOpen(false)}>
+                ✖
+              </button>
+              <nav className="menu-links">
+                <Link to="/user/edit/">ユーザー情報</Link>
+                <Link to="/home/">お相手一覧・登録・検索</Link>
+                {/* サブメニュー（提案） */}
+                <h1 onClick={() => setIsSubMenuOpen(!isSubMenuOpen)} className="submenu-title">
+                  提案
+                </h1>
+                {isSubMenuOpen && (
+                  <div className="submenu">
+                    <Link to="/date-spot/">デートスポット</Link>
+                    <Link to="/marriage-plans/">婚活プラン</Link>
+                    <Link to="/messages/ideas/">メッセージ</Link>
+                  </div>
+                )}
+                {/* サブここまで */}
+                <button onClick={handleLogout}>ログアウト</button>
+              </nav>
+            </div>
+          </nav>
+        )}
 
-            <Route
-              path="/login/"
-              element={<Login onLoginSuccess={handleLoginSuccess} />}
-            />
-            <Route path="/signup/" element={<MemberRegist />} />
+        {/* ルートの定義 */}
+        <Routes>
+          {/* 公開ルート */}
+          {/* index アクセス時に、ログイン済みなら /home/:userId へ、未ログインなら /login/ へ飛ばす */}
+          <Route
+            path="/"
+            element={
+              isAuthenticated ? (
+                <Navigate to="/home/" replace />
+              ) : (
+                <Navigate to="/login/" replace />
+              )
+            }
+          />
 
-            {/* 保護されたルート(ログインが必要) */}
-            <Route
-              path="/home/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <PartnerList />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/user/edit/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <Users />
-                </PrivateRoute>
-              }
-            />
-            {/* useParams を使用するコンポーネントはラッパー経由で渡す */}
-            <Route
-              path="/partner/:id/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <PartnerDisplayWrapper />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/partner/:id/edit/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <PartnerEditWrapper />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/partner/:id/impressions/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <ImpressionWrapper />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/partner/:id/phases/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <PhaseWrapper />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/date-spot/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <DateSpot />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/date-spot/questions/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <DateSpotQuestions />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/date-spot/result/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <DateSpotResult />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/marriage-plans/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <Marriage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/marriage-plans/result/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <MarriageResult />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/messages/ideas/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <MessageIdea />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/messages/correct/"
-              element={
-                <PrivateRoute isAuthenticated={isAuthenticated}>
-                  <MessageCorrect />
-                </PrivateRoute>
-              }
-            />
+          <Route
+            path="/login/"
+            element={<Login onLoginSuccess={handleLoginSuccess} />}
+          />
+          <Route path="/signup/" element={<MemberRegist />} />
 
-            {/* 存在しないパスへのアクセス (404 Not Found) */}
-            <Route path="*" element={<h2>404 Not Found</h2>} />
-            
-          </Routes>
-        </header>
-      </BrowserRouter>
+          {/* 保護されたルート(ログインが必要) */}
+          <Route
+            path="/home/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <PartnerList />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/user/edit/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <Users />
+              </PrivateRoute>
+            }
+          />
+          {/* useParams を使用するコンポーネントはラッパー経由で渡す */}
+          <Route
+            path="/partner/:id/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <PartnerDisplayWrapper />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/partner/:id/edit/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <PartnerEditWrapper />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/partner/:id/impressions/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <ImpressionWrapper />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/partner/:id/phases/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <PhaseWrapper />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/date-spot/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <DateSpot />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/date-spot/questions/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <DateSpotQuestions />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/date-spot/result/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <DateSpotResult />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/marriage-plans/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <Marriage />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/marriage-plans/result/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <MarriageResult />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/messages/ideas/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <MessageIdea />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/messages/correct/"
+            element={
+              <PrivateRoute isAuthenticated={isAuthenticated}>
+                <MessageCorrect />
+              </PrivateRoute>
+            }
+          />
+
+          {/* 存在しないパスへのアクセス (404 Not Found) */}
+          <Route path="*" element={<h2>404 Not Found</h2>} />
+
+        </Routes>
+      </header>
+      {/* </BrowserRouter> */}
     </div>
   );
 }
