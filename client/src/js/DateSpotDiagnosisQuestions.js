@@ -93,7 +93,7 @@ class DateSpotDiagnosisQuestions extends React.Component {
   };
 
   render() {
-    const { loading, errorMessage, questionsMap, currentQuestionId } = this.state;
+    const { loading, errorMessage, questionsMap, currentQuestionId, history } = this.state;
 
     if (loading) return <p>Loading...</p>;
     if (errorMessage) return <p style={{color: "red"}}>{errorMessage}</p>;
@@ -108,8 +108,16 @@ class DateSpotDiagnosisQuestions extends React.Component {
       return (
         <div>
           <h2>診断結果</h2>
-          <p>{currentItem.conclusion}</p>
-          {/* 必要ならトップ画面や再挑戦ボタンなど */}
+          <p>{currentItem.conclusion}がおすすめです！
+          </p>
+            <div>
+              {currentItem.description.split('\n').map((line,index) => (
+                <React.Fragment key={index}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </div>
         </div>
       );
     }
@@ -121,8 +129,8 @@ class DateSpotDiagnosisQuestions extends React.Component {
         <button onClick={() => this.handleAnswer("yes")}>YES</button>
         <button onClick={() => this.handleAnswer("no")}>No</button>
 
-        {this.state.history.length > 0 && (
-          <button onClick={this.handleBack} >←前の質問に戻る</button>
+        {history.length > 0 && (
+          <button onClick={this.handleBack} disabled={history.length === 0}>←前の質問に戻る</button>
         )}
       </div>
     );
