@@ -24,7 +24,7 @@ public class ImpressionController {
 
 	// ↓杉尾さんのやつ
 	// 全件またはファイルリング結果を取得
-	@GetMapping("/{partnerProfilesId}/")
+	@GetMapping("/{id}/")
 	public ResponseEntity<List<ImpressionLogs>> getAllImpressionsOrSearch(
 			@RequestParam(required = false) String searchTerm) {
 		List<ImpressionLogs> impressions;
