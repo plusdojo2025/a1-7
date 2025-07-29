@@ -2,6 +2,8 @@
 import React from "react";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import "../App.css";
+import "../css/DateSpotDiagnosis.css";
 
 // ページURL（http://localhost:3000/date-spot/）
 
