@@ -4,6 +4,9 @@ import axios from "axios";
 import { withNavigation } from "../hoc/withNavigation";
 import StarRating from "./StarRating";
 import RadioRating from "./RadioRating";
+import '../css/PartnerEdit.css';
+
+
 
 class PartnerEdit extends React.Component {
   constructor(props) {
@@ -218,7 +221,7 @@ class PartnerEdit extends React.Component {
 
     // エラーメッセージの表示
     // ローディングが完了し、かつエラーメッセージがある場合のみ表示
-    if (errorMessage && !loading) { 
+    if (errorMessage && !loading) {
       return <div className="error-message">{errorMessage}</div>;
     }
 
@@ -227,64 +230,92 @@ class PartnerEdit extends React.Component {
         <h1>{partner.name}さんのプロフィール編集</h1>
         {message && <div style={{ color: "green" }}>{message}</div>}
 
-        <form onSubmit={this.handleSubmit}>
-          <div>
-            <div className="form-group">
+        <form onSubmit={this.handleSubmit} className="form-container-3col">
+          {/* 左カラム */}
+          <div className="column left-column">
+            <div className="form-row">
               <label>
-                名前:
                 <input
                   type="text"
                   name="name"
                   value={partner.name}
                   onChange={this.handleChange}
+                  className="form-input"
+                  placeholder="名前"
                 />
               </label>
             </div>
-            <div className="form-group">
+            <div className="form-row">
               <label>
-                ふりがな:
                 <input
                   type="text"
                   name="nameRead"
                   value={partner.nameRead || ""}
                   onChange={this.handleChange}
+                  className="form-input"
+                  placeholder="ふりがな"
                 />
               </label>
+
             </div>
-            <div className="form-group">
-              <label>
-                年齢:
-                <input
-                  type="number"
-                  name="age"
-                  value={partner.age || ""}
-                  onChange={this.handleChange}
-                />
-              </label>
+          </div>
+
+          {/* 中央カラム */}
+          <div className="column center-column">
+            <div className="form-row age-row">
+              <div className="age-input-wrapper">
+                <label>
+                  <input
+                    type="number"
+                    name="age"
+                    value={partner.age || ""}
+                    onChange={this.handleChange}
+                    min="0"
+                  />
+                </label>
+                <span className="age-unit">歳</span>
+              </div>
+
             </div>
-            <div className="form-group">
-              <label>
-                生年月日:
-                <input
-                  type="date"
-                  name="birthday"
-                  value={partner.birthday || ""}
-                  onChange={this.handleChange}
-                />
-              </label>
+
+          </div>
+
+          {/* 右カラム */}
+          <div className="column right-column">
+            <div className="form-row">
+              <div className="form-group">
+                <label className="form-label" htmlFor="birthday">
+                  <input
+                    id="birthday"
+                    type="date"
+                    name="birthday"
+                    value={partner.birthday || ""}
+                    onChange={this.handleChange}
+                    className="form-input"
+                  />
+                </label>
+
+              </div>
+
             </div>
-            <div className="form-group">
-              <label>
-                出会った日:
+            <div className="form-row">
+              <div className="form-group">
+              <label className="form-label" htmlFor="firstMetDay">
                 <input
+                  id="firstMetDay"
                   type="date"
                   name="firstMetDay"
                   value={partner.firstMetDay || ""}
                   onChange={this.handleChange}
+                  className="form-input"
                 />
               </label>
             </div>
+            </div>
           </div>
+        </form>
+
+        <form onSubmit={this.handleSpecSubmit} className="basic-info-box">
 
           <hr className="divider" />
 
@@ -292,13 +323,18 @@ class PartnerEdit extends React.Component {
           {/* StarRating コンポーネントを使用 */}
           <div className="section">
             {starRatingFields.map((field) => (
-              <StarRating
-                key={field.key}
-                label={field.label}
-                name={field.key}
-                value={partner[field.key]} // partner オブジェクトから値を渡す
-                onChange={this.handleChange}
-              />
+              <div key={field.key}>
+                <p>{field.label}</p>
+                <div className="rating star">
+                  <StarRating
+                    key={field.key}
+                    label={field.label}
+                    name={field.key}
+                    value={partner[field.key]}
+                    onChange={this.handleChange}
+                  />
+                </div>
+              </div>
             ))}
           </div>
 
@@ -307,104 +343,95 @@ class PartnerEdit extends React.Component {
           {/* RadioRating コンポーネントを使用 */}
           <div className="section">
             {regularRatingFields.map((field) => (
-              <RadioRating
-                key={field.key}
-                label={field.label}
-                name={field.key}
-                value={partner[field.key]} // partner オブジェクトから値を渡す
-                onChange={this.handleChange}
-                minLabel={field.minLabel}
-                maxLabel={field.maxLabel}
-              />
+              <div key={field.key} style={{ display: 'inline-flex' }}>
+                <RadioRating
+                  key={field.key}
+                  label={field.label}
+                  name={field.key}
+                  value={partner[field.key]} // partner オブジェクトから値を渡す
+                  onChange={this.handleChange}
+                  minLabel={field.minLabel}
+                  maxLabel={field.maxLabel}
+                />
+              </div>
             ))}
           </div>
 
           <hr className="divider" />
 
-          {/* その他情報セクション */}
-          <div className="section">
+          <div className="section select-grid">
             <div className="form-group">
-            <label>
-              連れ子の有無:
-              <select
-                name="hasChildren"
-                value={partner.hasChildren || 0}
-                onChange={this.handleChange}
-              >
-                <option value={0}>未設定</option>
-                <option value={1}>なし</option>
-                <option value={2}>あり</option>
-              </select>
-            </label>
+              <label>
+                連れ子の有無:
+                <select
+                  name="hasChildren"
+                  value={partner.hasChildren || 0}
+                  onChange={this.handleChange}
+                >
+                  <option value={0}>未設定</option>
+                  <option value={1}>なし</option>
+                  <option value={2}>どちらでもよい</option>
+                  <option value={3}>あり</option>
+                </select>
+              </label>
             </div>
             <div className="form-group">
-            <label>
-              転勤の有無:
-              <select
-                name="transferable"
-                value={partner.transferable || 0}
-                onChange={this.handleChange}
-              >
-                <option value={0}>未設定</option>
-                <option value={1}>なし</option>
-                <option value={2}>あり</option>
-              </select>
-            </label>
+              <label>
+                転勤の有無:
+                <select
+                  name="transferable"
+                  value={partner.transferable || 0}
+                  onChange={this.handleChange}
+                >
+                  <option value={0}>未設定</option>
+                  <option value={1}>なし</option>
+                  <option value={2}>どちらでもよい</option>
+                  <option value={3}>あり</option>
+                </select>
+              </label>
             </div>
-<div className="form-group">
-            <label>
-              運転免許:
-              <select
-                name="driverLicense"
-                value={partner.driverLicense || 0}
-                onChange={this.handleChange}
-              >
-                <option value={0}>未設定</option>
-                <option value={1}>なし</option>
-                <option value={2}>あり</option>
-              </select>
-            </label>
+            <div className="form-group">
+              <label>
+                運転免許:
+                <select
+                  name="driverLicense"
+                  value={partner.driverLicense || 0}
+                  onChange={this.handleChange}
+                >
+                  <option value={0}>未設定</option>
+                  <option value={1}>なし</option>
+                  <option value={2}>どちらでもよい</option>
+                  <option value={3}>あり</option>
+                </select>
+              </label>
             </div>
-<div className="form-group">
-            <label>
-              両親との同棲希望:
-              <select
-                name="liveWithParents"
-                value={partner.liveWithParents || 0}
-                onChange={this.handleChange}
-              >
-                <option value={0}>未設定</option>
-                <option value={1}>希望しない</option>
-                <option value={2}>希望する</option>
-              </select>
-            </label>
-            </div>
-<div className="form-group">
-            <label>
-              共働き希望:
-              <select
-                name="dualIncome"
-                value={partner.dualIncome || 0}
-                onChange={this.handleChange}
-              >
-                <option value={0}>未設定</option>
-                <option value={1}>希望しない</option>
-                <option value={2}>希望する</option>
-              </select>
-            </label>
+            <div className="form-group">
+              <label>
+                両親との同棲希望:
+                <select
+                  name="liveWithParents"
+                  value={partner.liveWithParents || 0}
+                  onChange={this.handleChange}
+                >
+                  <option value={0}>未設定</option>
+                  <option value={1}>なし</option>
+                  <option value={2}>どちらでもよい</option>
+                  <option value={3}>あり</option>
+                </select>
+              </label>
             </div>
           </div>
 
           <hr className="divider" />
           {/* アクションボタン */}
           <div className="form-actions">
-          <button type="submit">更新</button>
-          <button type="button" onClick={this.handleReset}>
-            元に戻す
-          </button>
+            <button type="submit">更新</button>
+            <button type="button" onClick={this.handleReset}>
+              元に戻す
+            </button>
           </div>
-        </form>
-      </div>
+        </form >
+      </div >
     );
   }
 }
