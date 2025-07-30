@@ -1,6 +1,9 @@
 import React from "react";
 import axios from "axios";
 import { withNavigation } from "../hoc/withNavigation";
+
+import "../index.css";
+import "../App.css";
 import '../css/MemberRegist.css';
 
 class MemberRegist extends React.Component {
@@ -57,7 +60,7 @@ if (response.status === 200 || response.status === 201) {
         });
 
         // ログイン画面にリダイレクト
-        navigate("/login/");
+        this.props.router.navigate("/login/");
       }
 
     } catch (error) {
@@ -103,10 +106,10 @@ if (response.status === 200 || response.status === 201) {
       errorMessage,
     } = this.state;
     return (
-      <div>
-
-        <h1>会員登録</h1>
-        <form onSubmit={this.addUser}>
+      <div className="signup-container">
+        <h1 className="signup-title">新規登録</h1>
+        <form onSubmit={this.addUser} className="signup-form">
+          <div className="form-group-inline"> 
           <label htmlFor="birthday">生年月日</label>
           <input
             type="date"
@@ -116,8 +119,9 @@ if (response.status === 200 || response.status === 201) {
             onChange={this.onInput}
             required
           />
-          <br />
+          </div>
 
+<div className="form-group-inline"> 
           <label htmlFor="marriageStart">婚活開始</label>
           <input
             type="date"
@@ -127,9 +131,7 @@ if (response.status === 200 || response.status === 201) {
             onChange={this.onInput}
             required
           />
-          <br />
-
-          <label htmlFor="mailAddress"></label>
+          </div>
           
           <input
             type="text"
@@ -140,10 +142,7 @@ if (response.status === 200 || response.status === 201) {
             placeholder="メールアドレス"
             required
           />
-         
 
-          <label htmlFor="password1"></label>
-          
           <input
             type="password"
             name="password1"
@@ -153,10 +152,7 @@ if (response.status === 200 || response.status === 201) {
             placeholder="パスワード"
             required
           />
-        
 
-          <label htmlFor="password2"></label>
-         
           <input
             type="password"
             name="password2"
@@ -168,14 +164,16 @@ if (response.status === 200 || response.status === 201) {
           />
          
 
-          <input type="submit" name="submit" value="登録" />
+          <input type="submit" name="submit" value="登録" className="signup-button"/>
         </form>
 
+        <div className="error-message">
         {errorMessage && (
           <p id="errorMessage" style={{ color: "red" }}>
             {errorMessage}
           </p>
         )}
+        </div>
       </div>
     );
   }

@@ -3,7 +3,11 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 // withNavigation をインポートしてクラスコンポーネントに navigate を渡す
 import { withNavigation } from "../hoc/withNavigation";
-import '../css/Login.css';
+
+import "../index.css";
+import "../App.css";
+import "../css/Login.css";
+import logo from "../assets/images/logo.png";
 
 // default export は withNavigation で行う（コード末尾参照）
 class Login extends React.Component {
@@ -117,11 +121,13 @@ class Login extends React.Component {
     const { mailAddress, password, errorMessage, loading } = this.state;
     return (
       <div>
-        <form onSubmit={this.handleLogin}>
+        <div className="logo-image">
+          <img src={logo} alt="ロゴ画像" className="app-logo" />
+        </div>
+        <form className="login-form" onSubmit={this.handleLogin}>
           <label
             htmlFor="mail_address" // ※ input の id と一致させる
-          >
-          </label>
+          ></label>
           <br />
           <input
             type="text"
@@ -132,7 +138,6 @@ class Login extends React.Component {
             placeholder="メールアドレス"
             required // 入力必須に
           />
-          
 
           <label htmlFor="password"></label>
           <br />
@@ -145,35 +150,42 @@ class Login extends React.Component {
             placeholder="パスワード"
             required
           />
-      
 
-          {/* エラーメッセージがある場合のみ表示 */}
-          {errorMessage && (
-            <p id="errorMessage" style={{ color: "red" }}>
-              {errorMessage}
-            </p>
-          )}
-
-          <div className="reset-button">
-            <input
-              type="reset"
-              name="reset"
-              value="リセット"
-              onClick={this.handleReset}
-            />
+          <div className="error-message">
+            {/* エラーメッセージがある場合のみ表示 */}
+            {errorMessage && (
+              <p id="errorMessage" style={{ color: "red" }}>
+                {errorMessage.includes("パスワード") ? (
+                  <>
+                    {errorMessage.split("パスワード")[0]}
+                    <br />
+                    パスワード{errorMessage.split("パスワード")[1]}
+                  </>
+                ) : (
+                  errorMessage
+                )}
+              </p>
+            )}
           </div>
 
-       
           <input
+            className="reset-button"
+            type="reset"
+            name="reset"
+            value="リセット"
+            onClick={this.handleReset}
+          />
+          <input
+            className="submit-button"
             type="submit"
             name="submit"
             value={loading ? "ログイン中..." : "ログイン"}
             disabled={loading} // フォーム送信中にボタンを無効化
           />
         </form>
-        <br/>
+        <br />
 
-        <Link to="/signup/">新規登録はこちら</Link>
+        <Link to="/signup/" className="link-strong">新規登録はこちら</Link>
       </div>
     );
   }

@@ -2,7 +2,11 @@ import React from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { withNavigation } from "../hoc/withNavigation";
+
+import "../index.css";
+import "../App.css";
 import "../css/PartnerList.css";
+import delIcon from "../assets/images/delete-icon.png";
 
 class PartnerList extends React.Component {
   constructor(props) {
@@ -133,14 +137,17 @@ class PartnerList extends React.Component {
       name: formData.get("name"),
       nameRead: formData.get("nameRead"),
       birthday: formData.get("birthday"),
-      age: formData.get("age") ? parseInt(formData.get("age"), 10) : null,  // 数値に変換、空文字列の場合はnullをセット
+      age: formData.get("age") ? parseInt(formData.get("age"), 10) : null, // 数値に変換、空文字列の場合はnullをセット
       metEvent: formData.get("metEvent"),
       firstMetDay: formData.get("firstMetDay"),
       firstImpression: formData.get("firstImpression"),
     };
 
     // 年齢が入力されている場合のみバリデーションを実施
-    if (newPartnerData.age !== null && (isNaN(newPartnerData.age) || newPartnerData.age < 0)) {
+    if (
+      newPartnerData.age !== null &&
+      (isNaN(newPartnerData.age) || newPartnerData.age < 0)
+    ) {
       alert("有効な年齢を入力してください。");
       return;
     }
@@ -231,7 +238,7 @@ class PartnerList extends React.Component {
     } = this.state;
 
     return (
-      <div>
+      <div className="partner-list-container">
         {/* ローディング、エラー、データなしのメッセージ */}
         {loading && <p>読み込み中...</p>}
         {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
@@ -246,6 +253,10 @@ class PartnerList extends React.Component {
           />
           <button onClick={this.handleSearch}>検索</button>
         </div>
+
+        <button onClick={this.toggleModal} className="add-button">
+          + お相手を追加
+        </button>
 
         {/* モーダルウィンドウ(新規追加) */}
         {/* 名前と名前(ふりがな)のみ必須項目 */}
@@ -329,13 +340,16 @@ class PartnerList extends React.Component {
               <li key={partner.id} style={{ marginBottom: "1em" }}>
                 <Link
                   to={`/partner/${partner.id}/`}
-                  style={{ textDecoration: "none", color: "inherit" }}
+                  style={{
+                    flexGrow: 1,
+                  }}
                 >
                   <div>
-                    {partner.name} ({partner.age}歳)
+                    <span className="partner-link">{partner.name}</span>（
+                    {partner.age}歳）
                   </div>
-                  <div style={{ fontSize: "0.9em", color: "#555" }}>
-                    最後に会った日 {lastMetStr}
+                  <div style={{ fontSize: "0.9em" }}>
+                    最後に会った日：{lastMetStr}
                   </div>
                 </Link>
                 {/* 削除ボタン */}
@@ -347,16 +361,12 @@ class PartnerList extends React.Component {
                     this.handleDeletePartner(partner);
                   }}
                 >
-                  削除
+                  <img src={delIcon} alt="削除" className="delete-icon" />
                 </button>
               </li>
             );
           })}
         </ul>
-
-        <button onClick={this.toggleModal} className="add-button">
-          + お相手を追加
-        </button>
       </div>
     );
   }

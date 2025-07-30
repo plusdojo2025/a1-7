@@ -1,46 +1,17 @@
+/* Login.css */
 
-
-
-
-
-
-label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 6px;
+.logo-image { /* ロゴ画像を囲むdivのスタイル */
+  text-align: center; /* ロゴを中央に配置 */
+}
+.app-logo { /* ロゴ画像自体のスタイル */
+  max-width: 250px;
+  height: auto; /* 縦横比を維持 */
+  display: block; /* 余分なスペースを削除 */
+  margin: 0 auto;
 }
 
-input[type="submit"]{
-  width: 160px;
-  height: 44px;
-  font-size: 18px;
-  font-weight: bold;
-  border-radius: 6px;
-  cursor: pointer;
-  background-color: #db0a0a;
-  color: white;
-  border: none;
-  margin-right: 10px;
-  transition: background-color 0.3s ease;
-}
-.reset-button {
-  text-align: right;
-  margin-top: 1px;
-  margin-left: 2cm;
-}
-
-input[type="submit"]:hover,
-input[type="reset"]:hover {
-  background-color: #a2a39c;
-}
-
-#errorMessage {
-  color: red;
-  margin-top: 8px;
-}
-
-#mail_address,#password {
-  width: 7cm !important;
-  height: 1.2cm !important;
-  font-size: 18px !important;
+#mail_address, #password {
+  width: 250px;
+  height: 40px;
+  margin-bottom: 0;
 }

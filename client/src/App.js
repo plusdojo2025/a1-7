@@ -7,7 +7,7 @@ import {
   Link,
   Navigate,
   useParams,
-  useLocation,// ハンバガ用
+  useLocation, // ハンバガ用
 } from "react-router-dom";
 
 // PrivateRoute コンポーネント
@@ -15,6 +15,7 @@ import PrivateRoute from "./hoc/PrivateRoute";
 // useState と useEffect をインポート
 import React, { useState, useEffect } from "react";
 
+import "./index.css";
 import "./App.css";
 
 // 各コンポーネントのインポート
@@ -35,12 +36,11 @@ import MessageIdea from "./js/MessageIdea";
 import MessageCorrect from "./js/MessageCorrect";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // * あとで false に戻す * //
-  const [isMenuOpen, setIsMenuOpen] = useState(false);// ここ（初期画面はハンバガ閉じているのでfalse）
-  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);// サブメニュー用（提案の3つ）
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // * あとで false に戻す * //
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // ここ（初期画面はハンバガ閉じているのでfalse）
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(true); // サブメニュー用（提案の3つ）
 
-
-  const location = useLocation();// ここ
+  const location = useLocation(); // ここ
   // アプリケーション起動時に認証状態をチェック
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -50,7 +50,8 @@ function App() {
     }
   }, []);
 
-  useEffect(() => {//  location が変わったらメニュー閉じる（他ページに遷移したら勝手にメニューが閉じる）
+  useEffect(() => {
+    //  location が変わったらメニュー閉じる（他ページに遷移したら勝手にメニューが閉じる）
     setIsMenuOpen(false);
   }, [location.pathname]);
 
@@ -85,7 +86,6 @@ function App() {
     return <Phase partnerId={id} />;
   };
 
-
   return (
     <div className="App">
       {/* <BrowserRouter> */}
@@ -93,21 +93,29 @@ function App() {
         {/* 認証済みの場合のみ表示される、共通コンテンツ */}
         {isAuthenticated && (
           <nav>
+            <div className="common-header">
             {/* ハンバーガーアイコン */}
-            <button className="hamburger" onClick={() => setIsMenuOpen(true)}>
-              ☰
-            </button>
+              <button className="hamburger" onClick={() => setIsMenuOpen(true)}>
+                ☰
+              </button>
+            </div>
 
             {/* スライドメニュー */}
             <div className={`slide-menu ${isMenuOpen ? "open" : ""}`}>
-              <button className="close-button" onClick={() => setIsMenuOpen(false)}>
+              <button
+                className="close-button"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 ✖
               </button>
               <nav className="menu-links">
-                <Link to="/user/edit/">ユーザー情報</Link>
-                <Link to="/home/">お相手一覧・登録・検索</Link>
+                <Link to="/home/">お相手一覧</Link>
+                <Link to="/user/edit/">ユーザー設定</Link>
                 {/* サブメニュー（提案） */}
-                <h1 onClick={() => setIsSubMenuOpen(!isSubMenuOpen)} className="submenu-title">
+                <h1
+                  onClick={() => setIsSubMenuOpen(!isSubMenuOpen)}
+                  className="submenu-title"
+                >
                   提案
                 </h1>
                 {isSubMenuOpen && (
@@ -118,7 +126,9 @@ function App() {
                   </div>
                 )}
                 {/* サブここまで */}
-                <button onClick={handleLogout}>ログアウト</button>
+                <button className="logout-button" onClick={handleLogout}>
+                  ログアウト
+                </button>
               </nav>
             </div>
           </nav>
@@ -254,7 +264,6 @@ function App() {
 
           {/* 存在しないパスへのアクセス (404 Not Found) */}
           <Route path="*" element={<h2>404 Not Found</h2>} />
-
         </Routes>
       </header>
       {/* </BrowserRouter> */}

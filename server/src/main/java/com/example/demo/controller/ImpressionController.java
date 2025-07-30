@@ -35,22 +35,21 @@ public class ImpressionController {
 
 	// 全件またはファイルリング結果を取得
 	@GetMapping("/{partnerId}/") // IDをパス変数で受け取る
-	public ResponseEntity<List<ImpressionLogs>> getImpressionsByPartner(
-			@PathVariable Integer partnerId, // パス変数としてお相手Idを受け取る
+	public ResponseEntity<List<ImpressionLogs>> getImpressionsByPartner(@PathVariable Integer partnerId, // パス変数としてお相手Idを受け取る
 			@RequestParam(required = false) String searchTerm) {
-		
+
 		// 認証済みユーザーのIDを取得
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 		Integer loggedInUserId = userDetails.getId();
-		
+
 		// 指定されたパートナーIDが認証済みユーザーに紐づいているかを確認
 		Optional<Partners> partnerOptional = partnerRepository.findById(partnerId);
 		if (partnerOptional.isEmpty() || !partnerOptional.get().getUserId().equals(loggedInUserId)) {
 			// パートナーが見つからないか、認証済みユーザーのパートナーではない場合
 			return ResponseEntity.status(HttpStatus.FORBIDDEN).build(); // 403 Forbidden
 		}
-		
+
 		List<ImpressionLogs> impressions;
 		// 検索クエリがある場合、検索メソッドを呼び出す
 		if (searchTerm != null && !searchTerm.trim().isEmpty()) {

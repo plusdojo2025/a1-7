@@ -107,10 +107,3 @@ p {
   color: #ffffff;
   white-space: pre-wrap; /* 改行を尊重 */
 }
-
-/* エラーメッセージ */
-p[style*="color: red"] {
-  font-weight: 700;
-  font-size: 1rem;
-  margin-top: 1rem;
-}

@@ -1,13 +1,82 @@
-body {
+/* index.css */
+
+/* --- デフォルトスタイルの調整 --- */
+*,
+*::before,
+*::after { /* すべての要素に適用 */
+  box-sizing: border-box;
+}
+
+body, /* デフォルトのマージンとパディングをリセット */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+dl,
+dd,
+ol,
+ul,
+menu,
+figure,
+fieldset,
+legend {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  padding: 0;
+}
+
+ul, /* リストのデフォルトスタイルをリセット */
+ol {
+  list-style: none;
+}
+
+a {
+  /* リンクのデフォルトスタイルを調整 */
+  color: inherit; /* 親要素の文字色を継承 */
+  text-decoration: none;
+}
+
+img {
+  /* 画像の最大幅を親要素に合わせ、縦横比を維持 */
+  max-width: 100%;
+  height: auto;
+  display: block; /* 余分なスペースを削除 */
+}
+
+button, /* ボタンと入力フィールドのスタイルを親要素から継承 */
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+}
+
+/* --- グローバルスタイル --- */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
-  -webkit-font-smoothing: antialiased;
+  color: #676f74; /* 文字色 */
+  line-height: 1.6; /* 行の高さ */
+  background-color: #f8f8f8; /* 背景色 */
+  -webkit-font-smoothing: antialiased; /* フォントのアンチエイリアス */
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+ルート要素
+#root {
+  min-height: 100vh; /* 表示領域の高さ全体を占める */
+  display: flex;
+  flex-direction: column; /* コンテンツを縦並びに */
 }
+
+/* code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+} */
