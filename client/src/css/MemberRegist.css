@@ -1,12 +1,12 @@
-/* Memberregist.css */
+/* --- ベーススタイル --- */
 .signup-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #f8f8f8;
-  box-sizing: border-box; /* paddingを含めて高さを計算 */
+  box-sizing: border-box;
   justify-content: center;
-  padding: 0; 
+  padding: 2rem 1rem;
 }
 
 .signup-title {
@@ -21,69 +21,87 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
   width: 100%;
+  max-width: 400px;
+  gap: 15px;
 }
 
-label {
-  display: inline-block;
-  width: 140px;
-  text-align: right;
-  margin-right: 10px;
-  margin-bottom: 8px;
-}
-
-input[type="date"],
-input[type="text"],
-input[type="password"] {
-  width: 250px;
-  height: 36px;
-  font-size: 16px;
-  padding: 6px 10px;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
+/* ラベルとインプットのセット */
 .form-group-inline {
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
   width: 100%;
-  justify-content: center;
 }
 
-label[for="birthday"],
-label[for="marriageStart"] {
-  width: 80px;
-  margin-bottom: 10px;
-  white-space: nowrap; /* テキストの折り返しを防ぐ */
+/* ラベル共通 */
+label {
+  width: 40%;
+  text-align: right;
+  margin-right: 10px;
+  margin-bottom: 4px;
+  font-size: 0.95rem;
+  color: #333;
 }
 
-input#birthday, input#marriage_start {
-  width: 200px;
-}
-
-input[type="date"],
+/* 入力欄共通 */
 input[type="text"],
+input[type="date"],
 input[type="password"] {
-  width: 250px;
+  width: 60%;
+  max-width: 240px;
   height: 36px;
   font-size: 16px;
   padding: 6px 10px;
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;
-}
-
-input#mail_address {
-  margin-top: 20px;
-}
-
-input#password2 {
-  margin-bottom: 20px;
 }
 
 input::placeholder {
   font-size: 14px;
   color: #888;
+}
+
+.signup-button {
+  background-color: #8edae5;
+  color: #fff;
+  font-weight: bold;
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+/* --- スマホ・タブレット向けレスポンシブ対応 --- */
+@media (max-width: 600px) {
+  .signup-form {
+    padding: 0 10px;
+  }
+
+  .form-group-inline {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  label {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 6px;
+  }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="password"] {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .signup-button {
+    width: 100%;
+    max-width: 100%;
+  }
 }

@@ -1,56 +1,105 @@
-/* MessageIdea.css */
-
-/* メッセージ提案　命令文作成部分 */
-/* 入力欄用 */
-.input-message-box {
-    width: 30%;
-    margin: 0 0 0 5%;
-}
-/* 入力欄とラベルを横並べ */
+/* 入力欄とラベルのコンテナ */
 .input-command-container {
-    display: flex;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 12px 0;
 }
-/* ラベル表示用 */
+
+/* 入力ボックス */
+.input-message-box {
+  flex: 1;
+  min-width: 160px;
+  margin: 8px;
+}
+
+/* ラベル */
 .message-idea-label {
-    text-align: left;
-    margin: 0 0 0 5%;
-    width: fit-content;
+  margin-left: 10px;
+  font-size: 0.9rem;
 }
-/* 作成ボタン用 */
+
+/* 作成ボタン */
 .create-message-button {
-    border-radius: 10px;
-    margin: 3% 0 10% 70%;
-    width: 20%;    
+  border-radius: 10px;
+  width: 40%;
+  max-width: 240px;
+  padding: 10px;
+  margin: 32px auto;
+  display: block;
+  background-color: #e0e0ff;
+  border: none;
 }
 
-/* メッセージ提案　命令文表示部 */
+/* 命令文の表示 */
 .output-command-sentence {
-    width: 85%;
-    margin: 0 0 0 13%;
-    /* font-size: 0.9rem; */
-    border-left: 2px solid #FFFFFF;
+  width: 90%;
+  margin: 24px auto;
+  border-left: 3px solid #a5a5ff;
+  padding-left: 12px;
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
-/* メッセージ提案　プロンプト配置 */
-.output-prompt {
-    width: 95%;
-    margin: 0 5% 0 2%;
-}
-/* プロンプト表示エリア */
+/* プロンプト全体の枠 */
 .output-prompt-container {
-    border: 2px solid #FFFFFF;
-    border-top-left-radius: 35px;
-    border-top-right-radius: 35px;
-    border-bottom-right-radius: 35px;
-    padding: 10px;
-    margin: 5% 2% 5% 2%;
+  border: 2px solid #ddd;
+  border-radius: 24px;
+  padding: 16px;
+  margin: 32px auto;
+  width: 90%;
+  background-color: #fdfdff;
 }
 
+/* プロンプトの本文 */
+.output-prompt {
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
 
-/* プロンプトコピーボタン */
+/* コピー用ボタン */
 .copy-prompt-button {
-    border-radius: 10px;
-    width: fit-content;   
-    margin: 0 0 0 55%;
+  display: block;
+  margin: 0 auto;
+  width: 60%;
+  max-width: 250px;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #eef;
+  border: none;
 }
 
+/* タイトルの余白 */
+h2 {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 1.5rem;
+}
+
+/* スマホ用レイアウト調整 */
+@media screen and (max-width: 768px) {
+  .input-command-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .input-message-box {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .message-idea-label {
+    margin: 4px 0 0 8px;
+  }
+
+  .create-message-button,
+  .copy-prompt-button {
+    width: 90%;
+  }
+
+  .output-command-sentence,
+  .output-prompt-container {
+    width: 95%;
+  }
+}

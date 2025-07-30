@@ -488,3 +488,61 @@ html, body {
   flex: 1 1 48%;
   min-width: 140px;
 }
+
+@media (max-width: 480px) {
+  .basic-info-box h1 {
+    position: static;
+    display: block;
+    margin-bottom: 12px;
+    font-size: 1.25rem;
+    background-color: #de10d0;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+
+  .basic-info-box {
+    padding-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rating-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .label-left,
+  .label-right {
+    font-size: 11px;
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .rating.circle {
+    justify-content: flex-start;
+  }
+}
+
+.rating-column-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.rating-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 12px;
+  margin-top: 4px;
+  color: #666;
+  padding: 0 4px;
+}
+
+.label-left {
+  text-align: left;
+}
+
+.label-right {
+  text-align: right;
+}

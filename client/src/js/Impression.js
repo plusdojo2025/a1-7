@@ -1,28 +1,25 @@
 import React from "react";
 import axios from "axios";
 import { withNavigation } from "../hoc/withNavigation";
+import '../css/Impression.css';
 
 class Impression extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      fullItemsList: [], // 印象ログ全件一覧(APIから取得したオリジナルデータ)
-      filteredItems: [], // 検索結果一覧（初期画面では全件表示）
-
-      recordDate: "", // 日付
-      impression: "", // 印象内容
-      imageData: "", // 画像データ本体
-
-      searchTerm: "", // 検索クエリ
+      fullItemsList: [],
+      filteredItems: [],
+      recordDate: "",
+      impression: "",
+      imageData: "",
+      searchTerm: "",
       errorMessage: "",
-      loading: true, // ローディング状態
-      showModal: false, // モーダル表示用
+      loading: true,
+      showModal: false,
     };
   }
 
-  // コンポーネントがマウントされた後にデータを取得
   componentDidMount() {
-    // router プロパティが提供されているかチェック
     if (
       this.props.router &&
       this.props.router.params &&
@@ -30,13 +27,13 @@ class Impression extends React.Component {
     ) {
       this.fetchImpressions(this.props.router.params.id);
     } else {
-      // ID が取得できない場合のエラーハンドリング
       this.setState({
         errorMessage: "パートナーIDが取得できませんでした。",
         loading: false,
       });
     }
   }
+
   fetchImpressions = async (partnerProfilesId) => {
     this.setState({ loading: true, errorMessage: null });
     const accessToken = localStorage.getItem("accessToken");
@@ -50,7 +47,6 @@ class Impression extends React.Component {
       return;
     }
 
-    // axios.get()で ImpressionController から json を受け取り、fullItemsList と filteredItems にセット
     try {
       const response = await axios.get(
         `/api/impressions/${partnerProfilesId}/`,
@@ -77,16 +73,13 @@ class Impression extends React.Component {
     }
   };
 
-  // 各入力フィールドのstate値を更新
   handleInputChange = (e) => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
   };
 
-  // 印象ログをフィルタリングするメソッド
   filterItems = () => {
     const { searchTerm, fullItemsList } = this.state;
-    // 検索フォームが空の場合は全件表示
     if (!searchTerm) {
       this.setState({ filteredItems: fullItemsList });
       return;
@@ -99,24 +92,21 @@ class Impression extends React.Component {
     this.setState({ filteredItems: newFilteredItems });
   };
 
-  // モーダルウィンドウの表示メソッド
   toggleModal = () => {
     this.setState((prevState) => ({
       showModal: !prevState.showModal,
     }));
-    // モーダルを閉じる際にフォームをリセット
     if (this.state.showModal) {
       this.resetForm();
     }
   };
 
-  // 画像のアップロード処理
   handleImageUpload = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      this.setState({ imageData: reader.result.split(",")[1] }); // base64 文字列のみ
+      this.setState({ imageData: reader.result.split(",")[1] });
     };
 
     if (file) {
@@ -124,10 +114,9 @@ class Impression extends React.Component {
     }
   };
 
-  // 印象ログの登録処理
   addImpression = () => {
     const { recordDate, impression, imageData, imageMimeType } = this.state;
-    const partnerProfilesId = this.props.router.params.id; // URLからIDを取得
+    const partnerProfilesId = this.props.router.params.id;
 
     const data = {
       partnerProfilesId,
@@ -150,16 +139,17 @@ class Impression extends React.Component {
       this.props.router.navigate("/login/");
       return;
     }
+
     try {
-      axios.post("/api/impressions/add/", data, { 
+      axios.post("/api/impressions/add/", data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
-        }
-      })
-        alert("印象記録を登録しました。");
-        this.toggleModal(); // モーダルを閉じる
-        this.componentDidMount(); // リストを再取得
+        },
+      });
+      alert("印象記録を登録しました。");
+      this.toggleModal();
+      this.componentDidMount();
     } catch (error) {
       console.error("印象記録の登録に失敗しました。", error);
       if (error.response && error.response.status === 401) {
@@ -169,32 +159,31 @@ class Impression extends React.Component {
     }
   };
 
-  // フォームのリセット処理
   resetForm = () => {
     this.setState({
       recordDate: "",
       impression: "",
       imageData: "",
-      imageMimeType: ""
+      imageMimeType: "",
     });
   };
 
+  handleEdit = (id) => {
+    alert(`編集：${id}（実装してください）`);
+  };
 
+  handleDelete = (id) => {
+    alert(`削除：${id}（実装してください）`);
+  };
 
   render() {
     const { searchTerm, filteredItems, loading, error } = this.state;
 
-    if (loading) {
-      return <div>データを読み込み中...</div>;
-    }
-
-    if (error) {
-      return <div>データの読み込みに失敗しました: {error.message}</div>;
-    }
+    if (loading) return <div>データを読み込み中...</div>;
+    if (error) return <div>データの読み込みに失敗しました: {error.message}</div>;
 
     return (
       <div>
-        {/* 検索フォーム */}
         <div className="search-box">
           <input
             type="text"
@@ -202,104 +191,74 @@ class Impression extends React.Component {
             value={searchTerm}
             onChange={this.handleInputChange}
           />
-          <button
-            type="button"
-            className="search-button"
-            onClick={this.filterItems}
-          >
+          <button type="button" className="search-button" onClick={this.filterItems}>
             検索
           </button>
         </div>
 
-        {/* モーダルウィンドウ */}
-        <div>
-          {this.state.showModal && (
-            <div id="modal">
-              <h2>新規記録</h2>
+        {this.state.showModal && (
+          <div id="modal">
+            <h2>新規記録</h2>
+            <form>
+              <label>
+                日付：
+                <input
+                  type="date"
+                  name="recordDate"
+                  value={this.state.recordDate}
+                  onChange={this.handleInputChange}
+                />
+              </label>
+              <label>
+                画像：
+                <input type="file" accept="image/*" onChange={this.handleImageUpload} />
+              </label>
+              <label>
+                印象：
+                <textarea
+                  name="impression"
+                  value={this.state.impression}
+                  onChange={this.handleInputChange}
+                />
+              </label>
+              <button type="button" onClick={this.addImpression}>
+                登録
+              </button>
+              <button type="button" onClick={this.resetForm}>
+                リセット
+              </button>
+              <button type="button" onClick={this.toggleModal}>
+                閉じる
+              </button>
+            </form>
+          </div>
+        )}
 
-              <form>
-                <div>
-                  <label>
-                    日付：
-                    <input
-                      type="date"
-                      name="recordDate"
-                      value={this.state.recordDate}
-                      onChange={this.handleInputChange}
-                    />
-                  </label>
-                </div>
+        <button onClick={this.toggleModal}>新規記録</button>
 
-                <div>
-                  <label>
-                    画像：
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={this.handleImageUpload}
-                    />
-                  </label>
-                </div>
-
-                <div>
-                  <label>
-                    印象：
-                    <textarea
-                      name="impression"
-                      value={this.state.impression}
-                      onChange={this.handleInputChange}
-                    />
-                  </label>
-                </div>
-
-                <div>
-                  <button type="button" onClick={this.addImpression}>
-                    登録
-                  </button>
-                  <button type="button" onClick={this.resetForm}>
-                    リセット
-                  </button>
-                  <button type="button" onClick={this.toggleModal}>
-                    閉じる
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-        </div>
-
-        {/* 印象登録ボタン */}
-        <div>
-          <button onClick={this.toggleModal}>新規記録</button>
-        </div>
-
-        {/* 印象ログ表示部 */}
         <div>
           {filteredItems.length > 0 ? (
-            <ul>
+            <ul className="impression-list">
               {filteredItems.map((log) => (
-                <li key={log.id}>
-                  <p>日付：{log.recordDate}</p>
-                  <p>印象：{log.impression}</p>
-                  {log.imageData && (
-                    <img
-                      src={`data:${log.mimeType || "image/png"};base64,${
-                        log.imageData
-                      }`}
-                      alt="印象画像"
-                      style={{
-                        width: "100px",
-                        height: "auto",
-                        maxWidth: "200px",
-                        display: "block",
-                      }}
-                    />
-                  )}
-                  {/* アクションボタン */}
-                  <button onClick={() => this.handleEdit(log.id)}>編集</button>
-                  <button onClick={() => this.handleDelete(log.id)}>
-                    削除
-                  </button>
+                <li key={log.id} className="impression-card">
+                  <div className="impression-row">
+                    <div className="impression-text">
+                      <p><strong>日付：</strong>{log.recordDate}</p>
+                      <p><strong>印象：</strong>{log.impression}</p>
+                    </div>
+                    {log.imageData && (
+                      <div className="impression-image">
+                        <img
+                          src={`data:${log.mimeType || "image/png"};base64,${log.imageData}`}
+                          alt="印象画像"
+                        />
+                      </div>
+                    )}
+                  </div>
+                  <div className="impression-actions">
+                    <button onClick={() => this.handleEdit(log.id)}>編集</button>
+                    <button onClick={() => this.handleDelete(log.id)}>削除</button>
+                  </div>
                 </li>
               ))}
             </ul>

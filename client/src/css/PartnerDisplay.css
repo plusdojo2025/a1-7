@@ -42,11 +42,18 @@ canvas#radarChart {
 /* --------- 凡例表示 --------- */
 .legend-names {
   text-align: center;
-  margin-top: -30px;
-  margin-bottom: 20px;
+  margin-top: -80px; /* ← ここを調整して上に近づける */
+  margin-bottom: 10px;
   font-weight: bold;
   font-size: 14px;
+
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 6px 12px;
+  border-radius: 8px;
+  display: inline-block;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 
 .legend-names span {
   margin: 0 12px;
@@ -66,7 +73,7 @@ canvas#radarChart {
 
 .partner-header {
   text-align: center;
-  color: #fff; /* 全体白 */
+  color: #000; /* 全体白 */
   margin-bottom: 32px;
 }
 
@@ -76,7 +83,7 @@ canvas#radarChart {
 
 .partner-name-section .furigana {
   font-size: 14px;
-  color: #fff;
+  color: #000;
   margin-bottom: 4px;
 }
 
@@ -84,14 +91,14 @@ canvas#radarChart {
   font-size: 27px;
   font-weight: bold;
   margin: 0;
-  color: #fff;
+  color: #000;
 }
 
 .partner-age {
   font-size: 22px;
   font-weight: 500;
   margin-top: 8px;
-  color: #fff;
+  color: #000;
 }
 
 /* 2カラム表示部分 */
@@ -100,7 +107,7 @@ canvas#radarChart {
   justify-content: center;
   gap: 40px;
   margin-top: 16px;
-  color: #fff;
+  color: #000;
   font-size: 16px;
 }
 
