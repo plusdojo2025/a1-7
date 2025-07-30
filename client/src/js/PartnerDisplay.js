@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import Chart from "chart.js/auto";
+import '../css/PartnerDisplay.css';
 import { withNavigation } from "../hoc/withNavigation";
 
 class PartnerDisplay extends React.Component {
@@ -247,6 +248,17 @@ class PartnerDisplay extends React.Component {
     }
   };
 
+  // 印象記録画面に遷移
+  handleImpressionClick = () => {
+    const { id } = this.props.router.params;
+    if (id) {
+      this.props.router.navigate(`/partner/${id}/impressions/`);
+    } else {
+      console.error("Partner ID is missing for navigation.");
+      // Optionally, show an alert to the user or redirect to a default page
+    }
+  };
+
   drawChart() {
     const { idealJson, partnerJson, userJson } = this.state;
 
@@ -326,23 +338,48 @@ class PartnerDisplay extends React.Component {
       type: "radar",
       data: data,
       options: {
+        responsive: true,
+        maintainAspectRatio: false,
         scales: {
           r: {
             min: 0,
             max: 5,
-            ticks: { stepSize: 1 },
+            ticks: {
+              stepSize: 1,
+              color: "#333",
+              font: { size: 12 },
+            },
+            grid: {
+              color: "#ccc",
+            },
+            angleLines: {
+              color: "#aaa",
+            },
             pointLabels: {
               font: {
-                size: 14,
+                size: 13,
+                weight: "bold",
+              },
+              color: "#222",
+            },
+          },
+        },
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            enabled: true,
+            callbacks: {
+              label: function (ctx) {
+                return `${ctx.dataset.label}: ${ctx.formattedValue}`;
               },
             },
           },
         },
-        plugins: { legend: { position: "top" } },
-        responsive: true,
-        maintainAspectRatio: false,
       },
     };
+
 
     const ctx = this.chartRef.current;
     if (ctx) {
@@ -369,40 +406,56 @@ class PartnerDisplay extends React.Component {
     }
   }
 
-  // 5段階評価の□を横に並べて色付けするコンポーネント
   FivePointRating({ partnerScore, idealScore, label, leftLabel, rightLabel }) {
-    const boxes = (score, color) =>
-      [...Array(5)].map((_, i) => (
-        <span
-          key={i}
-          style={{
-            display: "inline-block",
-            width: 20,
-            height: 20,
-            margin: "0 2px",
-            border: "1px solid #999",
-            backgroundColor: i < score ? color : "transparent",
-          }}
-        />
-      ));
-
     return (
-      <div style={{ display: "flex", alignItems: "center", marginBottom: 8, maxWidth: 700, margin: "10px auto" }}>
-        <div style={{ width: 120 }}>{label}</div>
-        <div style={{ width: 50, textAlign: "right", fontSize: 12 }}>{leftLabel}</div>
-
-        <div style={{ margin: "0 10px" }}>
-          {boxes(partnerScore, "#d81e05")} {/* お相手は赤 */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          marginBottom: 10,
+          maxWidth: 700,
+          margin: "0 auto",
+          fontSize: 14,
+        }}
+      >
+        <div style={{ width: 100 }}>{label}</div>
+        <div style={{ width: 60, textAlign: "right", fontSize: 12 }}>
+          {leftLabel}
         </div>
 
-        <div style={{ margin: "0 10px" }}>
-          {boxes(idealScore, "#008000")} {/* 理想は緑 */}
+        {/* スケール部分 */}
+        <div style={{ display: "flex", margin: "0 10px" }}>
+          {[...Array(5)].map((_, i) => {
+            let bgColor = "white"; // デフォルトは白
+            if (idealScore === i + 1) bgColor = "#008000"; // 理想 → 緑
+            if (partnerScore === i + 1) bgColor = "#d81e05"; // 相手 → 赤
+            if (idealScore === i + 1 && partnerScore === i + 1)
+              bgColor = "purple"; // 両方一致したら紫などにしてもOK
+
+            return (
+              <div
+                key={i}
+                style={{
+                  width: 22,
+                  height: 22,
+                  border: "2px solid #444",
+                  margin: "0 2px",
+                  borderRadius: 4,
+                  backgroundColor: bgColor,
+                }}
+              />
+            );
+          })}
         </div>
 
-        <div style={{ width: 50, fontSize: 12 }}>{rightLabel}</div>
+        <div style={{ width: 60, fontSize: 12 }}>{rightLabel}</div>
       </div>
     );
   }
+
+
+
+
 
 
   render() {
@@ -418,69 +471,61 @@ class PartnerDisplay extends React.Component {
     } = this.state;
     const { navigate } = this.props.router;
 
+    const labelMap = {// 5段階表示用
+      "連絡頻度": { left: "少なめ", right: "多め" },
+      "性格": { left: "内向的", right: "外交的" },
+      "金銭感覚": { left: "節約家", right: "浪費家" },
+      "主体性": { left: "受動的", right: "主体的" },
+      "婚活真剣度": { left: "低め", right: "高め" },
+      "喫煙": { left: "まったく吸わない", right: "よく吸う" },
+      "飲酒": { left: "まったく飲まない", right: "よく飲む" },
+      "ギャンブル": { left: "まったくしない", right: "よくする" },
+    };
+
+
     return (
       <div style={{ fontFamily: "Arial, sans-serif", margin: 20 }}>
-        <header
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <div style={{ fontWeight: "bold" }}>
-              {partnerDetail.name}さんのプロフィール
+        <header className="partner-header">
+          <div className="partner-name-section">
+            <div className="furigana">{partnerDetail.nameRead}</div>
+            <h1 className="partner-name">{partnerDetail.name}さんのプロフィール</h1>
+            <div className="partner-age">{partnerDetail.age}歳</div>
+          </div>
+
+          <div className="partner-details-2col">
+            <div className="column">
+              <div className="detail-item">生年月日：{partnerDetail.birthday}</div>
+              <div className="detail-item">出会った日：{partnerDetail.firstMetDay}</div>
             </div>
-            <hr />
-            <div style={{ marginBottom: 4 }}>
-              <span>年齢：{partnerDetail.age}歳</span> &nbsp;&nbsp;
-              <span>生年月日：{partnerDetail.birthday}</span> &nbsp;&nbsp;
-              <span>出会った日：{partnerDetail.firstMetDay}</span>
-            </div>
-            <div>
-              出会った経緯：<span>{partnerDetail.metEvent}</span>
-            </div>
-            <div>
-              第一印象：<span>{partnerDetail.firstImpression}</span>
+            <div className="column">
+              <div className="detail-item">出会った経緯：{partnerDetail.metEvent}</div>
+              <div className="detail-item">第一印象：{partnerDetail.firstImpression}</div>
             </div>
           </div>
         </header>
-        <button onClick={this.handleEditClick}>編集</button>
 
-        <h1 style={{ color: "#d81e05" }}>お相手評価シート</h1>
 
-        <div
-          id="chartContainer"
-          style={{
-            width: 600,
-            maxWidth: "90vw",
-            margin: "20px auto",
-            height: 400,
-          }}
-        >
+
+
+
+
+        <div className="partner-buttons">
+          <button onClick={this.handleEditClick}>編集</button>
+          <button onClick={this.handleImpressionClick}>印象記録</button>
+        </div>
+
+        <div className="chart-container">
           <canvas ref={this.chartRef} id="radarChart"></canvas>
         </div>
 
-        <div
-          id="names"
-          style={{
-            textAlign: "center",
-            marginTop: -40,
-            marginBottom: 20,
-            fontWeight: "bold",
-          }}
-        >
-          <span style={{ color: "#000", margin: "0 20px" }}>あなた</span>
-          <span style={{ color: "#008000", margin: "0 20px" }}>理想</span>
-          <span style={{ color: "#d81e05", margin: "0 20px" }}>お相手</span>
+        <div className="legend-names">
+          <span className="legend-you">あなた</span>
+          <span className="legend-ideal">理想</span>
+          <span className="legend-partner">お相手</span>
         </div>
 
+
         {/* 5段階評価比較 */}
-        <h2
-          style={{ maxWidth: 700, margin: "40px auto 10px", color: "#d81e05" }}
-        >
-          詳細スコア比較（5段階評価）
-        </h2>
         <table
           style={{
             borderCollapse: "collapse",
@@ -489,30 +534,28 @@ class PartnerDisplay extends React.Component {
             margin: "20px auto",
           }}
         >
-          <thead>
-            <tr>
-              <th style={thStyle}>項目</th>
-              <th style={thStyle}>理想</th>
-              <th style={thStyle}>お相手</th>
-            </tr>
-          </thead>
           <tbody>
-            {Object.entries(detailedIdealScores || {}).map(([key, val]) => (
-              <tr key={key}>
-                <td style={tdStyle}>{key}</td>
-                <td style={tdStyle}>{val}</td>
-                <td style={tdStyle}>{detailedPartnerScores[key]}</td>
-              </tr>
-            ))}
+            {Object.keys(detailedIdealScores).map((key) => {
+              const labels = labelMap[key] || { left: "", right: "" };
+
+              return (
+                <this.FivePointRating
+                  key={key}
+                  label={key}
+                  idealScore={detailedIdealScores[key]}
+                  partnerScore={detailedPartnerScores[key]}
+                  leftLabel={labels.left}
+                  rightLabel={labels.right}
+                />
+              );
+            })}
+
+
           </tbody>
+
         </table>
 
         {/* 〇×比較 */}
-        <h2
-          style={{ maxWidth: 700, margin: "40px auto 10px", color: "#d81e05" }}
-        >
-          詳細スコア比較（〇×比較）
-        </h2>
         <table
           style={{
             borderCollapse: "collapse",

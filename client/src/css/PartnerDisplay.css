@@ -1,0 +1,115 @@
+
+/* --------- ボタン配置 --------- */
+.partner-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.partner-buttons button {
+  padding: 10px 16px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: none;
+  background-color: #f5f5f5;
+  color: #333;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease;
+}
+
+.partner-buttons button:hover {
+  background-color: #e0e0e0;
+}
+
+/* --------- レーダーチャート --------- */
+.chart-container {
+  width: 100%;
+  max-width: 380px;
+  height: 360px;
+  margin: 20px auto;
+  position: relative;
+}
+
+canvas#radarChart {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+/* --------- 凡例表示 --------- */
+.legend-names {
+  text-align: center;
+  margin-top: -30px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.legend-names span {
+  margin: 0 12px;
+}
+
+.legend-you {
+  color: #000;
+}
+
+.legend-ideal {
+  color: #008000;
+}
+
+.legend-partner {
+  color: #d81e05;
+}
+
+.partner-header {
+  text-align: center;
+  color: #fff; /* 全体白 */
+  margin-bottom: 32px;
+}
+
+.partner-name-section {
+  margin-bottom: 16px;
+}
+
+.partner-name-section .furigana {
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.partner-name {
+  font-size: 27px;
+  font-weight: bold;
+  margin: 0;
+  color: #fff;
+}
+
+.partner-age {
+  font-size: 22px;
+  font-weight: 500;
+  margin-top: 8px;
+  color: #fff;
+}
+
+/* 2カラム表示部分 */
+.partner-details-2col {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-top: 16px;
+  color: #fff;
+  font-size: 16px;
+}
+
+.partner-details-2col .column {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.partner-details-2col .detail-item {
+  text-align: left;
+}
