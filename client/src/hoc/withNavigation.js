@@ -1,5 +1,4 @@
 // hoc/withNavigation.js
-// クラスコンポーネントと useNavigate を組み合わせるためのカスタムHOC
 import React from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 
