@@ -325,3 +325,52 @@ input.form-input {
     padding: 5px;
   }
 }
+
+@media (max-width: 600px) {
+  .form-container-3col {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+  }
+
+  .column {
+    width: 100%;
+  }
+
+  .form-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .form-label {
+    width: auto;
+    margin-bottom: 4px;
+  }
+
+  .age-row {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .age-input-wrapper {
+    max-width: 100px;
+  }
+
+  .right-column .form-input {
+    max-width: 100%;
+  }
+
+  .form-group {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .partner-edit-container h1 {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 12px;
+  }
+}

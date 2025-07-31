@@ -1,50 +1,47 @@
-/* Marriage.css */
-/* 婚活プラン提案用css */
-
-/* 入力欄用 */
-.input-marriage-timing {
-    display: flex;
-    margin: 8% 0 0 8%;
-}
-
-/* 調べるボタン */
-.marriage-check-button {
-    width: 30%;
-    height: 50px;
-    margin: 10% 0 3% 0;
-    border-radius: 10px;
-}
-
-/* 婚活プラン提案の結果画面 */
+/* 婚活プラン提案結果画面レイアウト */
 .marriage-split-container {
-    display: flex;
-    height: fit-content;
-    /* 画面の高さに合わせる */
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 16px;
+  padding: 16px;
 }
 
-/* 分割時の共有css */
-/* .marriage-left-side,
-.marriage-right-side {
-    flex: 1;
-    padding: 10px;
-} */
-
-/* 左半分 */
+/* 左側（ステップの見出し） */
 .marriage-left-side {
-    /* 分割確認用 */
-    flex: 1;
-    padding: 5px;
-    background-color: #f6f0ff59;
+  flex: 1;
+  min-width: 140px;
+  background-color: #f6f0ff59;
+  padding: 10px;
+  font-size: 0.95rem;
 }
-/* 右半分 */
+
+/* 右側（期間ごとの詳細内容） */
 .marriage-right-side {
-    /* 分割確認用 */
-    flex: 2;
-    padding: 10px;
-    background-color: #e4e1ff13;
-    font-size: 0.9rem;
+  flex: 2;
+  background-color: #e4e1ff13;
+  padding: 10px;
+  font-size: 0.9rem;
 }
-/* １～５の各結果 */
+
+/* 各期間ブロック */
 .marriageplan-result-area {
-    margin: 10% 0 12% 0;
+  margin-bottom: 24px;
+}
+
+/* スマホ向けスタイル */
+@media screen and (max-width: 768px) {
+  .marriage-split-container {
+    flex-direction: column;
+  }
+
+  .marriage-left-side,
+  .marriage-right-side {
+    width: 100%;
+  }
+
+  .marriage-left-side {
+    margin-bottom: 16px;
+    background-color: #f9f9f9;
+  }
 }

@@ -280,7 +280,7 @@ class PartnerEdit extends React.Component {
 
           </div>
 
-          {/* 右カラム */}
+          {/* 右カラム
           <div className="column right-column">
             <div className="form-row">
               <div className="form-group">
@@ -312,7 +312,7 @@ class PartnerEdit extends React.Component {
               </label>
             </div>
             </div>
-          </div>
+          </div> */}
         </form>
 
         <form onSubmit={this.handleSpecSubmit} className="basic-info-box">

@@ -1,0 +1,57 @@
+.impression-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.impression-card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.impression-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.impression-text {
+  flex: 1;
+  word-break: break-word;
+}
+
+.impression-image img {
+  max-width: 100px;
+  height: auto;
+  border-radius: 5px;
+}
+
+.impression-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+  align-self: flex-end;
+}
+
+.impression-actions button {
+  font-size: 12px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  color: #333;
+  cursor: pointer;
+}
+
+.impression-actions button:hover {
+  background-color: #e0e0e0;
+}

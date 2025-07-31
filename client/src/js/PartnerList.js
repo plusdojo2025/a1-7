@@ -348,9 +348,9 @@ class PartnerList extends React.Component {
                     <span className="partner-link">{partner.name}</span>（
                     {partner.age}歳）
                   </div>
-                  <div style={{ fontSize: "0.9em" }}>
+                  {/* <div style={{ fontSize: "0.9em" }}>
                     最後に会った日：{lastMetStr}
-                  </div>
+                  </div> */}
                 </Link>
                 {/* 削除ボタン */}
                 <button

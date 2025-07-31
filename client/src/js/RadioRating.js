@@ -12,6 +12,7 @@ class RadioRating extends React.PureComponent {
       minValue,
       maxValue,
     } = this.props;
+
     const options = Array.from({ length: maxValue - minValue + 1 }, (_, i) =>
       minValue + i
     );
@@ -19,8 +20,7 @@ class RadioRating extends React.PureComponent {
     return (
       <div className="rating-block">
         <p className="rating-title">{label}</p>
-        <div className="rating-row">
-          {minLabel && <span className="label-left">{minLabel}</span>}
+        <div className="rating-row rating-column-layout">
           <div className="rating circle">
             {options.map((optionValue) => (
               <React.Fragment key={optionValue}>
@@ -42,18 +42,20 @@ class RadioRating extends React.PureComponent {
               </React.Fragment>
             ))}
           </div>
-          {maxLabel && <span className="label-right">{maxLabel}</span>}
+          <div className="rating-labels">
+            <span className="label-left">{minLabel}</span>
+            <span className="label-right">{maxLabel}</span>
+          </div>
         </div>
       </div>
     );
   }
 }
 
-// デフォルトプロパティを設定
 RadioRating.defaultProps = {
   minLabel: "",
   maxLabel: "",
-  minValue: 1, // デフォルトで1から5の範囲
+  minValue: 1,
   maxValue: 5,
 };
 
